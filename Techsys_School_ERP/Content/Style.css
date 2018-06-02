@@ -1,0 +1,40 @@
+﻿body {
+}
+
+.img-col {
+	height: 120px; 
+}
+
+.img-margin-top {
+	margin-top: -55px;
+}
+
+.lbl-margin-top {
+	margin-top : 10px;
+}
+
+.bootstrap-margin-top {
+	margin-top: -5%;
+}
+.vert-spacer {
+	margin-top : 2%;
+}
+
+span.headerBold{
+    font-weight:bold;
+	text-align:left;
+}
+
+.hot .ht_master tr:nth-of-type(even) > td {
+  background-color: hsl(199, 100%, 95%);
+}
+
+.hot .ht_master tr.foo > td {
+  background-color: #c8e5fc;
+  color: white;
+}
+
+.hot .ht_master tr > td.foo {
+	background-color: #c8e5fc;
+	color: white;
+}

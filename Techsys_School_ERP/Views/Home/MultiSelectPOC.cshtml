@@ -1,0 +1,123 @@
+﻿
+
+@{
+	ViewBag.Title = "SectionList";
+	Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Jquery multiple select with checkboxes using bootstrap-multiselect.js</title>
+	@*<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>*@
+	@*<script src="~/Scripts/jquery-1.10.2.js"></script>
+	<script src="~/Scripts/bootstrap.min.js"></script>
+	<script src="~/Scripts/bootstrap-multiselect.js"></script>
+
+	<link href="~/Content/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css">
+	<link href="~/Content/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>*@
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js" type="text/javascript"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" type="text/javascript">
+
+	</script>
+	<script src="~/Scripts/bootstrap-multiselect.js"></script>
+	@*<link href="~/Content/css/bootstrap.min.css" rel="stylesheet" type="text/css" />*@
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
+	<link rel="stylesheet" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" type="text/css"/>
+	@*<link rel="stylesheet" href="css/bootstrap-3.1.1.min.css" type="text/css" />
+	<link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css" />
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.8.2.js"></script>
+	<script type="text/javascript" src="js/bootstrap-2.3.2.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap-multiselect.js"></script>*@
+	@*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">*@
+	@*<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>*@
+	@*<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>*@
+	@*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">*@
+</head>
+<body>
+	<div class="form-group" id="multiselect">
+		<label class="col-md-4 control-label" for="rolename">Role Name</label>
+		<div class="col-md-4">
+			<select id="dates-field2" class="multiselect-ui form-control" multiple="multiple">
+				<option value="cheese">Cheese</option>
+				<option value="tomatoes">Tomatoes</option>
+				<option value="mozarella">Mozzarella</option>
+				<option value="mushrooms">Mushrooms</option>
+				<option value="pepperoni">Pepperoni</option>
+				<option value="onions">Onions</option>
+			</select>
+		</div>
+	</div>
+	<div class="div2">
+
+	</div>
+	<div class="container">
+		<strong>Select Language:</strong>
+		<select id="multiple-checkboxes" multiple="multiple">
+			@*<option value="php">PHP</option>
+			<option value="javascript">JavaScript</option>*@
+			@*<option value="php">PHP</option>
+			<option value="javascript">JavaScript</option>
+			<option value="java">Java</option>
+			<option value="sql">SQL</option>
+			<option value="jquery">Jquery</option>
+			<option value=".net">.Net</option>*@
+		</select>
+	</div>
+	<select id="mySkills" multiple="multiple" required name="mySkillsName">
+		@if (ViewBag.mySkills != null)
+		{
+			foreach (var item in ViewBag.mySkills)
+			{
+				if (item.Text != null)
+				{
+
+					<option value="@item.Value">
+						@item.Text
+					</option>
+				}
+			}
+		}
+	</select>
+	<input type="button" id="btnGetSkills" value="save" />
+	
+		<script type="text/javascript">
+			$(document).ready(function () {
+
+				var myOptions = {
+					val1: 'text1',
+					val2: 'text2'
+				};
+				var mySelect = $('#multiple-checkboxes');
+				$.each(myOptions, function (val, text) {
+					mySelect.append(
+						$('<option></option>').val(val).html(text)
+					);
+				});
+
+				$('#multiple-checkboxes').multiselect();
+
+				$("#dates-field2").multiselect();
+
+				$('#mySkills').multiselect();
+
+
+				$("#btnGetSkills").click(function () {
+					alert($("#mySkills").val());
+				});
+
+
+				//$('#multiple-checkboxes').append($('<option>', {
+				//	value: 1,
+				//	text: 'My option'
+				//}));
+
+				//$('#multiple-checkboxes').append($('<option>', {
+				//	value: 2,
+				//	text: 'All option'
+				//}));
+			});
+		</script>
+
+</body>
+</html>
+

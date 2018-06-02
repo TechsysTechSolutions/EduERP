@@ -1,0 +1,190 @@
+﻿@model IEnumerable<Techsys_School_ERP.Model.ViewModel.ExamList_ViewModel>
+
+@{
+    ViewBag.Title = "ExamList";
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+
+	<script type="text/javascript" src="~/Content/js/plugins/loaders/pace.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/core/libraries/jquery.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/core/libraries/bootstrap.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/loaders/blockui.min.js"></script>
+	<!-- /core JS files -->
+	<!-- Theme JS files -->
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/datatables.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/forms/selects/select2.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/jszip/jszip.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/buttons.min.js"></script>
+	<!-- <script type="text/javascript" src="~/Content/js/core/app.js"></script>-->
+	<script type="text/javascript" src="~/Content/js/pages/datatables_extension_buttons_html5.js"></script>
+	<!-- /theme JS files -->
+
+	<script type="text/javascript">
+		$(document).ready(function () {
+
+			$('#btnAddExam').click(function () { //On click of your button
+
+				debugger
+				$.ajax({
+					url: '/Exam/CreateExam/',
+					data: "{'Exam_Name':'" + $("#txtAddExam").val() + "'}",
+					dataType: "json",
+					type: "POST",
+					//dataType: "html",
+					contentType: "application/json; charset=utf-8",
+					success: function (response) {
+						debugger
+					
+						if (response == "Exam Already Exists.") {
+							debugger
+							alert("Exam Already Exists!!");
+						}
+						else if (response == "OK")
+							debugger
+						window.location.href = "/Exam/ExamList";
+					}
+					,
+					error: function (response) {
+				
+						debugger
+					},
+					failure: function (response) {
+						debugger
+
+					}
+				});
+
+			})
+		})
+
+
+	</script>
+</head>
+<body>
+
+
+
+	@*<div>
+			<h4>Staff</h4>
+			<hr />
+			<dl class="dl-horizontal">
+				<dt>
+					@Html.DisplayNameFor(model => model.First_Name)
+				</dt>
+
+
+				<dt>
+					@Html.DisplayNameFor(model => model.Last_Name)
+				</dt>
+
+
+
+				<dt>
+					@Html.DisplayNameFor(model => model.Gender_Id)
+				</dt>
+
+
+
+
+			</dl>
+		</div>*@
+	<div class="page-container" style="height:100%;">
+		<!-- Page content -->
+		<div class="page-content">
+			@*<div class="content-wrapper">*@
+			<!-- Page header -->
+			<!-- /page header -->
+			<!-- Content area -->
+			<div class="content">
+				<!-- Basic initialization -->
+				@*<div class="panel panel-tab-content">*@
+
+				<div class="panel panel-primary panel-bordered">
+					<div class="panel-heading bg-indigo-400">
+						<h6 class="panel-title ">ROLE LIST</h6>
+						<div class="heading-elements">
+							<ul class="icons-list">
+								<li><a data-action="collapse"></a></li>
+								<li><a data-action="reload"></a></li>
+								<li><a data-action="close"></a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="panel-body">
+
+					</div>
+					<div class="row col-xs-8">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<div class="text-left col-xs-4">
+							<input type="text" class="form-control col-xs-2" id="txtAddExam" />
+						</div>
+
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<div class="text-left col-xs-2">
+							<input type="button" class="btn btn-success" id="btnAddExam" value="ADD EXAM" />
+						</div>
+
+					</div>
+
+					<table class="table datatable-button-html5-basic table-striped table-bordered">
+						<thead class="bg-primary-400">
+							<tr>
+								<th>Exam Name</th>
+								<th>Academic Year</th>
+								<th>Is Active</th>
+								<th>Created On</th>
+								<th>Created By</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+
+							@foreach (var item in Model)
+							{
+								<tr>
+									<td>@item.Name</td>
+									<td>@item.Academic_Year</td>
+									<td>@item.Is_Active</td>
+									@if (item.Created_On != null)
+									{
+									<td>@item.Created_On</td>
+									}
+									else
+									{
+										<td></td>
+									}
+									<td>@User.Identity.Name</td>
+									<td>
+										@Html.ActionLink("Delete", "Delete", new { id = item.Id })
+									</td>
+								</tr>
+
+							}
+						</tbody>
+					</table>
+				</div>
+
+
+
+
+				@*</div>*@
+
+				<!-- Footer -->
+				@*<div class="footer text-muted">
+						&copy; 2015. <a href="#">Limitless Web App Kit</a> by <a href="http://themeforest.net/user/Kopyov" target="_blank">Eugene Kopyov</a>
+					</div>*@
+				<!-- /footer -->
+			</div>
+			<!-- /content area -->
+			@*</div>*@
+		</div>
+	</div>
+</body>
+</html>

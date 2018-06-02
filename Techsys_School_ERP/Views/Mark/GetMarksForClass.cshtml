@@ -1,0 +1,450 @@
+﻿
+@{
+     Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+}
+<!DOCTYPE html>
+<html>
+<head>
+	<link href="~/Content/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css">
+	<link href="~/Content/Style.css" rel="stylesheet" type="text/css" />
+
+	<script type="text/javascript" src="~/Content/js/plugins/loaders/pace.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/core/libraries/jquery.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/core/libraries/bootstrap.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/loaders/blockui.min.js"></script>
+	<!-- /core JS files -->
+
+	<script src="~/Scripts/bootstrap.min.js"></script>
+	<script src="~/Scripts/bootstrap-multiselect.js"></script>
+	<script type="text/javascript" src="~/Content/assets/js/plugins/tables/handsontable/handsontable.min.js"></script>
+	<link href="~/Content/assets/css/handsontable.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="~/Scripts/handsontable/handsontable.full.min.js"></script>
+	<link href="~/Content/handsontable/handsontable.full.min.css" rel="stylesheet" type="text/css" />
+
+	<style type="text/css">
+		span.headerBold {
+			font-weight: bold;
+			text-align: left;
+		}
+
+		.hot .ht_master tr:nth-of-type(even) > td {
+			background-color: #e8f4f8;
+			;
+			//hsl(199, 100%, 95%);
+		}
+
+		.hot .ht_master tr.foo > td {
+			background-color: #A9FEAA;
+			color: white;
+		}
+
+		.hot .ht_master tr > td.foo {
+			background-color: #A9FEAA;
+			color: white;
+		}
+
+		.lbl-margin-top {
+			margin-top: 20px;
+		}
+
+		.lbl-bold {
+			font-weight: 700;
+		}
+
+		.margin-top {
+			margin-top: 10px;
+		}
+
+		.minus-margin-top {
+		}
+	</style>
+
+
+
+	<script type="text/javascript">
+
+		$(document).ready(function () {
+
+
+			var today = new Date();
+			var hot5;
+			var nCount = 0;
+			var nColCount = 0;
+			
+
+			var mydata;
+
+			var d = new Date();
+			for (var i = 2; i >= 0; i--) {
+				var option = "<option value=" + parseInt(d.getFullYear() - i) + ">" + parseInt(d.getFullYear() - i) + "</option>"
+				$('[id*=DropDownList1]').append(option);
+			}
+			for (var i = 1; i <= 2; i++) {
+				var option = "<option value=" + parseInt(d.getFullYear() + i) + ">" + parseInt(d.getFullYear() + i) + "</option>"
+				$('[id*=DropDownList1]').append(option);
+			}
+
+
+			if (today.getMonth() < 4) {
+
+				$("#DropDownList1").val(today.getFullYear());
+				//$("#lblYear").text(today.getFullYear())
+			}
+			else {
+				$("#DropDownList1").val(parseInt(today.getFullYear()) + parseInt(1));
+				//$("#lblYear").text(parseInt(today.getFullYear()) + parseInt(1))
+			}
+
+			$("#classList").change(function () {
+				if ($("#classList").val() == 0) {
+					alert("Please Select the Class")
+					
+				}
+				else {
+					getSectionForClass($("#classList").val())
+				}
+			});
+
+			var container = document.getElementById('MarksHandsonTable');
+
+			function getSectionForClass(Class_Id)
+			{
+				debugger
+					$.ajax({
+						url: '/Mark/FetchSectionIDForClass/',
+						data: "{'Class_Id':'" + $("#classList").val() + "'}",
+						dataType: "json",
+						type: "POST",
+						contentType: "application/json; charset=utf-8",
+						async: true,
+						processData: false,
+						cache: false,
+						success: function (data) {
+							debugger
+							// first remove the current options if any
+							$('#SectionList').find('option').remove();
+
+							$('#SectionList').append($('<option></option>').val(0).html("-- Select Section --"));
+							for (var i = 0; i < data.length; i++) {
+								debugger
+								//$('#SectionList').append($('<option></option>').val(data[i].Id).html(data[i].Name))
+
+								var opt = new Option(data[i].Name, data[i].Id);
+								$('#SectionList').append(opt);
+
+							}
+
+
+							// next iterate thru your object adding each option to the drop down\
+							//$(data).each(function (index, item) { // GETTING ERROR HERE
+							//	debugger;
+
+							//	$('#SectionList').append($('<option></option>').val(item.Value).html(item.Text));
+							//});
+
+
+						}
+
+					});
+			}
+
+
+			$('#btnGetMarks').click(function () { //On click of your button
+
+				if ($('#classList').val() == 0) {
+					alert("Please Select the Class");
+				}
+				else if ($('#SectionList').val() == 0) {
+					alert("Please Select the Section");
+				}
+				else if ($('#ExamList').val() == 0) {
+					alert("Please Select the Exam");
+				}
+				else {
+
+					$.ajax({
+						url: '/Mark/GetMarkListForClass/',
+						data: "{'class_Id':'" + $("#classList").val() + "','section_Id':'" + $("#SectionList").val() + "','exam_Id':'" + $("#ExamList").val() + "','year':'" + $("#DropDownList1").val() + "'}",
+						//data: "{'Class_Name':'" + $("#txtAddClass").val() + "'}",
+						dataType: "json",
+						type: "POST",
+						contentType: "application/json; charset=utf-8",
+						success: function (data) {
+							$("#hot-display-license-info").val("");
+							$("#hot-display-license-info").text("");
+							mydata = data;
+
+							hot5 = new Handsontable(container, {
+								data: data,
+								startRows: 0,
+								startCols: 0,
+								//always keep at least 1 spare row at the right
+								//minSpareRows: 3,
+								//always keep at least 1 spare row at the bottom,
+								columnHeaders: true,
+								rowHeaders: true,
+								contextMenu: true,// disable context menu to change things
+								manualColumnResize: true,
+								manualRowResize: true,
+								//afterChange: function(changes, source) {
+								//	if(!changes) {
+								//		return;
+								//	}
+								//	$.each(changes, function(index, element) {
+								//		//var row = element[0];
+								//		//var col = element[1];
+								//		//alert("element : " + element);
+								//		//alert("index : " + index);
+								//		var oldVal = element[2];
+								//		var newVal = element[3];
+								//		hot5.setDataAtCell(1, 2, "totalCost");
+								//		//if ( parseInt(1) < parseInt(hot5.countCols())) {
+										
+								//		//	alert(parseInt(myData[row][col + 1]) + parseInt(newVal));
+								//		//	myData[row][col + 1] = parseInt(myData[row][col + 1]) + parseInt(newVal);
+								//		//	alert(myData[row][col + 1]);
+								//		//	hot5.loadData(myData);
+								//		//}
+								//	});
+								//},
+								cells: function (row, col, prop) {
+									var cellProperties = {};
+
+								
+									if (row === 0) {
+										cellProperties.renderer = firstRowRenderer; // uses function directly
+									
+										
+									}
+									;
+
+									//else {
+									//	cellProperties.renderer = "negativeValueRenderer"; // uses lookup map
+									//}
+
+									return cellProperties;
+								},
+
+								stretchH: 'all'
+								,
+								afterChange: onChange
+
+								
+							});
+
+							
+							function onChange(changes, source) {
+																
+								alert(changes);
+								myData = data;
+								myData[1][2] = "UUU";
+								hot5.updateSettings({
+									data : myData
+								});
+
+							//	hot5.setDataAtCell(1, 2, 'Some new value');
+							
+							}
+
+
+							function firstRowRenderer(instance, td, row, col, prop, value, cellProperties) {
+
+								//alert(row);
+								//alert(col);
+								//	alert(td);
+							//	alert(value);
+								
+							
+								if (value != "Total") {
+
+									if (nCount < 1) {
+										nColCount++
+									//alert(nColCount);
+									}
+								}
+								else {
+									if (nCount < 1) {
+										nCount++
+										nColCount++;
+									}
+								}
+
+								//if (nCount === 1) {
+								//	nColCount++;
+								//}
+
+								//alert(nColCount);
+							
+								Handsontable.renderers.TextRenderer.apply(this, arguments);
+								td.style.fontWeight = 'bold';
+								td.style.color = 'green';
+								td.style.background = '#CEC';
+							
+								
+								
+							}
+						}
+						,
+						error: function (response) {
+
+						},
+						failure: function (response) {
+
+						}
+					});
+				}
+
+			})
+
+			$('#btnSaveMarks').click(function () {
+				var myData = hot5.getData();
+				myData = JSON.stringify(myData);
+
+				$.ajax({
+					url: '/Mark/SaveMarksForClass/',
+					type: "POST",
+					dataType: "json",
+					contentType: 'application/json; charset=utf-8',
+					//data: "{'myData':'" + myData + "','Academic_Year':'" + $("#DropDownList1").val() + "'}",
+					data: myData,
+					async: true,
+					processData: false,
+					cache: false,
+					success: function (response) {
+						if (response == "OK") {
+							alert("Marks Succussfully Configured");
+						}
+						else if (response == "Updated") {
+							alert("Fees Configuartion Sucessfully Updated");
+						}
+						else if (response == "Fees Already Configured") {
+
+						}
+					},
+					error: function (xhr) {
+						alert('error');
+					}
+				});
+			})
+
+
+
+		});
+
+	</script>
+</head>
+<body>
+	<div class="page-container" style="height:100%;">
+		<div class="content">
+			<!-- Basic initialization -->
+
+			<div class="panel panel-primary panel-bordered" style="min-height:150px;">
+				<div class="panel-heading bg-blue-800">
+					<h6 class="panel-title ">FEE CONFIGURATION</h6>
+					<div class="heading-elements">
+						<ul class="icons-list">
+							<li><a data-action="collapse"></a></li>
+							<li><a data-action="reload"></a></li>
+							<li><a data-action="close"></a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="panel-body">
+
+				</div>
+				<div class="row col-xs-12">
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<div class="text-right col-xs-2">
+						<label class="margin-top lbl-bold">CLASS</label>
+					</div>
+
+					<div class="col-xs-3">
+
+						<select id="classList" required name="ClassName" class="form-control">
+							@if (ViewBag.classList != null)
+							{
+								<option value='0'>-- Select Class --</option>
+								foreach (var item in ViewBag.classList)
+								{
+									if (item.Text != null)
+									{
+
+										<option value="@item.Value">
+											@item.Text
+										</option>
+
+									}
+
+								}
+							}
+						</select>
+					</div>
+					<div class="text-right col-xs-2 col-xs-offset-1">
+						<label class="margin-top lbl-bold">SECTION</label>
+					</div>
+
+					<div class="col-xs-3">
+
+						<select id="SectionList" required name="SectionName" class="form-control"></select>
+					</div>
+				</div>
+
+				<div class="row col-xs-12 lbl-margin-top lbl-margin-top">
+					<div class="text-right col-xs-2">
+						<label class="lbl-bold margin-top">ACADEMIC YEAR</label>
+					</div>
+					<div class="col-xs-3 lbl-margin-top">
+
+						<select id="DropDownList1" name="DropDownList1" class="form-control" style="margin-top:-19px;"></select>
+
+					</div>
+					<div class="text-right col-xs-2 col-xs-offset-1">
+						<label class="margin-top lbl-bold">EXAM</label>
+					</div>
+
+					<div class="col-xs-3">
+						<select id="ExamList" required name="ExamName" class="form-control">
+							@if (ViewBag.examList != null)
+							{
+								<option value='0'>-- Select Exam --</option>
+								foreach (var item in ViewBag.examList)
+								{
+									if (item.Text != null)
+									{
+
+										<option value="@item.Value">
+											@item.Text
+										</option>
+
+									}
+
+								}
+							}
+						</select>
+					</div>
+				</div>
+				<div class="row col-xs-offset-5">
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<div class="text-left col-xs-3">
+						<input type="button" class="btn btn-success" id="btnGetMarks" value="GET MARKS" />
+					</div>
+				</div>
+
+				<div class="content" style="margin-top:100px; overflow:hidden; height:100px; width:1150px; ">
+					<div id="MarksHandsonTable" class="col-xs-offset-0 handsontable hot"></div>
+					<div class="row control-group"></div>
+
+				</div>
+				<div class="row col-xs-2 col-xs-offset-10 vert-spacer">
+					<input type="button" id="btnSaveMarks" value="SAVE MARKS" class="btn btn-success" />
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+</body>
+</html>
+
+
+

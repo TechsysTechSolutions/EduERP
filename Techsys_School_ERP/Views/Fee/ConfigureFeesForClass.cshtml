@@ -1,0 +1,333 @@
+﻿@model Techsys_School_ERP.Model.ViewModel.ClassList_ViewModel
+
+@{
+	ViewBag.Title = "ConfigureFeesForClass";
+	Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+		<link href="~/Content/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css">
+		<link href="~/Content/Style.css"  rel="stylesheet" type="text/css" />
+
+		<script type="text/javascript" src="~/Content/js/plugins/loaders/pace.min.js"></script>
+		<script type="text/javascript" src="~/Content/js/core/libraries/jquery.min.js"></script>
+		<script type="text/javascript" src="~/Content/js/core/libraries/bootstrap.min.js"></script>
+		<script type="text/javascript" src="~/Content/js/plugins/loaders/blockui.min.js"></script>
+		<!-- /core JS files -->
+
+		<script src="~/Scripts/bootstrap.min.js"></script>
+		<script src="~/Scripts/bootstrap-multiselect.js"></script>
+		<script type="text/javascript" src="~/Content/assets/js/plugins/tables/handsontable/handsontable.min.js"></script>
+		<link href="~/Content/assets/css/handsontable.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="~/Scripts/handsontable/handsontable.full.min.js"></script>
+		<link href="~/Content/handsontable/handsontable.full.min.css" rel="stylesheet" type="text/css" />
+		@*<script src="https://docs.handsontable.com/pro/2.0.0/bower_components/handsontable-pro/dist/handsontable.full.min.js"></script>
+		<link type="text/css" rel="stylesheet" href="https://docs.handsontable.com/pro/2.0.0/bower_components/handsontable-pro/dist/handsontable.full.min.css">*@
+
+		<style type="text/css">
+			span.headerBold{
+				font-weight:bold;
+				text-align:left;
+			}
+
+			.hot .ht_master tr:nth-of-type(even) > td {
+			  background-color: #e8f4f8;;
+				  //hsl(199, 100%, 95%);
+			}
+
+			.hot .ht_master tr.foo > td {
+			  background-color:#A9FEAA;
+			  color: white;
+			}
+
+			.hot .ht_master tr > td.foo {
+			  background-color: #A9FEAA;
+			  color: white;
+			}
+
+			.lbl-margin-top {
+				margin-top:10px;
+			}
+
+			.lbl-bold {
+				font-weight:700;
+			}
+		</style>
+
+	<script type="text/javascript">
+	
+		$(document).ready(function () {			
+
+			var $ = jQuery.noConflict();
+			var hot5;
+			var today = new Date();
+
+			var d = new Date();
+			for (var i = 2; i >= 0; i--) {
+				var option = "<option value=" + parseInt(d.getFullYear() - i) + ">" + parseInt(d.getFullYear() - i) + "</option>"
+				$('[id*=DropDownList1]').append(option);
+			}
+			for (var i = 1; i <= 2; i++) {
+				var option = "<option value=" + parseInt(d.getFullYear() + i) + ">" + parseInt(d.getFullYear() + i) + "</option>"
+				$('[id*=DropDownList1]').append(option);
+			}
+	
+			$('#classList').select();
+			if (today.getMonth() < 4) {
+				
+			$("#DropDownList1").val(today.getFullYear());
+				//$("#lblYear").text(today.getFullYear())
+			}
+			else {
+				$("#DropDownList1").val(parseInt(today.getFullYear()) + parseInt(1));
+				//$("#lblYear").text(parseInt(today.getFullYear()) + parseInt(1))
+			}
+
+						
+			function getFeeCongirationDetailsForClass(Class_Id)
+			{
+				var container = document.getElementById('myHandsonTable');
+			
+												
+				$.ajax({
+					url: '/Fee/GetFeeConfiguration/',
+					//data: "{'Class_Id':'" + $("#classList").val() + "'}",
+					data: "{'Class_Id':'" + $("#classList").val() + "','Academic_Year':'" + $("#DropDownList1").val() + "'}",
+					dataType: "json",
+					type: "POST",
+					contentType: "application/json; charset=utf-8",
+					async: true,
+					processData: false,
+					cache: false,
+					success: function (data) {
+							// on Success send the Json data 
+							// to the table by using loaddata function""
+																					
+							$("#myHandsonTable").html("");
+							$("#hot-display-license-info").val("");
+							$("#hot-display-license-info").text("");
+							hot5 = new Handsontable(container, {													
+									data: data,
+									startRows: 0,
+									startCols: 0,
+									//always keep at least 1 spare row at the right
+									minSpareRows: 0,
+									//always keep at least 1 spare row at the bottom,
+									columnHeaders: true,
+									rowHeaders: true,
+							
+									colHeaders: [
+													"<span class='headerBold' style='text-align:left'>FEE COMPONENT NAME</span>",
+													"<span class='headerBold'>Academic Year </span>",
+													"<span class='headerBold'>Yearly Amount </span>",
+													"<span class='headerBold'>First Term</span>",
+													"<span class='headerBold'>Second Term </span>",
+													"<span class='headerBold'>Third Term</span>"
+												],
+									columnSummary:
+												[
+														{
+														destinationRow: 0,
+														destinationColumn: 2,
+														reversedRowCoords: true,
+														type: 'sum',
+														forceNumeric: true
+														},
+														{
+														destinationRow: 0,
+														destinationColumn: 3,
+														reversedRowCoords: true,
+														type: 'sum',
+														forceNumeric: true
+														},
+														{
+														destinationRow: 0,
+														destinationColumn: 4,
+														reversedRowCoords: true,
+														type: 'sum',
+														forceNumeric: true
+														},
+														{
+														destinationRow: 0,
+														destinationColumn: 5,
+														reversedRowCoords: true,
+														type: 'sum',
+														forceNumeric: true
+														}
+												],
+										columns:    [	    						
+														{
+														data: 'Name',
+														readOnly: true,		
+														// 1nd column is simple text, no special options here
+														},
+														{
+														data: 'Academic_Year',
+														type: 'numeric',
+														readOnly: true,
+														},
+														{
+														data: 'Yearly_Amount',
+														type: 'numeric'
+														},
+														{
+														data: 'First_Term_Amount',
+														type: 'numeric'
+														},
+														{
+														data: 'Second_Term_Amount',
+														type: 'numeric'
+														},
+														{
+														data: 'Third_Term_Amount',
+														type: 'numeric',
+														},
+												],
+										stretchH: 'all',
+	    					
+						 });
+					},
+					error: function (xhr) {
+						alert('error');
+					}
+				});		
+			}
+
+			$("#classList").change(function () {
+					if ($("#classList").val() == 0) {
+						alert("Please Select the Class")
+						$("#myHandsonTable").html("");
+						$("#hot-display-license-info").val("");
+						$("#hot-display-license-info").text("");
+					}
+					else {
+						getFeeCongirationDetailsForClass($("#classList").val())
+					}
+			});
+
+			$("#DropDownList1").change(function () {
+				if ($("#classList").val() == 0) {
+					alert("Please Select the Class")
+					$("#myHandsonTable").html("");
+					$("#hot-display-license-info").val("");
+					$("#hot-display-license-info").text("");
+				}
+				else 
+					{
+					getFeeCongirationDetailsForClass($("#classList").val())
+				}
+			});
+
+			$('#btnFeeConfigure').click(function () {
+				var myData = hot5.getData();
+				myData = JSON.stringify(myData);
+
+				$.ajax({
+						url: '/Fee/SaveFeeConfiguration/',
+						type: "POST",
+						dataType: "json",
+						contentType: 'application/json; charset=utf-8',
+						//data: "{'myData':'" + myData + "','Academic_Year':'" + $("#DropDownList1").val() + "'}",
+						data: myData,
+						async: true,
+						processData: false,
+						cache: false,
+						success: function (response) {
+								if (response == "OK") {
+									alert("Fees Succussfully Configured");
+								}
+								else if (response == "Updated") {
+									alert("Fees Configuartion Sucessfully Updated");
+								}
+								else if (response == "Fees Already Configured") {
+							
+								}
+						},
+						error: function (xhr) {
+								alert('error');
+						}
+					});
+			})
+		})
+
+
+	</script>
+	</head>
+<body>
+	
+	<div class="page-container" style="height:100%;">
+		<!-- Page content -->
+		@*<div class="content-wrapper">*@
+		<!-- Page header -->
+		<!-- /page header -->
+		<!-- Content area -->
+		<div class="content">
+			<!-- Basic initialization -->
+		
+			<div class="panel panel-primary panel-bordered" style="min-height:150px;">
+				<div class="panel-heading bg-blue-800">
+					<h6 class="panel-title ">FEE CONFIGURATION</h6>
+					<div class="heading-elements">
+						<ul class="icons-list">
+							<li><a data-action="collapse"></a></li>
+							<li><a data-action="reload"></a></li>
+							<li><a data-action="close"></a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="panel-body">
+
+				</div>
+				<div class="row col-xs-10">
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<div class="text-right col-xs-2">
+						<label class="lbl-margin-top lbl-bold">CLASS</label>
+					</div>
+
+					<div class="col-xs-3 col-xs-offset-1">
+
+						<select id="classList" required name="SectionName" class="form-control">
+							@if (ViewBag.classList != null)
+								{
+								<option value='0'>-- Select Class --</option>
+									foreach (var item in ViewBag.classList)
+									{
+										if (item.Text != null)
+										{
+
+										<option value="@item.Value">
+											@item.Text
+										</option>
+
+										}
+
+									}
+								}
+						</select>
+					</div>
+					<div class="text-left col-xs-2 col-xs-offset-2">
+						<label class="lbl-margin-top lbl-bold">ACADEMIC YEAR</label>
+					</div>
+					<div class="col-xs-2">
+
+						<select id="DropDownList1" name="DropDownList1" class="form-control" style="margin-top:-19px;"></select>
+
+					</div>
+				</div>
+				<div class="content" style="margin-top:100px;">					
+						<div id="myHandsonTable" class="col-xs-offset-0 handsontable hot"></div>
+					<div class="row control-group"></div>
+					<div class="row col-xs-2 col-xs-offset-10 vert-spacer">
+						<input type="button" id="btnFeeConfigure" value="CONFIGURE FEES" class="btn btn-success" />
+					</div>
+				</div>
+			
+		</div>
+		</div>
+		</div>
+</body>
+</html>
+
