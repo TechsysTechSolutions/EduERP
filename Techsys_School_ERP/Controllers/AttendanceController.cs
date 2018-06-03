@@ -382,7 +382,7 @@ namespace Techsys_School_ERP.Controllers
 				DataTable dt = new DataTable();
 				
 				int nUser_Id;
-				int nYear =Convert.ToInt16( Year);
+				int nYear = Convert.ToInt16( Year);
 				using (var dbcontext = new SchoolERPDBContext())
 				{
 					//nUser_Id = dbcontext.Users.Where(x => x.User_Id == User.Identity.Name).ToList()[0].Id; ;
