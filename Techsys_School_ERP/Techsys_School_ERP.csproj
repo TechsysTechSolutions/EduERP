@@ -207,6 +207,7 @@
     <Content Include="Content\assets\js\jquery.flexslider.js" />
     <Content Include="Content\assets\js\pages\components_loaders.js" />
     <Content Include="Content\assets\js\pages\form_multiselect.js" />
+    <Content Include="Content\assets\js\pages\form_select2.js" />
     <Content Include="Content\assets\js\pages\handsontable_ac_password.js" />
     <Content Include="Content\assets\js\pages\handsontable_advanced.js" />
     <Content Include="Content\assets\js\pages\picker_date.js" />
