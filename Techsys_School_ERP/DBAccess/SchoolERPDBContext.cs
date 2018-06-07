@@ -31,6 +31,7 @@ namespace Techsys_School_ERP.DBAccess
 		public DbSet<Subject_Class_Detail> Subject_Class_Detail { get; set; }
 		public DbSet<Mark> Mark { get; set; }
 		public DbSet<Image> Image { get; set; }
+		public DbSet<School> School { get; set; }
 
 		public DbSet<Gender> Gender { get; set; }
 		public DbSet<Blood_Group> Blood_Group { get; set; }
@@ -38,6 +39,8 @@ namespace Techsys_School_ERP.DBAccess
 		public DbSet<State> State { get; set; }
 		public DbSet<Country> Country { get; set; }
 		public DbSet<Employee> Employee { get; set; }
+		public DbSet<Student_Prev_School_Details> Student_Prev_School_Detail { get; set; }
+		public DbSet<Student_Sibling_Detail> Student_Sibling_Detail { get; set; }
 
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -59,6 +62,9 @@ namespace Techsys_School_ERP.DBAccess
 			modelBuilder.Entity<Mark>().HasKey(s => s.Id);
 			modelBuilder.Entity<Image>().HasKey(s => s.Id);
 			modelBuilder.Entity<Employee>().HasKey(s => s.EmployeeID);
+			modelBuilder.Entity<School>().HasKey(s => s.Id);
+			modelBuilder.Entity<Student_Prev_School_Details>().HasKey(s => s.Student_PrevSchool_Id);
+			modelBuilder.Entity<Student_Sibling_Detail>().HasKey(s => s.Sibling_Detail_Id);
 
 			//modelBuilder.Entity<User>().ToTable("User");
 			//modelBuilder.Entity<Billing>().ToTable("Billing");

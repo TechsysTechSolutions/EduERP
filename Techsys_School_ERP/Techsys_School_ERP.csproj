@@ -3087,6 +3087,7 @@
     <Compile Include="Models\Model\Holiday.cs" />
     <Compile Include="Models\Model\Image.cs" />
     <Compile Include="Models\Model\Mark.cs" />
+    <Compile Include="Models\Model\School.cs" />
     <Compile Include="Models\Model\Section.cs" />
     <Compile Include="Models\Model\State.cs" />
     <Compile Include="Models\Model\Student_Prev_School_Detail.cs" />
@@ -3103,6 +3104,8 @@
     <Compile Include="Models\Model\ViewModel\HolidayList_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\MarkList_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\SectionList_ViewModel.cs" />
+    <Compile Include="Models\Model\ViewModel\Student_PrevSchoolList_ViewModel.cs" />
+    <Compile Include="Models\Model\ViewModel\Student_SiblingList_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\Student_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\Subject_ClassList_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\UserList_ViewModel.cs" />

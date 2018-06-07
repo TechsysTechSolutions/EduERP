@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
-namespace Techsys_School_ERP.Model
+namespace Techsys_School_ERP.Model.ViewModel
 {
-	public class Student_Sibling_Detail
+	public class Student_SiblingList_ViewModel
 	{
-		[Key]
-		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
 		public long Sibling_Detail_Id { get; set; }
 
 		public long Student_Id { get; set; }
@@ -18,6 +15,14 @@ namespace Techsys_School_ERP.Model
 		public long Sibling_Student_Id { get; set; }
 
 		public long Academic_Year { get; set; }
+
+		public string Student_Name { get; set; }
+
+		public string Roll_No { get; set; }
+
+		public string Class { get; set; }
+
+		public string Section { get; set; }
 
 		public bool Is_Active { get; set; }
 

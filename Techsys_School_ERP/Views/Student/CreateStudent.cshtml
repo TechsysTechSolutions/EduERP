@@ -367,6 +367,7 @@
 								
 								<div class="col-sm-2 col-md-2">
 									@Html.LabelFor(model => model.Roll_No, new { htmlAttributes = new { @class = "form-control" } })
+									
 									@Html.EditorFor(model => model.Roll_No, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
 								</div>
 								<div class="col-sm-2 col-md-2">
@@ -622,9 +623,9 @@
 							
 							<div class="row">
 								</div>
-								<div class="row vert-margin-top vert-margin-top"  style="margin-left:82%; ">
-									<input type="button" id="btncancel" class="btn btn-primary bg-green-400"  value="CANCEL"/>
-									<input type="button" id="btnSaveAndContinue" class="btn btn-primary bg-green-400" value="SAVE & CONTINUE" />
+								<div class="row vert-margin-top vert-margin-top col-sm-offset-7 col-md-offset-7"  >
+									<input type="button" id="btncancel" class="btn btn-primary bg-green-400 col-md-1 col-sm-1"  value="CANCEL"/>
+									<input type="button" id="btnSaveAndContinue" class="btn btn-primary bg-green-400 col-md-2 col-sm-2" value="SAVE & CONTINUE" />
 									@*<div class="col-sm-3 col-md-3" style="margin-top:10px;">
 										@Html.LabelFor(model => model.Is_HostelStudent, new { htmlAttributes = new { @class = "form-control" } })
 										@Html.CheckBoxFor(model => model.Is_HostelStudent, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })

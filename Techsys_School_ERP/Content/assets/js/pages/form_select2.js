@@ -271,7 +271,7 @@ $(function() {
         ajax: {
             url: "https://api.github.com/search/repositories",
             dataType: 'json',
-            delay: 250,
+            //delay: 250,
             data: function (params) {
                 return {
                     q: params.term, // search term

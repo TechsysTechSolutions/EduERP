@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
 namespace Techsys_School_ERP.Model
 {
-	public class Student_Prev_School_Detail
+	public class Student_Prev_School_Details
 	{
-
+		[Key]
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int Student_PrevSchool_Id { get; set; }
 
 		public long Student_Id { get; set; }
@@ -15,6 +18,8 @@ namespace Techsys_School_ERP.Model
 		public int School_Id { get; set; }
 
 		public string Other_School_Name { get; set; }
+
+		public string Comments { get; set; }
 
 		public string Other_School_Address { get; set; }
 

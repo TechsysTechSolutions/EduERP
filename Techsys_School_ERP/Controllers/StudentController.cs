@@ -28,7 +28,9 @@ namespace Techsys_School_ERP.Controllers
 			GetGender();
 			GetCountries();
 			GetClass();
-            return View();
+			Student student = new Student();
+			student.Roll_No = "2019-3";
+			return View(student);
         }
 
 
@@ -40,6 +42,314 @@ namespace Techsys_School_ERP.Controllers
 			return null;
 		}
 
+
+		public ActionResult AddStudentSiblingAndPrevSchoolDetail()
+		{
+			return View();
+		}
+
+		[HttpPost]
+		public JsonResult AddStudentPrevSchoolDetails(Student_Prev_School_Details stuPrevSchoolDetail)
+		{
+			stuPrevSchoolDetail.Created_On = DateTime.Now;
+			stuPrevSchoolDetail.Academic_Year = 2019;
+			stuPrevSchoolDetail.Is_Active = true;
+			List<Student_PrevSchoolList_ViewModel> addedStudentPrevSchoolDetails = new List<Student_PrevSchoolList_ViewModel>();
+
+			addedStudentPrevSchoolDetails = GetStudentPrevSchoolDetails(stuPrevSchoolDetail);
+			return Json(new { items = addedStudentPrevSchoolDetails }, JsonRequestBehavior.AllowGet);
+		}
+
+		public List<Student_PrevSchoolList_ViewModel>  getStudentPrevSchoolDetail ()
+			{
+
+				List<Student_PrevSchoolList_ViewModel> addedStudentPrevSchoolDetails = new List<Student_PrevSchoolList_ViewModel>();
+				try
+				{
+
+					using (var dbcontext = new SchoolERPDBContext())
+					{
+						addedStudentPrevSchoolDetails = (from school in dbcontext.School
+															join prevSchooldetails in dbcontext.Student_Prev_School_Detail on school.Id equals prevSchooldetails.School_Id
+															where prevSchooldetails.Student_Id == 1 && prevSchooldetails.Academic_Year == 2019 && prevSchooldetails.Is_Deleted == null || prevSchooldetails.Is_Deleted == false
+															select new Student_PrevSchoolList_ViewModel
+															{
+																Id = prevSchooldetails.Student_PrevSchool_Id,
+																Name = school.Name,
+																From_Year = prevSchooldetails.From_Year,
+																To_Year = prevSchooldetails.To_Year,
+																Leaving_Reason = prevSchooldetails.Leaving_Reason,
+																Updated_On = prevSchooldetails.Updated_On,
+																Student_Id = prevSchooldetails.Student_Id
+
+						}).ToList();
+					}
+				}
+				catch (Exception ex)
+				{
+
+				}
+
+			return addedStudentPrevSchoolDetails;
+		  }
+
+
+		public List<Student_SiblingList_ViewModel> getStudenSiblingDetail()
+		{
+
+			List<Student_SiblingList_ViewModel> addedStudentSiblingDetails = new List<Student_SiblingList_ViewModel>();
+			try
+			{
+
+				using (var dbcontext = new SchoolERPDBContext())
+				{
+					addedStudentSiblingDetails = (from stu in dbcontext.Student
+													 join studentSiblingDetail in dbcontext.Student_Sibling_Detail on stu.Student_Id equals studentSiblingDetail.Sibling_Student_Id
+													 join cls in dbcontext.Class on stu.Class_Id equals cls.Id
+													 join sec in dbcontext.Section on stu.Section_Id equals sec.Id
+													 where studentSiblingDetail.Student_Id == 1 && studentSiblingDetail.Academic_Year == 2019 && studentSiblingDetail.Is_Deleted == null || studentSiblingDetail.Is_Deleted == false
+													 select new Student_SiblingList_ViewModel
+													 {
+
+														 Sibling_Detail_Id = studentSiblingDetail.Sibling_Detail_Id,
+														 Class = cls.Name,
+														 Section = sec.Name,
+														 Student_Name = stu.First_Name + "  " + stu.Last_Name,
+														 Updated_On = studentSiblingDetail.Updated_On,
+														 Student_Id = studentSiblingDetail.Student_Id
+
+													 }).ToList();
+				}
+			}
+			catch (Exception ex)
+			{
+
+			}
+
+			return addedStudentSiblingDetails;
+		}
+		[HttpPost]
+		public JsonResult GetStudentPrevSchoolDetailsOnPageLoad()
+		{
+			List<Student_PrevSchoolList_ViewModel> addedStudentPrevSchoolDetails = new List<Student_PrevSchoolList_ViewModel>();
+
+			addedStudentPrevSchoolDetails = getStudentPrevSchoolDetail();
+
+			return Json(new { items = addedStudentPrevSchoolDetails }, JsonRequestBehavior.AllowGet);
+		}
+
+		public JsonResult GetStudentSiblingDetailsOnPageLoad()
+		{
+			List<Student_SiblingList_ViewModel> addedStudentSiblingDetails = new List<Student_SiblingList_ViewModel>();
+
+			addedStudentSiblingDetails = getStudenSiblingDetail();		
+
+			return Json(new { items = addedStudentSiblingDetails }, JsonRequestBehavior.AllowGet);
+		}
+
+		[HttpPost]
+		public JsonResult DeleteStudentPrevSchoolDetail(string id)
+		{
+			int idTobemodified = Convert.ToInt16(id);
+			List<Student_PrevSchoolList_ViewModel> modifiedStudentPrevSchoolDetails = new List<Student_PrevSchoolList_ViewModel>();
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				var studentPrevSchoolDetailT0bedeleted = dbcontext.Student_Prev_School_Detail.Find(idTobemodified);
+				studentPrevSchoolDetailT0bedeleted.Is_Deleted = true;
+				studentPrevSchoolDetailT0bedeleted.Updated_On = DateTime.Now;
+				studentPrevSchoolDetailT0bedeleted.Updated_By = 5;
+				dbcontext.Entry(studentPrevSchoolDetailT0bedeleted).CurrentValues.SetValues(studentPrevSchoolDetailT0bedeleted);
+				dbcontext.SaveChanges();
+			}
+			modifiedStudentPrevSchoolDetails = getStudentPrevSchoolDetail();
+			return Json(new { items =  modifiedStudentPrevSchoolDetails}, JsonRequestBehavior.AllowGet);
+		}
+
+
+		public JsonResult DeleteStudentSiblingDetail(string id)
+		{
+			int idTobemodified = Convert.ToInt16(id);
+			List<Student_SiblingList_ViewModel> modifiedStudentSiblingDetails = new List<Student_SiblingList_ViewModel>();
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				var studentSiblingDetailTobedeleted = dbcontext.Student_Sibling_Detail.Find(idTobemodified);
+				studentSiblingDetailTobedeleted.Is_Deleted = true;
+				studentSiblingDetailTobedeleted.Updated_On = DateTime.Now;
+				studentSiblingDetailTobedeleted.Updated_By = 5;
+				dbcontext.Entry(studentSiblingDetailTobedeleted).CurrentValues.SetValues(studentSiblingDetailTobedeleted);
+				dbcontext.SaveChanges();
+			}
+			modifiedStudentSiblingDetails = getStudenSiblingDetail();
+			return Json(new { items = modifiedStudentSiblingDetails }, JsonRequestBehavior.AllowGet);
+		}
+
+		public List<Student_PrevSchoolList_ViewModel>  GetStudentPrevSchoolDetails(Student_Prev_School_Details stuPrevSchoolDetail)
+			{
+			List<Student_PrevSchoolList_ViewModel> addedStudentPrevSchoolDetails = new List<Student_PrevSchoolList_ViewModel>();
+			try
+			{
+				using (var dbcontext = new SchoolERPDBContext())
+				{
+					dbcontext.Student_Prev_School_Detail.Add(stuPrevSchoolDetail);
+					dbcontext.SaveChanges();
+				}
+
+				using (var dbcontext = new SchoolERPDBContext())
+				{
+					addedStudentPrevSchoolDetails = (from school in dbcontext.School
+													 join prevSchooldetails in dbcontext.Student_Prev_School_Detail on school.Id equals prevSchooldetails.School_Id
+													 where prevSchooldetails.Student_Id == 1 && prevSchooldetails.Academic_Year == 2019 && prevSchooldetails.Is_Deleted == null || prevSchooldetails.Is_Deleted == false
+													 select new Student_PrevSchoolList_ViewModel
+													 {
+														 Id = prevSchooldetails.Student_PrevSchool_Id,
+														 Name = school.Name,
+														 From_Year = prevSchooldetails.From_Year,
+														 To_Year = prevSchooldetails.To_Year,
+														 Leaving_Reason = prevSchooldetails.Leaving_Reason,
+														 Updated_On = prevSchooldetails.Updated_On,
+														 Student_Id = prevSchooldetails.Student_Id,
+														 Comments = prevSchooldetails.Comments
+
+													 }).ToList();
+				}
+				}
+			catch (Exception ex)
+			{
+
+			}
+
+					return addedStudentPrevSchoolDetails;
+			}
+
+
+		public class Select2Model
+		{
+			public string id { get; set; }
+			public string text { get; set; }
+		}
+
+		public ActionResult GetEmployeeList(string q)
+
+		{	var list = new List<Select2Model>();
+
+		List<School> schoolList = new List<School>();
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+
+				if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+				{
+					//schoolList = dbcontext.School.Where(x => x.Name.Trim().ToLower().Contains(q.Trim().ToLower())).ToList();
+					//schoolList = (from b in dbcontext.School
+					//			 where b.Name.ToLower().Contains(q.Trim().ToLower())
+					//			 select b
+					//			 ).ToList();
+
+
+					schoolList =  (from school in dbcontext.School
+								   where school.Name.Contains(q.ToLower())
+								   select new
+								   {
+									   Text = school.Name,
+									  Id = school.Id
+								   }).ToList().
+								   Select(x=> new School
+
+					 {
+						
+						 Name = x.Text,
+						 Id = x.Id
+
+					}).ToList();
+
+				}
+			}
+
+
+			for (int i = 0; i < schoolList.Count(); i++)
+			{
+				Select2Model oSelect2Model = new Select2Model();
+				oSelect2Model.text = schoolList[i].Name;
+				oSelect2Model.id = schoolList[i].Id.ToString();
+
+				list.Add(oSelect2Model);
+
+
+			}
+			
+
+			if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+			{
+				list = list.Where(x => x.text.ToLower().Contains(q.ToLower())).ToList();
+			}
+			//return Json(new { data = schoolList }, JsonRequestBehavior.AllowGet);
+			return Json(new { items = list }, JsonRequestBehavior.AllowGet);
+		}
+
+		public ActionResult GetStudentList(string q)
+
+		{
+			var list = new List<Select2Model>();
+
+			List<Student> schoolList = new List<Student>();
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+
+				if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+				{
+					//schoolList = dbcontext.School.Where(x => x.Name.Trim().ToLower().Contains(q.Trim().ToLower())).ToList();
+					//schoolList = (from b in dbcontext.School
+					//			 where b.Name.ToLower().Contains(q.Trim().ToLower())
+					//			 select b
+					//			 ).ToList();
+
+					string newLine = ((char)13).ToString() + ((char)10).ToString(); ;
+
+					schoolList = (from stu in dbcontext.Student
+								  join cls in dbcontext.Class on stu.Class_Id equals cls.Id
+								  join sec in dbcontext.Section on stu.Section_Id equals sec.Id
+								  where stu.First_Name.Contains(q.ToLower())
+								  select new
+								  {
+									  Text = stu.First_Name + " " +stu.Last_Name + " " +
+									  Environment.NewLine
+									  + "["+stu.Roll_No + "]"+ " - " + cls.Name + " " + sec.Name,
+									  Id = stu.Student_Id
+									  }).ToList().
+								   Select(x => new Student
+
+								   {
+
+									   First_Name = x.Text,
+									   Student_Id = x.Id
+
+								   }).ToList();
+
+
+				}
+			}
+
+
+			for (int i = 0; i < schoolList.Count(); i++)
+			{
+				Select2Model oSelect2Model = new Select2Model();
+				oSelect2Model.text = schoolList[i].First_Name;
+				oSelect2Model.id = schoolList[i].Student_Id.ToString();
+
+				list.Add(oSelect2Model);
+
+
+			}
+
+
+			if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+			{
+				list = list.Where(x => x.text.ToLower().Contains(q.ToLower())).ToList();
+			}
+			//return Json(new { data = schoolList }, JsonRequestBehavior.AllowGet);
+			return Json(new { items = list }, JsonRequestBehavior.AllowGet);
+		}
 
 
 		[HttpPost]
@@ -166,12 +476,67 @@ namespace Techsys_School_ERP.Controllers
 			return ms.ToArray();
 		}
 
-		public ActionResult AddStudentSiblingAndPrevSchoolDetail()
+
+		[HttpPost]
+		public ActionResult AddStudentSiblingDetails(Student_Sibling_Detail stuSiblingDetail)
 		{
-			return View();
+			stuSiblingDetail.Created_On = DateTime.Now;
+			stuSiblingDetail.Academic_Year = 2019;
+			stuSiblingDetail.Is_Active = true;
+			List<Student_SiblingList_ViewModel> addedStudentSiblingDetails = new List<Student_SiblingList_ViewModel>();
+
+			addedStudentSiblingDetails = GetStudentSiblingDetails(stuSiblingDetail);
+
+			return Json(new { items = addedStudentSiblingDetails }, JsonRequestBehavior.AllowGet);
 
 
 		}
+
+
+		public List<Student_SiblingList_ViewModel> GetStudentSiblingDetails(Student_Sibling_Detail stuSiblingDetail)
+			{
+			List<Student_SiblingList_ViewModel> addedStudentSiblingDetails = new List<Student_SiblingList_ViewModel>();
+			try
+			{
+				using (var dbcontext = new SchoolERPDBContext())
+				{
+					if (stuSiblingDetail != null)
+					{
+
+						dbcontext.Student_Sibling_Detail.Add(stuSiblingDetail);
+						dbcontext.SaveChanges();
+					}
+				}
+
+				using (var dbcontext = new SchoolERPDBContext())
+				{
+					addedStudentSiblingDetails = (from stu in dbcontext.Student
+													 join studentSiblingDetail in dbcontext.Student_Sibling_Detail on stu.Student_Id equals studentSiblingDetail.Sibling_Student_Id
+													 join cls in dbcontext.Class on stu.Class_Id equals cls.Id
+													 join sec in dbcontext.Section on stu.Section_Id equals sec.Id
+													 where studentSiblingDetail.Student_Id == 1 && studentSiblingDetail.Academic_Year == 2019 && studentSiblingDetail.Is_Deleted == null || studentSiblingDetail.Is_Deleted == false
+													 select new Student_SiblingList_ViewModel
+													 {
+
+														 Sibling_Detail_Id = studentSiblingDetail.Sibling_Detail_Id,
+														 Class  = cls.Name,
+														 Section = sec.Name,													 
+														 Student_Name = stu.First_Name + "  " + stu.Last_Name,														
+														 Updated_On = studentSiblingDetail.Updated_On,
+														 Student_Id = studentSiblingDetail.Student_Id
+
+}).ToList();
+				}
+
+
+			}
+			catch (Exception ex)
+			{
+
+			}
+
+			return addedStudentSiblingDetails;
+			}
 
 		[HttpPost]
 		public JsonResult AutoComplete(string prefix)
