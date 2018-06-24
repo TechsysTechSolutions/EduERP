@@ -13,7 +13,8 @@ namespace Techsys_School_ERP.DBAccess
 	public class SchoolERPDBContext : DbContext
 	{
 		public SchoolERPDBContext() : base("SchoolERPDbContext")
-        {
+		{
+
 		}
 
 		public DbSet<User> Users { get; set; }
@@ -22,7 +23,7 @@ namespace Techsys_School_ERP.DBAccess
 		public DbSet<Fee> Fee { get; set; }
 		public DbSet<Class> Class { get; set; }
 		public DbSet<Section> Section { get; set; }
-        public DbSet<Fee_Configuration> Fee_Configuration { get; set; }
+		public DbSet<Fee_Configuration> Fee_Configuration { get; set; }
 		public DbSet<Holiday> Holiday { get; set; }
 		public DbSet<Term> Term { get; set; }
 		public DbSet<Student> Student { get; set; }
@@ -32,7 +33,6 @@ namespace Techsys_School_ERP.DBAccess
 		public DbSet<Mark> Mark { get; set; }
 		public DbSet<Image> Image { get; set; }
 		public DbSet<School> School { get; set; }
-
 		public DbSet<Gender> Gender { get; set; }
 		public DbSet<Blood_Group> Blood_Group { get; set; }
 		public DbSet<City> City { get; set; }
@@ -41,6 +41,19 @@ namespace Techsys_School_ERP.DBAccess
 		public DbSet<Employee> Employee { get; set; }
 		public DbSet<Student_Prev_School_Details> Student_Prev_School_Detail { get; set; }
 		public DbSet<Student_Sibling_Detail> Student_Sibling_Detail { get; set; }
+		public DbSet<Student_Other_Details> Student_Other_Details { get; set; }
+		public DbSet<Category> Category { get; set; }
+		public DbSet<Staff_Type> Staff_Type { get; set; }
+		public DbSet<Staff> Staff { get; set; }
+		public DbSet<Staff_Educational_Details> Staff_Educational_Details { get; set; }
+		public DbSet<Staff_Exp_Details> Staff_Exp_Details { get; set; }
+		public DbSet<Staff_Salary_Detail> Staff_Salary_Detail { get; set; }
+		public DbSet<Institution> Institution { get; set; }
+		public DbSet<Qualification> Qualification { get; set; }
+		public DbSet<Specialization> Specialization { get; set; }
+		public DbSet<Occupation> Occupation { get; set; }
+		public DbSet<Fee_Payment> Fee_Payment { get; set; }
+		public DbSet<Frequency> Frequency { get; set; }
 
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -65,20 +78,18 @@ namespace Techsys_School_ERP.DBAccess
 			modelBuilder.Entity<School>().HasKey(s => s.Id);
 			modelBuilder.Entity<Student_Prev_School_Details>().HasKey(s => s.Student_PrevSchool_Id);
 			modelBuilder.Entity<Student_Sibling_Detail>().HasKey(s => s.Sibling_Detail_Id);
-
-			//modelBuilder.Entity<User>().ToTable("User");
-			//modelBuilder.Entity<Billing>().ToTable("Billing");
-			//modelBuilder.Entity<ProductViewModel>().ToTable("Product");
-			//modelBuilder.Entity<CustomerViewModel>().ToTable("Customer");
-			//modelBuilder.Entity<User_Registration>().ToTable("UserRegistration");
-			//modelBuilder.Entity<Billing_Cancelled>().ToTable("Billing_Cancelled");
-			//modelBuilder.Entity<Unit>().ToTable("Unit");
-			//modelBuilder.Entity<GSM>().ToTable("GSM");
-			//modelBuilder.Entity<Status>().ToTable("Status");
-			//modelBuilder.Entity<PaymentType>().ToTable("PaymentType");
-			//modelBuilder.Entity<PaymentDetail>().ToTable("PaymentDetail");
-			//modelBuilder.Entity<CreditNoteDetail>().ToTable("CreditNote_Detail");
-			//modelBuilder.Entity<OpeningBalance>().ToTable("OpeningBalance");
+			modelBuilder.Entity<Student_Other_Details>().HasKey(s => s.StudentDetail_Id);
+			modelBuilder.Entity<Category>().HasKey(s => s.Id);
+			modelBuilder.Entity<Staff_Type>().HasKey(s => s.Id);
+			modelBuilder.Entity<Staff>().HasKey(s => s.Staff_Id);
+			modelBuilder.Entity<Staff_Educational_Details>().HasKey(s => s.StaffDetail_Id);
+			modelBuilder.Entity<Staff_Exp_Details>().HasKey(s => s.StaffExp_Id);
+			modelBuilder.Entity<Staff_Salary_Detail>().HasKey(s => s.Staff_Salary_Id);
+			modelBuilder.Entity<Institution>().HasKey(s => s.Id);
+			modelBuilder.Entity<Qualification>().HasKey(s => s.Id);
+			modelBuilder.Entity<Occupation>().HasKey(s => s.Id);
+			modelBuilder.Entity<Fee_Payment>().HasKey(s => s.Id);
+			modelBuilder.Entity<Frequency>().HasKey(s => s.Id);
 
 			base.OnModelCreating(modelBuilder);
 		}

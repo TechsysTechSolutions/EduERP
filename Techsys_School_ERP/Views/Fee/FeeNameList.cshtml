@@ -76,7 +76,7 @@
 			<!-- Page header -->
 			<!-- /page header -->
 			<!-- Content area -->
-			<div class="content">
+			<div class="container">
 				<!-- Basic initialization -->
 				@*<div class="panel panel-tab-content">*@
 
@@ -94,15 +94,24 @@
 					<div class="panel-body">
 
 					</div>
-					<div class="row col-xs-8">
+					<div class="row form-group">
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						<div class="text-left col-xs-4">
-							<input type="text" class="form-control col-xs-2" id="txtAddFee" />
+						<div class="col-sm-2 col-md-2" style="margin-left:10px;">
+							<input type="text" class="form-control col-sm-2 col-md-2" id="txtAddFee" />
 						</div>
 
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-						<div class="text-left col-xs-2">
+						<div class="col-sm-2 col-md-2">
 							<input type="button" class="btn btn-success" id="btnAddFee" value="ADD FEE" />
+						</div>
+
+						<div class="col-sm-1 col-md-1 col-sm-offset-1 col-md-offset-1">
+							<label class="lbl-bold">YEAR</label>
+						</div>
+						<div class="col-sm-3 col-md-3">
+
+							<select id="DropDownList1" name="DropDownList1" class="form-control"></select>
+
 						</div>
 
 					</div>

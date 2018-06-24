@@ -3028,18 +3028,22 @@
     <Content Include="Content\DataTables\css\semanticui.scss" />
     <Content Include="Content\bootstrap-multiselect\bootstrap-multiselect.less" />
     <Content Include="Content\css\bootstrap-multiselect.less" />
-    <None Include="Scripts\jquery-1.10.0.intellisense.js" />
     <Content Include="Scripts\handsontable\handsontable.full.js" />
     <Content Include="Scripts\handsontable\handsontable.full.min.js" />
     <Content Include="Scripts\handsontable\handsontable.js" />
     <Content Include="Scripts\handsontable\handsontable.min.js" />
-    <Content Include="Scripts\jquery-1.10.0.js" />
-    <Content Include="Scripts\jquery-1.10.0.min.js" />
-    <Content Include="Scripts\jquery-1.10.0.min.map" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.3.1.js" />
+    <Content Include="Scripts\jquery-3.3.1.min.js" />
+    <Content Include="Scripts\jquery-3.3.1.slim.js" />
+    <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
+    <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.3.1.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -3069,13 +3073,16 @@
     <Compile Include="Controllers\FeeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MarkController.cs" />
+    <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Controllers\StudentController.cs" />
     <Compile Include="DBAccess\SchoolERPDBContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Frequency.cs" />
     <Compile Include="Models\Model\Attendance.cs" />
     <Compile Include="Models\Model\Blood_Group.cs" />
+    <Compile Include="Models\Model\Category.cs" />
     <Compile Include="Models\Model\City.cs" />
     <Compile Include="Models\Model\Class.cs" />
     <Compile Include="Models\Model\Country.cs" />
@@ -3083,13 +3090,24 @@
     <Compile Include="Models\Model\Exam.cs" />
     <Compile Include="Models\Model\Fee.cs" />
     <Compile Include="Models\Model\Fee_Config.cs" />
+    <Compile Include="Models\Model\Fee_Payment.cs" />
     <Compile Include="Models\Model\Gender.cs" />
     <Compile Include="Models\Model\Holiday.cs" />
     <Compile Include="Models\Model\Image.cs" />
+    <Compile Include="Models\Model\Institution.cs" />
     <Compile Include="Models\Model\Mark.cs" />
+    <Compile Include="Models\Model\Occupation.cs" />
+    <Compile Include="Models\Model\Qualification.cs" />
     <Compile Include="Models\Model\School.cs" />
     <Compile Include="Models\Model\Section.cs" />
+    <Compile Include="Models\Model\SearchList.cs" />
+    <Compile Include="Models\Model\Staff.cs" />
+    <Compile Include="Models\Model\Staff_Educational_Details.cs" />
+    <Compile Include="Models\Model\Staff_Exp_Details.cs" />
+    <Compile Include="Models\Model\Staff_Salary_Detail.cs" />
+    <Compile Include="Models\Model\Staff_Type.cs" />
     <Compile Include="Models\Model\State.cs" />
+    <Compile Include="Models\Model\Student_Other_Details.cs" />
     <Compile Include="Models\Model\Student_Prev_School_Detail.cs" />
     <Compile Include="Models\Model\Student_Sibling_Detail.cs" />
     <Compile Include="Models\Model\Subject_Class_Detail.cs" />
@@ -3097,6 +3115,7 @@
     <Compile Include="Models\Model\User.cs" />
     <Compile Include="Models\Model\User_Role.cs" />
     <Compile Include="Models\Model\ViewModel\Attendance_ViewModel.cs" />
+    <Compile Include="Models\Model\ViewModel\AutoComplete_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\ClassList_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\ExamList_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\FeeConfiguration_ViewModel.cs" />
@@ -3104,6 +3123,7 @@
     <Compile Include="Models\Model\ViewModel\HolidayList_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\MarkList_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\SectionList_ViewModel.cs" />
+    <Compile Include="Models\Model\ViewModel\StaffEduList_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\Student_PrevSchoolList_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\Student_SiblingList_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\Student_ViewModel.cs" />
@@ -3111,6 +3131,7 @@
     <Compile Include="Models\Model\ViewModel\UserList_ViewModel.cs" />
     <Compile Include="Models\Model\Student.cs" />
     <Compile Include="Models\Model\Subject.cs" />
+    <Compile Include="Models\Model\Specialization.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -3432,6 +3453,10 @@
     <Content Include="Views\Mark\ConfigureSubjectsForClass.cshtml" />
     <Content Include="Views\Student\CreateStudent.cshtml" />
     <Content Include="Views\Student\AddStudentSiblingAndPrevSchoolDetail.cshtml" />
+    <Content Include="Views\Student\CreateStudentOtherDetails.cshtml" />
+    <Content Include="Views\Staff\CreateTeachingStaff.cshtml" />
+    <Content Include="Views\Staff\AddStaffEducationalAndWorkExpDetails.cshtml" />
+    <Content Include="Views\Fee\FeePayment.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

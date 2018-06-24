@@ -161,17 +161,17 @@ namespace Techsys_School_ERP.Controllers
 							{
 								using (var dbcontext = new SchoolERPDBContext())
 								{
-									if (dbcontext.Holiday.Where((x => x.From_Date == dDateToBeCompared || x.To_Date == dDateToBeCompared && x.Academic_Year == nYear && x.Is_Deleted == false)).ToList().Count() > 0)
+									if (dbcontext.Holiday.Where((x => x.Holiday_Date == dDateToBeCompared  && x.Academic_Year == nYear && (x.Is_Deleted == false || x.Is_Deleted == null))).ToList().Count() > 0)
 									{
-										sHolidayReason = dbcontext.Holiday.Where((x => x.From_Date == dDateToBeCompared || x.To_Date == dDateToBeCompared && x.Academic_Year == nYear && x.Is_Deleted == false)).ToList()[0].Name;
+										sHolidayReason = dbcontext.Holiday.Where((x => x.Holiday_Date == dDateToBeCompared && x.Academic_Year == nYear && (x.Is_Deleted == false || x.Is_Deleted == null))).ToList()[0].Name;
 
 										sHolidayReason = "H" + "-" + sHolidayReason;
 									}
 									else
 									{
-										if (dbcontext.Attendance.Where(x => x.Leave_Date == dDateToBeCompared && x.Academic_Year == nYear && x.Is_Deleted == false && x.Student_Id == nStudent_Id).ToList().Count() > 0)
+										if (dbcontext.Attendance.Where(x => x.Leave_Date == dDateToBeCompared && x.Academic_Year == nYear && (x.Is_Deleted == false || x.Is_Deleted == null) && x.Student_Id == nStudent_Id).ToList().Count() > 0)
 										{
-											sHolidayReason = dbcontext.Attendance.Where(x => x.Leave_Date == dDateToBeCompared && x.Academic_Year == nYear && x.Is_Deleted == false && x.Student_Id == nStudent_Id).ToList()[0].Leave_Reason;
+											sHolidayReason = dbcontext.Attendance.Where(x => x.Leave_Date == dDateToBeCompared && x.Academic_Year == nYear && (x.Is_Deleted == false || x.Is_Deleted == null) && x.Student_Id == nStudent_Id).ToList()[0].Leave_Reason;
 										}
 									}
 								}
@@ -236,9 +236,11 @@ namespace Techsys_School_ERP.Controllers
 					{
 						for (int iAttendanceLoopCount = 1; iAttendanceLoopCount < myData.ToList().Count(); iAttendanceLoopCount++)
 						{
-							Attendance newAttendance = new Attendance();
-							for (int nColumnCount = 3; nColumnCount <= 3 + nDays; nColumnCount++)
+							
+							for (int nColumnCount = 3; nColumnCount < 3 + nDays; nColumnCount++)
 							{
+								Attendance newAttendance = new Attendance();
+								newAttendance.Academic_Year = Convert.ToInt32(GetAcademicYear());
 								if (Convert.ToString(myData[iAttendanceLoopCount][nColumnCount]) != "P" && Convert.ToString(myData[iAttendanceLoopCount][nColumnCount]) != "H" && Convert.ToString(myData[iAttendanceLoopCount][nColumnCount]) != "PH" && Convert.ToString(myData[iAttendanceLoopCount][nColumnCount]) != null)
 								{
 									newAttendance.Class_Id = Convert.ToInt16(TempData.Peek("Class_Id_For_Attendance"));
@@ -247,7 +249,7 @@ namespace Techsys_School_ERP.Controllers
 									newAttendance.Student_Id = nStudentIdArr[iAttendanceLoopCount - 1];
 									newAttendance.Leave_Reason = myData[iAttendanceLoopCount][nColumnCount];
 									newAttendance.Is_Active = true;
-									newAttendance.Is_Deleted = false;
+									//newAttendance.Is_Deleted = false;
 									newAttendance.Term_Id = Convert.ToInt16(TempData.Peek("Term_Id_For_Attendance"));
 									newAttendance.Created_By = 4;
 									newAttendance.Created_On = DateTime.Now;
@@ -292,7 +294,7 @@ namespace Techsys_School_ERP.Controllers
 									}
 								}
 
-								if (iAttendanceLoopCount == myData.ToList().Count() - 1 && nColumnCount == 3 + nDays)
+								if (iAttendanceLoopCount == myData.ToList().Count() - 1 && nColumnCount == 3 + (nDays - 1 ))
 								{
 									transaction.Commit();
 									sReturnText = "OK";
@@ -344,22 +346,24 @@ namespace Techsys_School_ERP.Controllers
 			List<HolidayList_ViewModel> holidayListViewModel = new List<HolidayList_ViewModel>();
 			using (var dbcontext = new SchoolERPDBContext())
 			{
-				holidayListViewModel = (from usr in dbcontext.Users
-									  join hol in dbcontext.Holiday on usr.Id equals hol.Created_By
-									  where hol.Is_Deleted == null || hol.Is_Deleted == false
-									  select new HolidayList_ViewModel
-									  {
-										  Id = hol.Id,
-										  Name = hol.Name,
-										  From_Date = hol.From_Date,
-										  To_Date = hol.To_Date,
-										  Reason = hol.Reason,
-										  Academic_Year = hol.Academic_Year,
-										  User_Id = usr.User_Id,
-										  Created_On = usr.Created_On,
-										  Created_By = usr.Created_By
+				holidayListViewModel  = (from usr in dbcontext.Users
+										join hol in dbcontext.Holiday on usr.Id equals hol.Created_By
+										where hol.Is_Deleted == null || hol.Is_Deleted == false 
+										select  new HolidayList_ViewModel 
+										{
+											//Id = hol.Id,
+											Name = hol.Name,
+											From_Date = hol.From_Date,
+											To_Date = hol.To_Date,
+											Reason = hol.Reason,
+											Academic_Year = hol.Academic_Year,
+											User_Id = usr.User_Id,
+											Created_On = usr.Created_On,
+											Created_By = usr.Created_By
+										}).ToList();
 
-									  }).ToList();
+				
+				
 
 				if (holidayListViewModel.Count() == 0)
 				{
@@ -376,45 +380,68 @@ namespace Techsys_School_ERP.Controllers
 		[HttpPost]
 		public ActionResult AddHoliday(string Name, string From_Date , string To_Date , string Year)
 		{
-			try
-			{
-				Holiday newHoliday = new Holiday();
-				DataTable dt = new DataTable();
+			DataTable dt = new DataTable();
 				
-				int nUser_Id;
-				int nYear = Convert.ToInt16( Year);
-				using (var dbcontext = new SchoolERPDBContext())
-				{
-					//nUser_Id = dbcontext.Users.Where(x => x.User_Id == User.Identity.Name).ToList()[0].Id; ;
-					nUser_Id = 5;
-				}
-				using (var dbcontext = new SchoolERPDBContext())
-				{
-					newHoliday.Name = Name;
-					newHoliday.Academic_Year = nYear;
-					newHoliday.Is_Active = true;
-					newHoliday.Created_By = nUser_Id;
-					newHoliday.Created_On = DateTime.Now;
-					newHoliday.From_Date = DateTime.ParseExact(From_Date, "dd/MM/yyyy", null);
-					newHoliday.To_Date = DateTime.ParseExact(To_Date, "dd/MM/yyyy", null);
-
-					if (dbcontext.Holiday.Where(a => a.Name.Replace(" ","").Trim().ToString() == Name.Replace(" ","").Trim().ToString() && (a.Is_Deleted == false || a.Is_Deleted == null) && a.Academic_Year == nYear).Count() == 0)
-					{
-						dbcontext.Holiday.Add(newHoliday);
-						dbcontext.SaveChanges();
-						return Json("OK", JsonRequestBehavior.AllowGet);
-					}
-					else
-					{
-						return Json("Holiday Already Exists.", JsonRequestBehavior.AllowGet);
-					}
-				}
-
-			}
-			catch (Exception e)
+			int nUser_Id;
+			int nYear = Convert.ToInt16( Year);
+			using (var dbcontext = new SchoolERPDBContext())
 			{
-				return Json("Failure", JsonRequestBehavior.AllowGet);
+				//nUser_Id = dbcontext.Users.Where(x => x.User_Id == User.Identity.Name).ToList()[0].Id; ;
+				nUser_Id = 5;
 			}
+			DateTime dtFromDate = DateTime.ParseExact(From_Date, "dd/MM/yyyy", null);
+			DateTime dtToDate = DateTime.ParseExact(To_Date, "dd/MM/yyyy", null);
+			TimeSpan ts = dtToDate - dtFromDate;
+			int nDays = Convert.ToInt16(ts.TotalDays) + 1;
+
+				using (var dbcontext = new SchoolERPDBContext())
+				{
+				using (var transaction = dbcontext.Database.BeginTransaction())
+				{
+					try
+					{
+						for (int nHolidayCount = 0; nHolidayCount < nDays; nHolidayCount++)
+						{
+							Holiday newHoliday = new Holiday();
+							newHoliday.Name = Name;
+							newHoliday.Academic_Year = nYear;
+							newHoliday.Is_Active = true;
+							newHoliday.Created_By = nUser_Id;
+							newHoliday.Created_On = DateTime.Now;
+							newHoliday.Holiday_Date = dtFromDate.AddDays(nHolidayCount);
+
+							newHoliday.From_Date = dtFromDate;
+							newHoliday.To_Date = dtToDate;
+
+							//if (dbcontext.Holiday.Where(a => a.Name.Replace(" ", "").Trim().ToString() == Name.Replace(" ", "").Trim().ToString() && (a.Is_Deleted == false || a.Is_Deleted == null) && a.Academic_Year == nYear).Count() == 0)
+							if (dbcontext.Holiday.Where(a => a.From_Date >= newHoliday.Holiday_Date && a.To_Date <= newHoliday.Holiday_Date && (a.Is_Deleted == false || a.Is_Deleted == null) && a.Academic_Year == nYear).Count() == 0)
+							{
+								dbcontext.Holiday.Add(newHoliday);
+								dbcontext.SaveChanges();
+								//return Json("OK", JsonRequestBehavior.AllowGet);
+							}
+							else
+							{
+								return Json("Holiday Already Exists.", JsonRequestBehavior.AllowGet);
+							}
+
+							if (nHolidayCount == (nDays - 1))
+							{
+								transaction.Commit();
+							}
+						}
+					}
+					catch (Exception e)
+					{
+						transaction.Rollback();
+						return Json("Failure", JsonRequestBehavior.AllowGet);
+					}
+				}
+					return Json("OK", JsonRequestBehavior.AllowGet);
+				}
+
+			
+			
 
 			//return View();
 		}

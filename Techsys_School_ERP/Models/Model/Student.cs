@@ -19,6 +19,7 @@ namespace Techsys_School_ERP.Model
 		public string Roll_No { get; set; }
 
 		[StringLength(50)]
+		[Required(ErrorMessage = "First Name is Required.")]
 		[Display(Name = "FIRST NAME")]
 		public string First_Name { get; set; }
 
@@ -27,18 +28,24 @@ namespace Techsys_School_ERP.Model
 		public string Middle_Name { get; set; }
 
 		[StringLength(50)]
+		[Required(ErrorMessage = "Last Name is Required.")]
 		[Display(Name = "LAST NAME")]
 		public string Last_Name { get; set; }
 
 		[Display(Name = "GENDER")]
+
 		public int Gender_Id { get; set; }
 
 
 		[Display(Name = "DOB")]
-		public DateTime DOB { get; set; }
+		[Required(ErrorMessage = "Date Of birth is Required.")]
+		//[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
+		public DateTime? DOB { get; set; }
 
 		[Display(Name = "ENROLLMENT DATE")]
-		public DateTime Enrollment_Date { get; set; }
+		[Required(ErrorMessage = "Enrollment Date is Required.")]
+		[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
+		public DateTime? Enrollment_Date { get; set; }
 
 		[StringLength(50)]
 		[Display(Name = "FATHER NAME")]
@@ -54,10 +61,12 @@ namespace Techsys_School_ERP.Model
 
 		[StringLength(500)]
 		[Display(Name = "ADDRESS LINE1")]
+		[Required(ErrorMessage = "Address Line1 is Required.")]
 		public string Address_Line1 { get; set; }
 
 		[StringLength(500)]
 		[Display(Name = "ADDRESS LINE2")]
+		[Required(ErrorMessage = "Address Line2 is Required.")]
 		public string Address_Line2 { get; set; }
 
 		[Display(Name = "CITY")]
@@ -72,6 +81,7 @@ namespace Techsys_School_ERP.Model
 
 		[StringLength(10)]
 		[Display(Name = "PHONE1")]
+		[Required(ErrorMessage = "Phone1 is Required.")]
 		public string Phone_No1 { get; set; }
 
 		[StringLength(10)]
@@ -84,6 +94,7 @@ namespace Techsys_School_ERP.Model
 
 		[StringLength(30)]
 		[Display(Name = "EMAIL")]
+		[Required(ErrorMessage = "Email is Required.")]
 		public string Email_Id { get; set; }
 
 		[Display(Name = "ACADEMIC YEAR")]
@@ -93,13 +104,13 @@ namespace Techsys_School_ERP.Model
 		public DateTime? Created_On { get; set; }
 
 		[Display(Name = "CREATED BY")]
-		public string Created_By { get; set; }
+		public int Created_By { get; set; }
 
 		[Display(Name = "UPDATED DATE")]
 		public DateTime? Updated_On { get; set; }
 
 		[Display(Name = "UPDATED BY")]
-		public string Updated_By { get; set; }
+		public int? Updated_By { get; set; }
 
 		public bool Is_Active { get; set; }
 
@@ -112,7 +123,8 @@ namespace Techsys_School_ERP.Model
 		public byte[] Photo { get; set; }
 
 		[Display(Name = "AADHAR NO")]
-		public long Aadhar_No { get; set; }
+		[Required(ErrorMessage = "Aadhar No is Required.")]
+		public long? Aadhar_No { get; set; }
 
 		[Display(Name = "CLASS")]
 		public int Class_Id { get; set; }
@@ -122,11 +134,11 @@ namespace Techsys_School_ERP.Model
 
 
 		[Display(Name = "IS HOSTEL STUDENT?")]
-		public bool Is_HostelStudent { get; set; }
+		public bool? Is_HostelStudent { get; set; }
 
-		public bool Is_FeesDueRemaining { get; set; }
+		public bool? Is_FeesDueRemaining { get; set; }
 
-		public decimal Fees_Due_Amount { get; set; }
+		public decimal? Fees_Due_Amount { get; set; }
 
 
 		//[ForeignKey("Section_Id")]

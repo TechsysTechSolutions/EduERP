@@ -22,6 +22,64 @@ namespace Techsys_School_ERP.Controllers
 			return View();
 		}
 
+		public ActionResult SearchAndGetStudentList(string q)
+		{
+			var list = new List<SearchList>();
+
+			List<Student> schoolList = new List<Student>();
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+
+				if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+				{
+					string newLine = ((char)13).ToString() + ((char)10).ToString(); ;
+
+					schoolList = (from stu in dbcontext.Student
+								  join cls in dbcontext.Class on stu.Class_Id equals cls.Id
+								  join sec in dbcontext.Section on stu.Section_Id equals sec.Id
+								  where stu.First_Name.Contains(q.ToLower())
+								  select new
+								  {
+									  Text = stu.First_Name + " " + stu.Last_Name + " " +
+									  Environment.NewLine
+									  + "[" + stu.Roll_No + "]" + " - " + cls.Name + " " + sec.Name,
+									  Id = stu.Student_Id
+								  }).ToList().
+								   Select(x => new Student
+
+								   {
+
+									   First_Name = x.Text,
+									   Student_Id = x.Id
+
+								   }).ToList();
+
+
+				}
+			}
+
+
+			for (int i = 0; i < schoolList.Count(); i++)
+			{
+				SearchList oSelect2Model = new SearchList();
+				oSelect2Model.text = schoolList[i].First_Name;
+				oSelect2Model.id = schoolList[i].Student_Id.ToString();
+
+				list.Add(oSelect2Model);
+
+
+			}
+
+
+			if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+			{
+				list = list.Where(x => x.text.ToLower().Contains(q.ToLower())).ToList();
+			}
+			//return Json(new { data = schoolList }, JsonRequestBehavior.AllowGet);
+			return Json(new { items = list }, JsonRequestBehavior.AllowGet);
+		}
+
 		public void GetClass()
 		{
 			using (var dbcontext = new SchoolERPDBContext())
@@ -32,6 +90,103 @@ namespace Techsys_School_ERP.Controllers
 					ViewBag.classList = clsList.Select(N => new SelectListItem { Text = N.Name, Value = N.Id.ToString() });
 				}
 			}
+		}
+
+		public void GetCategory()
+		{
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				var categoryList = (from ctgList in dbcontext.Category select ctgList).ToList();
+				if (categoryList != null)
+				{
+					ViewBag.categoryList = categoryList.Select(N => new SelectListItem { Text = N.Name, Value = N.Id.ToString() });
+				}
+			}
+		}
+
+
+		public int GetLoggedInUserId()
+		{
+			int nUser_Id;
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				nUser_Id = dbcontext.Users.Where(x => x.User_Id == User.Identity.Name).ToList()[0].Id; ;
+			}
+
+			return nUser_Id;
+		}
+
+		public void GetStaffType()
+		{
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				var staffList = (from stffList in dbcontext.Staff_Type select stffList).ToList();
+				if (staffList != null)
+				{
+					ViewBag.staffList = staffList.Select(N => new SelectListItem { Text = N.Name, Value = N.Id.ToString() });
+				}
+			}
+		}
+
+
+		public List<AutoComplete_ViewModel> GetCountriesList(string q)
+		{
+			var list = new List<AutoComplete_ViewModel>();
+
+			List<Country> countryList = new List<Country>();
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+
+				if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+				{
+
+					countryList = (from country in dbcontext.Country
+								  where country.Name.Contains(q.ToLower())
+								  select new
+								  {
+									  Text = country.Name,
+									  Id = country.Id
+								  }).ToList().
+								   Select(x => new Country
+
+								   {
+
+									   Name = x.Text,
+									   Id = x.Id
+
+								   }).ToList();
+
+				}
+			}
+
+
+			for (int i = 0; i < countryList.Count(); i++)
+			{
+				AutoComplete_ViewModel oAutoCompleteViewModel = new AutoComplete_ViewModel();
+				oAutoCompleteViewModel.text = countryList[i].Name;
+				oAutoCompleteViewModel.id = countryList[i].Id.ToString();
+
+				list.Add(oAutoCompleteViewModel);
+
+
+			}
+
+
+			if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+			{
+				list = list.Where(x => x.text.ToLower().Contains(q.ToLower())).ToList();
+			}
+
+			return list;
+			
+		}
+
+		public long GetAcademicYear()
+		{
+			long nAcademicYear = (DateTime.Now.Month <= 4) ? DateTime.Now.Year : DateTime.Now.Year + 1;
+
+			return nAcademicYear;
 		}
 
 		public void GetExamList()
@@ -81,6 +236,18 @@ namespace Techsys_School_ERP.Controllers
 				}
 			}
 		}
+		public void GetOccupation()
+		{
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				var occupationList = (from occupation in dbcontext.Occupation select occupation).ToList();
+				if (occupationList != null)
+				{
+					ViewBag.occupationList = occupationList.Select(N => new SelectListItem { Text = N.Name, Value = N.Id.ToString() });
+				}
+			}
+		}
+
 
 		public void GetGender()
 		{
@@ -102,6 +269,18 @@ namespace Techsys_School_ERP.Controllers
 				if (countriesList != null)
 				{
 					ViewBag.countriesList = countriesList.Select(N => new SelectListItem { Text = N.Name, Value = N.Id.ToString() });
+				}
+			}
+		}
+
+		public void GetFrequency()
+		{
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				var freqList = (from freq in dbcontext.Frequency select freq).ToList();
+				if (freqList != null)
+				{
+					ViewBag.freqList = freqList.Select(N => new SelectListItem { Text = N.Name, Value = N.Id.ToString() });
 				}
 			}
 		}

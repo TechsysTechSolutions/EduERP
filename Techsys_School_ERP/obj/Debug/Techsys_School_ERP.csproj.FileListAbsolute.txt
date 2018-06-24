@@ -136,6 +136,6 @@ G:\ERP2\Techsys_School_ERP\bin\System.Web.Mvc.xml
 G:\ERP2\Techsys_School_ERP\bin\System.Net.Http.Formatting.xml
 G:\ERP2\Techsys_School_ERP\bin\System.Web.Http.xml
 G:\ERP2\Techsys_School_ERP\bin\System.Web.Http.WebHost.xml
-G:\ERP2\Techsys_School_ERP\obj\Debug\Techsys_School_ERP.csprojResolveAssemblyReference.cache
 G:\ERP2\Techsys_School_ERP\obj\Debug\Techsys_School_ERP.dll
 G:\ERP2\Techsys_School_ERP\obj\Debug\Techsys_School_ERP.pdb
+G:\ERP2\Techsys_School_ERP\obj\Debug\Techsys_School_ERP.csprojResolveAssemblyReference.cache

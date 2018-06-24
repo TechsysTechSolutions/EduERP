@@ -120,12 +120,12 @@
 									rowHeaders: true,
 							
 									colHeaders: [
-													"<span class='headerBold' style='text-align:left'>FEE COMPONENT NAME</span>",
-													"<span class='headerBold'>Academic Year </span>",
-													"<span class='headerBold'>Yearly Amount </span>",
-													"<span class='headerBold'>First Term</span>",
-													"<span class='headerBold'>Second Term </span>",
-													"<span class='headerBold'>Third Term</span>"
+													"<span class='headerBold' style='text-align:left; width:20%;'>FEE COMPONENT NAME</span>",
+													"<span class='headerBold' style='text-align:left; width:15%;'>Academic Year </span>",
+													"<span class='headerBold' style='text-align:left; width:15%;'>Yearly Amount </span>",
+													"<span class='headerBold' style='text-align:left; width:15%;'>First Term</span>",
+													"<span class='headerBold' style='text-align:left; width:15%;'>Second Term </span>",
+													"<span class='headerBold' style='text-align:left; width:15%;'>Third Term</span>"
 												],
 									columnSummary:
 												[
@@ -161,7 +161,9 @@
 										columns:    [	    						
 														{
 														data: 'Name',
-														readOnly: true,		
+														readOnly: true,
+													    
+														
 														// 1nd column is simple text, no special options here
 														},
 														{
@@ -176,6 +178,7 @@
 														{
 														data: 'First_Term_Amount',
 														type: 'numeric'
+															
 														},
 														{
 														data: 'Second_Term_Amount',
@@ -257,75 +260,74 @@
 	</script>
 	</head>
 <body>
-	
+
 	<div class="page-container" style="height:100%;">
-		<!-- Page content -->
-		@*<div class="content-wrapper">*@
-		<!-- Page header -->
-		<!-- /page header -->
-		<!-- Content area -->
-		<div class="content">
-			<!-- Basic initialization -->
-		
-			<div class="panel panel-primary panel-bordered" style="min-height:150px;">
-				<div class="panel-heading bg-blue-800">
-					<h6 class="panel-title ">FEE CONFIGURATION</h6>
-					<div class="heading-elements">
-						<ul class="icons-list">
-							<li><a data-action="collapse"></a></li>
-							<li><a data-action="reload"></a></li>
-							<li><a data-action="close"></a></li>
-						</ul>
+		<div class="page-content">
+
+			<div class="container">
+
+				<div class="panel panel-primary panel-bordered" style="min-height:150px;">
+					<div class="panel-heading bg-blue-800">
+						<h6 class="panel-title ">FEE CONFIGURATION</h6>
+						<div class="heading-elements">
+							<ul class="icons-list">
+								<li><a data-action="collapse"></a></li>
+								<li><a data-action="reload"></a></li>
+								<li><a data-action="close"></a></li>
+							</ul>
+						</div>
 					</div>
-				</div>
-				<div class="panel-body">
+					<div class="panel-body">
 
-				</div>
-				<div class="row col-xs-10">
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<div class="text-right col-xs-2">
-						<label class="lbl-margin-top lbl-bold">CLASS</label>
 					</div>
+					<div class="row form-group">
+												<div class="col-sm-1 col-md-1 col-sm-offset-1 col-md-offset-1">
+							<label class = "lbl-bold lbl-margin-top">CLASS</label>
+						</div>
 
-					<div class="col-xs-3 col-xs-offset-1">
+						<div class="col-sm-2 col-md-2">
 
-						<select id="classList" required name="SectionName" class="form-control">
-							@if (ViewBag.classList != null)
+							<select id="classList" required name="SectionName" class="form-control">
+								@if (ViewBag.classList != null)
 								{
-								<option value='0'>-- Select Class --</option>
+									<option value='0'>-- Select Class --</option>
 									foreach (var item in ViewBag.classList)
 									{
 										if (item.Text != null)
 										{
 
-										<option value="@item.Value">
-											@item.Text
-										</option>
+											<option value="@item.Value">
+												@item.Text
+											</option>
 
 										}
 
 									}
 								}
-						</select>
-					</div>
-					<div class="text-left col-xs-2 col-xs-offset-2">
-						<label class="lbl-margin-top lbl-bold">ACADEMIC YEAR</label>
-					</div>
-					<div class="col-xs-2">
+							</select>
+						</div>
+						<div class="col-sm-2 col-md-2 col-sm-offset-1 col-md-offset-1" >
+							<label class="lbl-bold lbl-margin-top">ACADEMIC YEAR</label>
+						</div>
+						<div class="col-sm-2 col-md-2">
 
-						<select id="DropDownList1" name="DropDownList1" class="form-control" style="margin-top:-19px;"></select>
+							<select id="DropDownList1" name="DropDownList1" class="form-control" style="margin-top:0px;"></select>
 
+						</div>
 					</div>
-				</div>
-				<div class="content" style="margin-top:100px;">					
-						<div id="myHandsonTable" class="col-xs-offset-0 handsontable hot"></div>
-					<div class="row control-group"></div>
+					<div class="content" style="margin-top:40px;">
+						<div id="myHandsonTable" class="col-xs-offset-0 handsontable hot row"></div>
+						<div class="row control-group"></div>
+						
+					</div>
+
+					<div class="row form-group"></div>
 					<div class="row col-xs-2 col-xs-offset-10 vert-spacer">
 						<input type="button" id="btnFeeConfigure" value="CONFIGURE FEES" class="btn btn-success" />
 					</div>
+
 				</div>
-			
-		</div>
+			</div>
 		</div>
 		</div>
 </body>

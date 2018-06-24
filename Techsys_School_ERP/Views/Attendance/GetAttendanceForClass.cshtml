@@ -1,6 +1,6 @@
 ﻿
 @{
-	ViewBag.Title = "GetAttendanceForClass";
+
 	Layout = "~/Views/Shared/_Layout_Admin.cshtml";
 }
 
@@ -173,6 +173,7 @@
 						type: "POST",
 						contentType: "application/json; charset=utf-8",
 						success: function (data) {
+							$("#AttendanceHandsonTable").html("");
 							$("#hot-display-license-info").val("");
 							$("#hot-display-license-info").text("");
 							
@@ -226,31 +227,35 @@
 			})
 
 			$('#btnSaveAttendance').click(function () {
+				debugger
 				var myData = hot5.getData();
 				myData = JSON.stringify(myData);
 
 				$.ajax({
 					url: '/Attendance/SaveAttendanceForClass/',
 					type: "POST",
-					dataType: "json",
+					dataType: "text",
+				//	contentType: "text",
 					contentType: 'application/json; charset=utf-8',
 					//data: "{'myData':'" + myData + "','Academic_Year':'" + $("#DropDownList1").val() + "'}",
 					data: myData,
 					async: true,
 					processData: false,
 					cache: false,
-					success: function (response) {
-						if (response == "OK") {
+					success: function (data) {
+						debugger
+						if (data.replace("\"", "").replace("\"", "") == "OK") {
 							alert("Fees Succussfully Configured");
 						}
-						else if (response == "Updated") {
+						else if (data.replace("\"", "").replace("\"", "") == "Updated") {
 							alert("Fees Configuartion Sucessfully Updated");
 						}
-						else if (response == "Fees Already Configured") {
+						else if (data.replace("\"", "").replace("\"", "") == "Fees Already Configured") {
 
 						}
 					},
 					error: function (xhr) {
+						debugger
 						alert('error');
 					}
 				});
@@ -264,76 +269,76 @@
 	</head>
 <body>
 	<div class="page-container" style="height:100%;">
-		<div class="content">
-			<!-- Basic initialization -->
+		<div class="page-content">
 
-			<div class="panel panel-primary panel-bordered" style="min-height:150px;">
-				<div class="panel-heading bg-blue-800">
-					<h6 class="panel-title ">FEE CONFIGURATION</h6>
-					<div class="heading-elements">
-						<ul class="icons-list">
-							<li><a data-action="collapse"></a></li>
-							<li><a data-action="reload"></a></li>
-							<li><a data-action="close"></a></li>
-						</ul>
+			<div class="container">
+				<!-- Basic initialization -->
+
+				<div class="panel panel-primary panel-bordered" style="min-height:150px;">
+					<div class="panel-heading bg-blue-800">
+						<h6 class="panel-title ">ATTENDANCE CONFIGURATION</h6>
+						<div class="heading-elements">
+							<ul class="icons-list">
+								<li><a data-action="collapse"></a></li>
+								<li><a data-action="reload"></a></li>
+								<li><a data-action="close"></a></li>
+							</ul>
+						</div>
 					</div>
-				</div>
-				<div class="panel-body">
+					<div class="panel-body">
 
-				</div>
-				<div class="row col-xs-12">
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<div class="text-right col-xs-2">
-						<label class="margin-top lbl-bold">CLASS</label>
 					</div>
+					<div class="row form-group">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<div class="col-sm-2 col-md-2 col-sm-offset-1 col-md-offset-1" >
+							<label class="lbl-bold">CLASS</label>
+						</div>
 
-					<div class="col-xs-3">
+						<div class="col-sm-2 col-md-2">
 
-						<select id="classList" required name="ClassName" class="form-control">
-							@if (ViewBag.classList != null)
-							{
-								<option value='0'>-- Select Class --</option>
-								foreach (var item in ViewBag.classList)
+							<select id="classList" required name="ClassName" class="form-control">
+								@if (ViewBag.classList != null)
 								{
-									if (item.Text != null)
+									<option value='0'>-- Select Class --</option>
+									foreach (var item in ViewBag.classList)
 									{
+										if (item.Text != null)
+										{
 
-										<option value="@item.Value">
-											@item.Text
-										</option>
+											<option value="@item.Value">
+												@item.Text
+											</option>
+
+										}
 
 									}
-
 								}
-							}
-						</select>
-					</div>
-					<div class="text-right col-xs-2 col-xs-offset-1">
-						<label class="margin-top lbl-bold">SECTION</label>
-					</div>
-
-					<div class="col-xs-3">
-
-						<select id="SectionList" required name="SectionName" class="form-control">
-						
-						</select>
-					</div>
-				</div>
-
-					<div class="row col-xs-12 lbl-margin-top lbl-margin-top">
-						<div class="text-right col-xs-2">
-							<label class="lbl-bold margin-top">ACADEMIC YEAR</label>
+							</select>
 						</div>
-						<div class="col-xs-3 lbl-margin-top">
-
-							<select id="DropDownList1" name="DropDownList1" class="form-control" style="margin-top:-19px;"></select>
-
-						</div>
-						<div class="text-right col-xs-2 col-xs-offset-1">
-							<label class="margin-top lbl-bold">TERM</label>
+						<div class="col-sm-2 col-md-2 col-sm-offset-1 col-md-offset-1">
+							<label class="lbl-bold">SECTION</label>
 						</div>
 
-						<div class="col-xs-3">
+						<div class="col-sm-2 col-md-2">
+
+							<select id="SectionList" required name="SectionName" class="form-control"></select>
+						</div>
+					</div>
+
+					<div class="row form-group">
+						<div class="col-sm-2 col-md-2 col-sm-offset-1 col-md-offset-1">
+							<label class="lbl-bold">ACADEMIC YEAR</label>
+						</div>
+						<div class="col-sm-2 col-md-2">
+
+							<select id="DropDownList1" name="DropDownList1" class="form-control"></select>
+
+						</div>
+						<div class="col-sm-2 col-md-2 col-sm-offset-1 col-md-offset-1">
+							<label class="lbl-bold">TERM</label>
+						</div>
+
+						<div class="col-sm-2 col-md-2">
 							<select id="TermList" required name="TermName" class="form-control">
 								@if (ViewBag.termList != null)
 								{
@@ -354,25 +359,26 @@
 							</select>
 						</div>
 					</div>
-				<div class="row col-xs-offset-5">
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<div class="text-left col-xs-3">
-						<input type="button" class="btn btn-success" id="btnGetAttendance" value="GET ATTENDANCE" />
+					<div class="row col-sm-offset-5 col-md-offset-5">
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<div class="text-left col-sm-3 col-md-3">
+							<input type="button" class="btn btn-success" id="btnGetAttendance" value="GET ATTENDANCE" />
+						</div>
 					</div>
-				</div>
-			
-				<div class="content" style="margin-top:100px; overflow:hidden; height:100px; width:1150px; ">
-					<div id="AttendanceHandsonTable" class="col-xs-offset-0 handsontable hot"   ></div>
-					<div class="row control-group"></div>
-					
-				</div>
-				<div class="row col-xs-2 col-xs-offset-10 vert-spacer">
-					<input type="button" id="btnSaveAttendance" value="SAVE ATTENDANCE" class="btn btn-success" />
-				</div>
 
+					<div class="content container-fluid" style="margin-top:40px; overflow:auto;height:600px;width:100%;">
+						<div id="AttendanceHandsonTable" class="col-xs-offset-0 handsontable hot container-fluid"></div>
+						<div class="row control-group"></div>
+
+					</div>
+					<div class="row col-sm-2 col-sm-offset-10 col-md-2 col-sm-offset-10 vert-spacer">
+						<input type="button" id="btnSaveAttendance" value="SAVE ATTENDANCE" class="btn btn-success" />
+					</div>
+
+				</div>
 			</div>
-		</div>
 
+		</div>
 		</div>
 </body>
 </html>

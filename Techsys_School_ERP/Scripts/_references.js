@@ -1,1 +1,1 @@
-﻿/// <reference path="jquery-1.10.0.js" />
+﻿/// <reference path="jquery-3.3.1.js" />

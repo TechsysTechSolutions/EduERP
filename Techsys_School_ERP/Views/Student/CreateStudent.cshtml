@@ -1,7 +1,7 @@
 ﻿@model Techsys_School_ERP.Model.Student
 
 @{
-    ViewBag.Title = "CreateStudent";
+    
     Layout = "~/Views/Shared/_Layout_Admin.cshtml";
 }
 
@@ -12,17 +12,17 @@
 <head>
 	
 	<!-- /theme JS files -->
-	@*<link class="jsbin" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
-	<script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-	<script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"></script>*@
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>*@
 
-	@*<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-	<link rel="stylesheet" href="/resources/demos/style.css">*@
-	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-	<title>JS Bin</title>
+	<script type="text/javascript" src="~/Scripts/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="~/Scripts/jquery-ui.js"></script>
+
+	<!-- /core JS files -->
+	<!-- Theme JS files -->
+	<script type="text/javascript" src="~/Content/assets/js/core/libraries/jquery_ui/interactions.min.js"></script>
+	<script type="text/javascript" src="~/Content/assets/js/plugins/forms/selects/select2.min.js"></script>
+	<script type="text/javascript" src="~/Content/assets/js/pages/form_select2.js"></script>
 	
 	<style>
 		article, aside, figure, footer, header, hgroup,
@@ -31,7 +31,16 @@
 		}
 
 
+		.bold {
+			font-weight : 700;
 
+		}
+
+		label {
+
+font-weight: 500;
+
+}
 
 		.bootstrap-margin-top {
 	margin-top: -5%;
@@ -40,34 +49,47 @@
 		.vert-margin-top {
 			margin-top: 1%;
 		}
-		/* For mobile phones: */
-	/*[class*="col-"] {
-	width: 100%;
-	}
-	@@media (max-width: 200px) {
-	
-	.col-1 {width: 8.33%;}
-	.col-2 {width: 16.66%;}
-	.col-3 {width: 25%;}
-	.col-4 {width: 33.33%;}
-	.col-5 {width: 41.66%;}
-	.col-6 {width: 50%;}
-	.col-7 {width: 58.33%;}
-	.col-8 {width: 66.66%;}
-	.col-9 {width: 75%;}
-	.col-10 {width: 83.33%;}
-	.col-11 {width: 91.66%;}
-	.col-12 {width: 100%;}
-	}*/
+		
 	</style>
 	<script type="text/javascript">
 		$(document).ready(function () {
+			var isdropdownValidvalid = true;
+
+			$('#CountriesList').select2({
+				minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
+				placeholder: "Select Country from List",
+				ajax: {
+					url: '/Staff/populateCountriesList',
+					data: function (params) {
+						return {
+							sSearchTerm: params.term// search term
+						};
+					},
+					processResults: function (data) {
+						return {
+							results: data.items
+						};
+					},
+					initSelection: function (element, callback) {
+					}
+				},
+			});
 
 			$(function () {
-				$("#datepicker").datepicker({
 
-					format: "%d/%m/%Z"
-			});
+
+
+				$("#datepicker").datepicker({
+					required: true,
+					message: "This is a required field",
+					dateFormat: 'dd-mm-yy'
+				});
+
+				$("#DOB").datepicker({
+					required: true,
+					message: "This is a required field",
+					dateFormat: 'dd-mm-yy'
+				});
 			});
 			
 
@@ -77,118 +99,143 @@
 				$("input[type=file]").trigger("change");
 			});
 
+			$("#btncancel").click(function () {		
+			});
+
+
+
 			$("#btnSaveAndContinue").click(function () {
-
-				//var data = new FormData();
-				//var files = $("#file1").get(0).files;
-
-				//var file = document.getElementById("file1").files[0];
-				//formData.append("FileUpload", file);
-				//if (files.length > 0) {
-				//	data.append("Photo", files[0]);
-				//}
-
-				var data = new FormData();
-				var files = $("#file1").get(0).files;
-				if (files.length > 0) {
-					data.append("helpSectionImages", files[0]);
-				}
-
-				//$.ajax({
-				//	url: '/Student/InsertProduct1/',
-				//	type: "POST",
-				//	processData: false,
-				//	contentType: false,
-				//	data: data,
-				//	success: function (response) {
-				//		alert("uploaded");
-				//	},
-				//	error: function (er) {
-				//		alert("error");
-				//	}
-
-				//});
-
-				//debugger
-				//var formData = new FormData();
-				//var totalFiles = document.getElementById("file1").files.length;
-
-				//var file = document.getElementById("file1").files[0];
-				//formData.append("FileUpload", file);
 				debugger
-				var jsonObject = {
-					"First_Name": $("#First_Name").val(),
-					"Last_Name": $("#Last_Name").val(),
-					"Middle_Name": $("#Middle_Name").val(),
-					"Gender_Id": $("#Gender").val(),
-					"DOB": $("#DOB").text(),
-					"Enrollment_Date": $("#Enrollment_Date").val(),
-					"Photo" : data
-					//"Roles": [{ "RoleName": "Admin", "Description": "Admin Role" }, { "RoleName": "User", "Description": "User Role" }]
-				};
-
-
-				var student = {};
-				student.First_Name = $("#First_Name").val();
-				student.Last_Name = $("#Last_Name").val()
+				var isValid = true;
+				
+				isValid = dropdownSelectValidation(isValid);
 				var Student =
 					{
 						First_Name: $("#First_Name").val(),
 						Last_Name: $("#Last_Name").val(),
 						Middle_Name: $("#Middle_Name").val(),
-						Gender_Id: $("#Gender").val(),
-						DOB: $("#DOB").text(),
-						Enrollment_Date: $("#Enrollment_Date").val(),
+						Gender_Id: $("#GenderList").find(":selected").val(),
+						DOB: $("#DOB").val(),
+						Enrollment_Date: $("#datepicker").val(),
 						Father_Name: $("#Father_Name").val(),
 						Mother_Name: $("#Mother_Name").val(),
-						Blood_Group_Id: $("#Blood_Group_Id").val(),
+						Blood_Group_Id: $("#BloodGroupList").find(":selected").val(),
 						Address_Line1: $("#Address_Line1").val(),
 						Address_Line2: $("#Address_Line2").val(),
-						City_Id: $("#City_Id").val(),
-						State_Id: $("#State_Id").val(),
-						Country_Id: $("#Country_Id").val(),
+						City_Id: $("#City_Id").find(":selected").val(),
+						State_Id: $("#State_Id").find(":selected").val(),
+						Country_Id: $("#CountriesList").find(":selected").val(),
 						Phone_No1: $("#Phone_No1").val(),
 						Phone_No2: $("#Phone_No2").val(),
 						LandLine: $("#LandLine").val(),
 						Email_Id: $("#Email_Id").val(),
 						Academic_Year: $("#Academic_Year").val(),
 						Pincode: $("#Pincode").val(),
-						Photo: data,
+						Photo: ($("#Photo").get(0).files)[0],
 						Aadhar_No: $("#Aadhar_No").val(),
-						Class_Id: $("#Class_Id").val(),
-						Section_Id: $("#Section_Id").val()
+						Class_Id: $("#ClassList").find(":selected").val(),
+						Section_Id: $('#Section_Id').find(":selected").val(),
+						Roll_No: $("#Roll_No").val()
 					};
 
+
+				
+				$('input[type="text" ]').each(function () {
+				//$('input').each(function () {
+						if ($.trim($(this).val()) == '') {
+							//debugger
+							isValid = false;
+							$(this).css({
+								"border": "1px solid red",
+								"background": "#FFCECE"
+							});
+						}
+						else {
+							$(this).css({
+								"border": "",
+								"background": ""
+							});
+						}
+					
+						
+					});
+
+				if (isValid == false ) {
+					//debugger
+					e.preventDefault();
+				}
+				
+				else {
+
+					$.ajax({
+						type: "POST",
+						url: "/Student/CreateStudent/",
+						data: JSON.stringify(Student),
+						contentType: "application/json; charset=utf-8",
+						dataType: "json",
+						success: function (response) {
+							debugger
+							if (response == "SuccessFully Added") {
+								var data = new FormData();
+								data.append('file', ($("#Photo").get(0).files)[0]);
+								$.ajax({
+
+									url: "/Student/Upload",
+									type: "POST",
+									data: data,
+									cache: false,
+									processData: false,
+									contentType: false,
+									success: function (data) {
+										alert('Student Successfully Added');
+										window.location.href = "/Student/CreateStudentOtherDetails";
+									},
+									error: function (ex) {
+										alert('Failed to retrieve records.' + ex);
+									}
+								});
+							}
+							else if (response == "Email Already Exists") {
+								alert("Email Already Exists.Please try another email Id");
+							}
+							else if (response == "Error"){
+								alert("Error in Saving Details.Please try again.");
+						}
+					else
+							{
+								alert(response);
+
+					}
+
+
+						}
+
+					});
+				}
+				
 				
 
-				var data1 = new FormData();
-				data1.append("file", files[0]);
-				data1.append("model", JSON.stringify(student));
+			
+			
+				
+			});
 
-				$.ajax({
-					url: '/Student/CreateStudent/',
-					type: 'POST',
+			//var isValid = true;
+			$('input[type="text"]').on('input', function () {
 
-					contentType: 'application/json; charset=utf-8',
-					cache: false,
-					processData: false,
-					//data: {
-					//	model: jsonObject,
-					//	postedFile: data
-					//},
-					data: data1,
-					dataType: "json",
-					success: function (data) {
-						//alert(data.BandName);
-						//alert(data.Members.length);
-						//for (i = 0; i < data.Members.length; ++i) {
-						//	var m = data.Members[i];
-						//	alert(m.MemberName + ' / ' + m.BestSong + ' / ' + m.BirthYear);
-						//}
-					}
-				});
-
-
+				if ($.trim($(this).val()) == '') {
+					isValid = false;
+					$(this).css({
+						"border": "1px #ddd ",
+						"background": "white"
+					});
+				}
+				else {
+					$(this).css({
+						"border": "",
+						"background": ""
+					});
+				}
 			});
 
 			$("input[type=file]").change(function () {
@@ -199,8 +246,8 @@
 					reader.onload = function (e) {
 						$('#blah1')
 							.attr('src', e.target.result)
-							.width(110)
-							.height(110);
+							.width(100)
+							.height(80);
 					};
 
 					reader.readAsDataURL($(this)[0].files[0]);
@@ -209,7 +256,52 @@
 			});
 
 
-			$("#ClassList").change(function () {
+			function dropdownSelectValidation(valid) {
+
+				debugger;
+
+				var isValid = valid;
+
+				if ($("#ClassList").val() == 0) {
+				   isValid = false;
+					alert("Please Select the Class");
+				}
+
+				else if ($('#Section_Id').val() == 0) {
+					isValid = false;
+					alert("Please Select the Section");
+				}
+
+				else if ($("#GenderList").val() == 0) {
+					isValid = false;
+					alert("Please Select the Gender");
+				}
+
+				else if ($("#BloodGroupList").val() == 0) {
+					isValid = false;
+					alert("Please Select the Blood Group");
+				}
+
+				else if ($("#City_Id").val() == 0) {
+					isValid = false;
+					alert("Please Select the City");
+				}
+				else if ($("#CountriesList").val() == 0) {
+					isValid = false;
+					alert("Please Select the Country");
+				}
+
+				else if  ($("#State_Id").val() == 0) {
+					isValid = false;
+					alert("Please Select the Country");
+
+				}
+
+				return isValid;
+			}
+
+
+		$("#ClassList").change(function () {
 				if ($("#ClassList").val() == 0) {
 					alert("Please Select the Class")
 
@@ -263,7 +355,7 @@
 			function getStatesForCountry(Country_Id) {
 
 				$.ajax({
-					url: '/Student/FetchStateForCountry/',
+					url: '/Staff/FetchStateForCountry/',
 					data: "{'Country_Id':'" + $("#CountriesList").val() + "'}",
 					dataType: "json",
 					type: "POST",
@@ -283,6 +375,8 @@
 
 							var opt = new Option(data[i].Name, data[i].Id);
 							$('#State_Id').append(opt);
+							$('#State_Id').append("<div style=\"margin-top:4px;display:none;\"></div>");
+							
 
 						}
 
@@ -305,7 +399,7 @@
 			function getCitiesForState(State_Id) {
 
 				$.ajax({
-					url: '/Student/FetchCitiesForState/',
+					url: '/Staff/FetchCitiesForState/',
 					data: "{'State_Id':'" + $("#State_Id").val() + "'}",
 					dataType: "json",
 					type: "POST",
@@ -338,310 +432,269 @@
 
 </head>
 <body>
-	<section class="content">
-		<div class="content">
-			<div class="container">
-				<div class="row">
-					@*<div class="col-sm-6 col-md-4">col-sm-6 col-md-4</div>
-					<div class="col-sm-6 col-md-4">col-sm-6 col-md-4</div>
-					<div class="col-sm-6 col-md-4">col-sm-6 col-md-4</div>*@
-					<div class="panel panel-primary panel-bordered container-fluid" style="min-height:700px;">
-						<div class="panel-heading bg-indigo-400 container-fluid" >
-							<h6 class="panel-title ">STUDENT DETAIL</h6>
-							<div class="heading-elements ">
-								<ul class="icons-list">
-									<li><a data-action="collapse"></a></li>
-									<li><a data-action="reload"></a></li>
-									<li><a data-action="close"></a></li>
-								</ul>
+	@*<section class="content">*@
+		@*<div class="content">*@
+		<div class="page-container" style="height:100%;">
+			<div class="page-content">
+				<div class="container">
+					@*<div class="row">*@
+
+						<div class="panel panel-primary panel-bordered" style="width:100%;">
+							<div class="panel-heading bg-indigo-400">
+								<h6 class="panel-title ">STUDENT DETAIL</h6>
+								<div class="heading-elements ">
+									<ul class="icons-list">
+										<li><a data-action="collapse"></a></li>
+										<li><a data-action="reload"></a></li>
+										<li><a data-action="close"></a></li>
+									</ul>
+								</div>
 							</div>
-						</div>
-						<fieldset>
-							<legend class="text-semibold">
-								<i class="icon-reading position-left" style="color:green;font-size:larger; "></i>
-								Add personal details
-							</legend>
-							
+							<div class="panel-body">
+								<fieldset>
+									<legend class="text-semibold" style="font-weight:900;">
+										<i class="icon-reading position-left" style="color:green;font-size:larger;font-weight:bolder; "></i>
+										Add personal details
+									</legend>
+									<div class="row">
 
-							<div class="row">
-								
-								<div class="col-sm-2 col-md-2">
-									@Html.LabelFor(model => model.Roll_No, new { htmlAttributes = new { @class = "form-control" } })
-									
-									@Html.EditorFor(model => model.Roll_No, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-								</div>
-								<div class="col-sm-2 col-md-2">
-									@Html.LabelFor(model => model.First_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									@Html.EditorFor(model => model.First_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-								</div>
-								<div class="col-sm-2 col-md-2">
-									@Html.LabelFor(model => model.Last_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									@Html.EditorFor(model => model.Last_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-								</div>
-								<div class="col-sm-2 col-md-2">
-									@Html.LabelFor(model => model.Middle_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									@Html.EditorFor(model => model.Middle_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-								</div>
-								<div class="col-sm-2 col-md-2">
-									@Html.LabelFor(model => model.Enrollment_Date, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									@*<p>Date: <input type="text" id="datepicker"></p>*@
-									@Html.EditorFor(model => model.Enrollment_Date, new { htmlAttributes = new { @class = "form-control", @placeholder = "" , @id = "datepicker" } })
+										<div class="row form-group">
 
-									@*@Html.EditorFor(model => model.Enrollment_Date, new { htmlAttributes = new { @class = "form-control date", @placeholder = "" } })*@
-								</div>
-								<div class="col-sm-2 col-md-2" style="margin-top:2%">
-									@*@Html.LabelFor(model => model.Photo, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })*@
-									<img id="blah1" src="~/Content/images/imageupload_-_Copy.png" alt="your image" style="height:110px;width:110px;margin-top:0%;margin-left:1%;background-size:auto; " class="img-responsive">
-									<input type="file" name="file1" style="display:none;  " id="file1" />
-								</div>
+											<div class="col-sm-2 col-md-2 ">
+												@Html.LabelFor(model => model.Roll_No, new { htmlAttributes = new { @class = "form-control bold" } })
 
-								
-							</div>
+												@Html.EditorFor(model => model.Roll_No, new { htmlAttributes = new { @class = "form-control", @placeholder = "", @readonly = "readonly" } })
 
-							<div class="row bootstrap-margin-top">
-								<div class="col-sm-2 col-md-2 bootstrap-margin-top ">
-									@Html.LabelFor(model => model.Aadhar_No, new { htmlAttributes = new { @class = "form-control" } })
-									@Html.EditorFor(model => model.Aadhar_No, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-								</div>
-								<div class="col-sm-2 col-md-2 bootstrap-margin-top">
-									@Html.LabelFor(model => model.Class_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									<select id="ClassList" required name="ClassListName" class="form-control">
-										@if (ViewBag.classList != null)
+												@Html.ValidationMessageFor(model => model.Roll_No)
+											</div>
+											<div class="col-sm-2 col-md-2">
+												@Html.LabelFor(model => model.First_Name, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+												@Html.EditorFor(model => model.First_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+												@Html.ValidationMessageFor(model => model.First_Name)
+											</div>
+											<div class="col-sm-2 col-md-2">
+												@Html.LabelFor(model => model.Last_Name, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+												@Html.EditorFor(model => model.Last_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+												@Html.ValidationMessageFor(model => model.Last_Name)
+											</div>
+											<div class="col-sm-2 col-md-2">
+												@Html.LabelFor(model => model.Middle_Name, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+												@Html.EditorFor(model => model.Middle_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+												@Html.ValidationMessageFor(model => model.Middle_Name)
+											</div>
+											<div class="col-sm-2 col-md-2">
+												@Html.LabelFor(model => model.Enrollment_Date, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+												@*<p>Date: <input type="text" id="datepicker"></p>*@
+												@Html.EditorFor(model => model.Enrollment_Date, new { htmlAttributes = new { @class = "form-control", @placeholder = "", @id = "datepicker", @type = "text" } })
+												@Html.ValidationMessageFor(model => model.Enrollment_Date)
+												@*@Html.EditorFor(model => model.Enrollment_Date, new { htmlAttributes = new { @class = "form-control date", @placeholder = "" } })*@
+											</div>
+											<div class="col-sm-2 col-md-2">
+												@Html.LabelFor(model => model.Academic_Year, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+												@Html.EditorFor(model => model.Academic_Year, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+											</div>
+											
+										</div>
+
+										<div class="row form-group">
+											<div class="col-sm-2 col-md-2 ">
+												@Html.LabelFor(model => model.Aadhar_No, new { htmlAttributes = new { @class = "form-control bold" } })
+												@Html.EditorFor(model => model.Aadhar_No, new { htmlAttributes = new { @class = "form-control", @placeholder = "", @type = "text" } })
+												@Html.ValidationMessageFor(model => model.Aadhar_No)
+											</div>
+											<div class="col-sm-2 col-md-2">
+												@Html.LabelFor(model => model.Class_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+												<select id="ClassList" required name="ClassListName" class="form-control">
+													@if (ViewBag.classList != null)
 										{
-											<option value='0'>-- Select Class --</option>
+														<option value='0'>-- Select Class --</option>
 											foreach (var item in ViewBag.classList)
 											{
 												if (item.Text != null)
 												{
 
-													<option value="@item.Value">
-														@item.Text
-													</option>
+																<option value="@item.Value">
+																	@item.Text
+																</option>
 
 												}
 
 											}
 										}
-									</select>
-								</div>
-								<div class="col-sm-2 col-md-2 bootstrap-margin-top">
-									@Html.LabelFor(model => model.Section_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									<select id="Section_Id" required name="SectionName" class="form-control"></select>
-								</div>
-								<div class="col-sm-2 col-md-2 bootstrap-margin-top">
-									@Html.LabelFor(model => model.Gender_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									<select id="GenderList" required name="GenderListName" class="form-control">
-										@if (ViewBag.genderList != null)
+												</select>
+											</div>
+											<div class="col-sm-2 col-md-2">
+												@Html.LabelFor(model => model.Section_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+												<select id="Section_Id" required name="SectionName" class="form-control"></select>
+											</div>
+											<div class="col-sm-2 col-md-2">
+												@Html.LabelFor(model => model.Gender_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+												<select id="GenderList" required name="GenderListName" class="form-control">
+													@if (ViewBag.genderList != null)
 										{
-											<option value='0'>-- Select Gender --</option>
+														<option value='0'>-- Select Gender --</option>
 											foreach (var item in ViewBag.genderList)
 											{
 												if (item.Text != null)
 												{
 
-													<option value="@item.Value">
-														@item.Text
-													</option>
+																<option value="@item.Value">
+																	@item.Text
+																</option>
 
 												}
 
 											}
 										}
-									</select>
-								</div>
-								<div class="col-sm-2 col-md-2 bootstrap-margin-top">
-									@Html.LabelFor(model => model.DOB, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									@Html.EditorFor(model => model.DOB, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-								</div>
-								</div>
-							
-								<div class="row vert-margin-top">
-									<div class="col-sm-2 col-md-2">
-										@Html.LabelFor(model => model.Father_Name, new { htmlAttributes = new { @class = "form-control" } })
-										@Html.EditorFor(model => model.Father_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									</div>
-									<div class="col-sm-2 col-md-2">
-										@Html.LabelFor(model => model.Mother_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-										@Html.EditorFor(model => model.Mother_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									</div>
-									<div class="col-sm-2 col-md-2">
-										@Html.LabelFor(model => model.DOB, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-										@Html.EditorFor(model => model.DOB, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									</div>
-									<div class="col-sm-2 col-md-2">
-										@Html.LabelFor(model => model.Blood_Group_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-										<select id="BloodGroupListt" required name="BloodGroupName" class="form-control">
-											@if (ViewBag.bloodGroupList != null)
-											{
-												<option value='0'>-- Select Blood Group --</option>
-												foreach (var item in ViewBag.bloodGroupList)
-												{
-													if (item.Text != null)
+												</select>
+											</div>
+											<div class="col-sm-2 col-md-2">
+												@Html.LabelFor(model => model.DOB, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+												@Html.EditorFor(model => model.DOB, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+												@Html.ValidationMessageFor(model => model.DOB)
+											</div>
+											<div class="col-sm-2 col-md-2">
+
+												<img id="blah1" src="~/Content/images/imageupload_-_Copy.png" alt="your image" style="height:80px;width:100px;margin-top:0%;margin-left:18%;background-size:auto; align-content:center; " class="img-responsive">
+												<input type="file" name="Photo" style="display:none;  " id="Photo" />
+											</div>
+											
+										</div>
+
+										<div class="row form-group" style="margin-top:-10px;">
+											<div class="col-sm-3 col-md-3">
+												@Html.LabelFor(model => model.Father_Name, new { htmlAttributes = new { @class = "form-control bold" } })
+												@Html.EditorFor(model => model.Father_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+											</div>
+											<div class="col-sm-3 col-md-3">
+												@Html.LabelFor(model => model.Mother_Name, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+												@Html.EditorFor(model => model.Mother_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+											</div>
+
+											<div class="col-sm-2 col-md-2">
+												@Html.LabelFor(model => model.Phone_No1, new { htmlAttributes = new { @class = "form-control bold" } })
+												@Html.EditorFor(model => model.Phone_No1, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+											</div>
+											<div class="col-sm-2 col-md-2">
+												@Html.LabelFor(model => model.Phone_No2, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+												@Html.EditorFor(model => model.Phone_No2, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+											</div>
+											<div class="col-sm-2 col-md-2">
+												@Html.LabelFor(model => model.Blood_Group_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+												<select id="BloodGroupList" required name="BloodGroupName" class="form-control">
+													@if (ViewBag.bloodGroupList != null)
 													{
+														<option value='0'>-- Select Blood Group --</option>		foreach (var item in ViewBag.bloodGroupList)
+														{
+															if (item.Text != null)
+															{
 
-														<option value="@item.Value">
-															@item.Text
-														</option>
+																<option value="@item.Value">
+																	@item.Text
+																</option>
 
+															}
+
+														}
 													}
+												</select>
+											</div>
 
-												}
-											}
-										</select>
+											@*<div class="col-sm-2 col-md-2">
+							@Html.LabelFor(model => model.DOB, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+							@Html.EditorFor(model => model.DOB, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+						@Html.ValidationMessageFor(model => model.DOB)
+						</div>*@
+
+											@*<div class="col-sm-2 col-md-2">
+							@Html.LabelFor(model => model.Academic_Year, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+							@Html.EditorFor(model => model.Academic_Year, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+						</div>*@
+
+										</div>
+
+
+									</div>
+								</fieldset>
+
+
+								<fieldset>
+									<legend class="text-semibold" style="font-weight:900;">
+										<i class="icon-reading position-left" style="color:green;"></i>
+										Add CONTACT details
+									</legend>
+
+
+
+
+									<div class="row form-group">
+										<div class="col-sm-5 col-md-5">
+											@Html.LabelFor(model => model.Address_Line1, new { htmlAttributes = new { @class = "form-control bold", @style = "font-weight:600; " } })
+											@Html.EditorFor(model => model.Address_Line1, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+										</div>
+										<div class="col-sm-5 col-md-5">
+											@Html.LabelFor(model => model.Address_Line2, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+											@Html.EditorFor(model => model.Address_Line2, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+										</div>
+										<div class="col-sm-2 col-md-2">
+											@Html.LabelFor(model => model.Country_Id, new { htmlAttributes = new { @class = "form-control bold" } })
+											<select data-placeholder="Select Country" class="select-search col-sm-3 col-md-3" id="CountriesList"></select>
+											</div>
+
+										</div>
+									<div class="row form-group">
+										
+										<div class="col-sm-2 col-md-2">
+											@Html.LabelFor(model => model.State_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+											<select id="State_Id" required name="StateName" class="form-control"></select>
+											@*@Html.EditorFor(model => model.State_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })*@
+										</div>
+
+										<div class="col-sm-2 col-md-2">
+											@Html.LabelFor(model => model.City_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+											<select id="City_Id" required name="StateName" class="form-control"></select>
+											@*@Html.EditorFor(model => model.City_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })*@
+										</div>
+										<div class="col-sm-2 col-md-2">
+											@Html.LabelFor(model => model.Pincode, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+											@Html.EditorFor(model => model.Pincode, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+										</div>
+										<div class="col-sm-3 col-md-3">
+											@Html.LabelFor(model => model.LandLine, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+											@Html.EditorFor(model => model.LandLine, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+										</div>
+										<div class="col-sm-3 col-md-3">
+											@Html.LabelFor(model => model.Email_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+											@Html.EditorFor(model => model.Email_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+										</div>
 									</div>
 
-								</div>
-</fieldset>
-
-						<fieldset>
-							<legend class="text-semibold">
-								<i class="icon-reading position-left" style="color:green;"></i>
-								Add CONTACT details
-							</legend>
-							<div class="row">
-								<div class="col-sm-2 col-md-2">
-								</div>
-								<div class="col-sm-2 col-md-2">
-								</div>
-								<div class="col-sm-2 col-md-2">
-								</div>
-								<div class="col-sm-2 col-md-2">
-								</div>
-								<div class="col-sm-2 col-md-2">
-
-								</div>
-								<div class="col-sm-2 col-md-2">
-
-								</div>
+								</fieldset>
 							</div>
 
-							
-							<div class="row">
-								</div>
-
-								<div class="row">
-									<div class="col-sm-6 col-md-6">
-										@Html.LabelFor(model => model.Address_Line1, new { htmlAttributes = new { @class = "form-control" } })
-										@Html.EditorFor(model => model.Address_Line1, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									</div>
-									<div class="col-sm-6 col-md-6">
-										@Html.LabelFor(model => model.Address_Line2, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-										@Html.EditorFor(model => model.Address_Line2, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									</div>
-								
-								</div>
-							<div class="row">
-								<div class="col-sm-3 col-md-3">
-									@Html.LabelFor(model => model.Country_Id, new { htmlAttributes = new { @class = "form-control" } })
-									<select id="CountriesList" required name="countriesListName" class="form-control">
-										@if (ViewBag.countriesList != null)
-										{
-											<option value='0'>-- Select Countries --</option>
-											foreach (var item in ViewBag.countriesList)
-											{
-												if (item.Text != null)
-												{
-
-													<option value="@item.Value">
-														@item.Text
-													</option>
-
-												}
-
-											}
-										}
-									</select>
-								</div>
-								<div class="col-sm-3 col-md-3">
-									@Html.LabelFor(model => model.State_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									<select id="State_Id" required name="StateName" class="form-control"></select>
-									@*@Html.EditorFor(model => model.State_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })*@
-								</div>
-
-								<div class="col-sm-3 col-md-3">
-									@Html.LabelFor(model => model.City_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									<select id="City_Id" required name="StateName" class="form-control"></select>
-									@*@Html.EditorFor(model => model.City_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })*@
-								</div>
-								<div class="col-sm-3 col-md-3">
-									@Html.LabelFor(model => model.Pincode, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									@Html.EditorFor(model => model.Pincode, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-								</div>
-								</div>
-
-							<div class="row">
-								<div class="col-sm-3 col-md-3">
-									@Html.LabelFor(model => model.Phone_No1, new { htmlAttributes = new { @class = "form-control" } })
-									@Html.EditorFor(model => model.Phone_No1, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-								</div>
-								<div class="col-sm-3 col-md-3">
-									@Html.LabelFor(model => model.Phone_No2, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									@Html.EditorFor(model => model.Phone_No2, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-								</div>
-
-								<div class="col-sm-3 col-md-3">
-									@Html.LabelFor(model => model.LandLine, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									@Html.EditorFor(model => model.LandLine, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-								</div>
-								<div class="col-sm-3 col-md-3">
-									@Html.LabelFor(model => model.Email_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									@Html.EditorFor(model => model.Email_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-								</div>
-							</div>
-</fieldset>
-
-						<fieldset>
-							@*<legend class="text-semibold">
-								<i class="icon-reading position-left" style="color:green;"></i>
-								Add PERSONAL details
-							</legend>*@
-							@*<div class="row">
-								<div class="col-sm-2 col-md-2">
-
-								</div>
-								<div class="col-sm-2 col-md-2">
-
-								</div>
-								<div class="col-sm-2 col-md-2">
-
-								</div>
-								<div class="col-sm-2 col-md-2">
-
-								</div>
-								<div class="col-sm-2 col-md-2">
-
-								</div>
-								<div class="col-sm-2 col-md-2">
-
-								</div>
-							</div>*@
-
-
-							<div class="row">
-							</div>
-
-							
-							<div class="row">
-								</div>
-								<div class="row vert-margin-top vert-margin-top col-sm-offset-7 col-md-offset-7"  >
-									<input type="button" id="btncancel" class="btn btn-primary bg-green-400 col-md-1 col-sm-1"  value="CANCEL"/>
-									<input type="button" id="btnSaveAndContinue" class="btn btn-primary bg-green-400 col-md-2 col-sm-2" value="SAVE & CONTINUE" />
-									@*<div class="col-sm-3 col-md-3" style="margin-top:10px;">
-										@Html.LabelFor(model => model.Is_HostelStudent, new { htmlAttributes = new { @class = "form-control" } })
-										@Html.CheckBoxFor(model => model.Is_HostelStudent, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									</div>*@
+								<fieldset>
 									
-								</div>
 
-								
-</fieldset>
-					</div>
+
+									<div class="row col-sm-offset-9 col-md-offset-9 form-group">
+										@*<input type="button" id="btncancel" class="btn btn-primary bg-green-400" style="width:25%;margin-left:30.5%;" value="CANCEL"/>
+					<input type="button" id="btnSaveAndContinue" class="btn btn-primary bg-green-400" style="width:40%;" value="SAVE & CONTINUE" />*@
+										<input type="button" id="btncancel" class="btn btn-primary bg-green-400" value="CANCEL" style="margin-left:22%;" />
+										<input type="button" id="btnSaveAndContinue" class="btn btn-primary bg-green-400" value="SAVE & CONTINUE" />
+
+									</div>
+
+
+								</fieldset>
+							</div>
+
+					@*</div>*@
 				</div>
 			</div>
 			</div>
 
 
-</section>
+@*</section>*@
 		
 </body>
 </html>

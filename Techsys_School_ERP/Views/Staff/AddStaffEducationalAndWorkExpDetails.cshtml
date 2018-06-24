@@ -1,6 +1,7 @@
-﻿@{
-	
-	Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+﻿
+@{
+    
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +19,7 @@
 	<link href="~/Content/assets/css/colors.css" rel="stylesheet" type="text/css">
 	<!-- /global stylesheets -->
 	<!-- Core JS files -->
-	
+
 	<script type="text/javascript" src="~/Content/assets/js/plugins/loaders/pace.min.js"></script>
 	<script type="text/javascript" src="~/Content/assets/js/core/libraries/jquery.min.js"></script>
 	<script type="text/javascript" src="~/Content/assets/js/core/libraries/bootstrap.min.js"></script>
@@ -31,16 +32,6 @@
 	<script type="text/javascript" src="~/Content/assets/js/pages/form_select2.js"></script>
 	<!-- /theme JS files -->
 
-	<!-- Theme JS files -->
-	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/datatables.min.js"></script>
-	<script type="text/javascript" src="~/Content/js/plugins/forms/selects/select2.min.js"></script>
-	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/jszip/jszip.min.js"></script>
-	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js"></script>
-	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js"></script>
-	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/buttons.min.js"></script>
-	<!-- <script type="text/javascript" src="~/Content/js/core/app.js"></script>-->
-	<script type="text/javascript" src="~/Content/js/pages/datatables_extension_buttons_html5.js"></script>
-	<!-- /theme JS files -->
 
 	<script type="text/javascript">
 		// Select with search
@@ -48,12 +39,12 @@
 
 		$(document).ready(function () {
 
-		
-			$('#searchselect').select2({
+
+			$('#institutionSelect').select2({
 				minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
 				placeholder: "Select items from List",
 				ajax: {
-					url: '/Student/GetEmployeeList',
+					url: '/Staff/GetInstitutionList',
 					//width: 'resolve',
 					data: function (params) {
 						return {
@@ -63,18 +54,39 @@
 					processResults: function (data) {
 						return {
 							results: data.items
-						};					
+						};
 					},
 					initSelection: function (element, callback) {
 					}
 				},
 			});
-			
-			$('#studentsearchselect').select2({
+
+			$('#specializationSelect').select2({
 				minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
 				placeholder: "Select items from List",
 				ajax: {
-					url: '/Student/GetStudentList',
+					url: '/Staff/GetSpecializationList',
+					//width: 'resolve',
+					data: function (params) {
+						return {
+							q: params.term// search term
+						};
+					},
+					processResults: function (data) {
+						return {
+							results: data.items
+						};
+					},
+					initSelection: function (element, callback) {
+					}
+				},
+			});
+
+			$('#qualificationSelect').select2({
+				minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
+				placeholder: "Select items from List",
+				ajax: {
+					url: '/Staff/GetQualificationList',
 					data: function (params) {
 						return {
 							q: params.term// search term
@@ -92,32 +104,31 @@
 
 
 			$.ajax({
-				url: '/Student/GetStudentPrevSchoolDetailsOnPageLoad/',
+				url: '/Staff/GetStaffEducationalDetailsOnPageLoad/',
 				type: 'POST',
 				contentType: 'application/json; charset=utf-8',
 				cache: false,
 				data: {},
 				dataType: "json",
 				success: function (data) {
-
-						populatePrevSchoolDetailsInGrid(data);
-					}				
+					populateStaffEducationalDetailsInGrid(data);
+					}
 			});
 
 
-			
 
-			function populatePrevSchoolDetailsInGrid(data)
+
+			function populateStaffEducationalDetailsInGrid(data)
 			{
-			
-				$("#tblStudentPrevSchool").find("tr:gt(0)").remove();
+				debugger
+				$("#tblStaffEducationalDetails").find("tr:gt(0)").remove();
 				if (data.items.length == 0) {
 
 					var rows = "<tr>" +
 						"<td class='' colspan=7 style=\"text-align:center;\" >" + "No Record to Display" + "</td>" +
 							"</tr>";
 
-					$('#tblStudentPrevSchool tbody').append(rows);
+					$('#tblStaffEducationalDetails tbody').append(rows);
 				}
 				else {
 					for (i = 0 ; i < data.items.length ; i++) {
@@ -134,7 +145,7 @@
 							"</tr>";
 
 
-						$('#tblStudentPrevSchool tbody').append(rows);
+						$('#tblStaffEducationalDetails tbody').append(rows);
 						$('#searchselect').val(null).trigger("change");
 						$(".Id").hide();
 						$("#txtComments").val(""),
@@ -159,14 +170,14 @@
 					dataType: "json",
 					success: function (data) {
 						populatePrevSchoolDetailsInGrid(data);
-						
+
 
 					}
 				});
 			});
 
 			$('#tblStudentSiblingDetail').on('click', '.deleteRow', function (e) {
-				
+				debugger
 				e.preventDefault();
 				var id = $(this).closest('tr')[0].cells['0'].textContent
 
@@ -183,46 +194,85 @@
 
 					}
 				});
-			});			
-			
+			});
+
+
 
 			$('#searchselect').val('Select items from List').trigger("change");
 
 
-			function getStudentPrevSchoolDetails(stuPrevSchoolDetail )
+			function getStaffEducationalDetail(staffEducationalDetail)
 			{
-				$("#tblStudentPrevSchool").find("tr:gt(0)").remove();
+				$("#tblStaffEducationalDetails").find("tr:gt(0)").remove();
 				$.ajax({
-					url: '/Student/AddStudentPrevSchoolDetails/',
+					url: '/Staff/AddStaffEducationalQualification/',
 					type: 'POST',
 					contentType: 'application/json; charset=utf-8',
 					cache: false,
-					data:  stuPrevSchoolDetail,
+					data: staffEducationalDetail,
 					dataType: "json",
-					success: function (data) {					
-						populatePrevSchoolDetailsInGrid(data);
+					success: function (data) {
+						populateStaffEducationalDetailsInGrid(data);
 					}
 				});
+			}
+
+			function populateStaffEducationalDetailsInGrid(data) {
+				debugger
+
+				$("#tblStaffEducationalDetails").find("tr:gt(0)").remove();
+				if (data.items.length == 0) {
+
+					var rows = "<tr>" +
+						"<td class='' colspan=7 style=\"text-align:center;\" >" + "No Record to Display" + "</td>" +
+							"</tr>";
+
+					$('#tblStaffEducationalDetails tbody').append(rows);
+				}
+				else {
+					for (i = 0 ; i < data.items.length ; i++) {
+
+
+						var rows = "<tr>" +
+							"<td class='Id' >" + data.items[i].Id + "</td>" +
+							"<td class=''>" + data.items[i].Qualification + " - " + data.items[i].Specialization + "</td>" +
+							"<td class=''>" + data.items[i].Institution + "</td>" +
+							"<td class=''>" + data.items[i].Year_Of_Passing + "</td>" +
+							"<td class=''>" + "" + "</td>" +
+							"<td class=''>" + "" + "</td>" +
+							"<td class=''> <div><button class='deleteRow form-control btn-warning' style=\"width:75%;\" >DELETE</button></div> </td>" +
+							"</tr>";
+
+
+						$('#tblStaffEducationalDetails tbody').append(rows);
+						//$('#searchselect').val(null).trigger("change");
+						$(".Id").hide();
+						//$("#txtComments").val(""),
+						//$("#txtFromYear").val(""),
+						//$("#txtToYear").val(""),
+						//$("#txtLeavingReason").val("")
+					}
+				}
 			}
 
 
 			$("#btnAdd").click(function () {
 
-				var Student_Prev_School_Detail =
+				var Staff_Educational_Detail =
 					{
-						
-						School_Id: $('#searchselect').val(),
-						Other_School_Name: $("#comments").val(),
-						From_Year: $("#txtFromYear").val(),
-						To_Year: $("#txtToYear").val(),
-						Leaving_Reason: $("#txtLeavingReason").val(),
-						Comments: $("#txtComments").val()
+						Staff_Id: "1",
+						Qualification_Id: $('#qualificationSelect').val(),
+						Specialization_Id: $("#specializationSelect").val(),
+						Institution_Id: $("#institutionSelect").val(),
+						Year_Of_Passing: "",
+						Medium_Of_Instruction: "",
+						Academic_Year: ""
 
 					};
 
-				var stuPrevSchoolDetail = JSON.stringify(Student_Prev_School_Detail);
-				getStudentPrevSchoolDetails(stuPrevSchoolDetail);
-				 
+				var staffEducationalDetail = JSON.stringify(Staff_Educational_Detail);
+				getStaffEducationalDetail(staffEducationalDetail);
+
 			});
 
 			$.ajax({
@@ -234,7 +284,7 @@
 				dataType: "json",
 				success: function (data) {
 
-				
+
 					populateStudentSiblingDetailInGrid(data);
 				}
 			});
@@ -258,8 +308,8 @@
 							"<td class=''>" + data.items[i].Student_Name +  "</td>" +
 							"<td class=''>" + data.items[i].Class + " - " + data.items[i].Section  + "</td>" +
 							"<td class=''>" + data.items[i].Roll_No + "</td>" +
-							"<td class=''>" + data.items[i].Sibling_Relation + "</td>" +
-							//"<td class=''>" + "" + "</td>" +
+							////"<td class=''>" + data.items[i].Leaving_Reason + "</td>" +
+							"<td class=''>" + "" + "</td>" +
 							"<td class=''> <div><button class='deleteRow form-control btn-warning' style=\"width:75%;\"  >DELETE</button></div> </td>" +
 							"</tr>";
 
@@ -267,7 +317,6 @@
 						$('#tblStudentSiblingDetail tbody').append(rows);
 						$(".Id").hide();
 						$('#studentsearchselect').val(""),
-						$('#txtSiblingRelation').val(""),
 						$('#studentsearchselect').val(null).trigger("change");
 
 					}
@@ -276,11 +325,12 @@
 
 			$("#btnSiblingAdd").click(function () {
 
-					var Student_Sibling_Detail =
+			//	debugger
+
+				var Student_Sibling_Detail =
 					{
-						
-						Sibling_Student_Id: $('#studentsearchselect').val(),
-						Sibling_Relation : $('#txtSiblingRelation').val()
+						Student_Id: "1",
+						Sibling_Student_Id: $('#studentsearchselect').val()
 
 					};
 
@@ -294,16 +344,14 @@
 					data: stuSiblingDetail,
 					dataType: "json",
 					success: function (data) {
-
-								populateStudentSiblingDetailInGrid(data);
-
+						populateStudentSiblingDetailInGrid(data);
 					}
 				});
 
 			});
-		
 
-			
+
+
 		});
 	</script>
 </head>
@@ -312,12 +360,9 @@
 		<div class="content">
 			<div class="container">
 				<div class="row">
-					@*<div class="col-sm-6 col-md-4">col-sm-6 col-md-4</div>
-						<div class="col-sm-6 col-md-4">col-sm-6 col-md-4</div>
-						<div class="col-sm-6 col-md-4">col-sm-6 col-md-4</div>*@
-					<div class="panel panel-primary panel-bordered container-fluid" style="min-height:700px;">
+						<div class="panel panel-primary panel-bordered container-fluid" style="min-height:700px;">
 						<div class="panel-heading bg-indigo-400 container-fluid">
-							<h6 class="panel-title ">STUDENT PREV SCHOOL DETAIL & SIBLING DETAIL</h6>
+							<h6 class="panel-title ">STAFF EDUCATIONAL & PREV WORK EXPERIENCE DETAIL</h6>
 							<div class="heading-elements ">
 								<ul class="icons-list">
 									<li><a data-action="collapse"></a></li>
@@ -333,68 +378,72 @@
 							</legend>
 
 
-					
-								<div class="col-md-12 col-sm-12" style="min-height:100px;overflow-y:auto">
-									<div class="panel panel-flat">
 
-										<div class="panel-body">
+							<div class="col-md-12 col-sm-12" style="min-height:100px;overflow-y:auto">
+								<div class="panel panel-flat">
 
+									<div class="panel-body">
+
+
+
+										<div class="row">
+											<div class="content-group-lg col-md-3 col-sm-3">
+												<label style="font-weight:700; ">INSTITUTION</label>
+												<select data-placeholder="Select Instituion" class="select-search col-sm-3 col-md-3" id="institutionSelect"></select>
+											</div>
+											<div class="col-md-4 col-sm-4">
+												<label style="font-weight:700; ">QUALIFICATION</label>
+												<select data-placeholder="Select Qualification" class="select-search col-sm-3 col-md-3" id="qualificationSelect"></select>
+												@*<input type="text" id="txtQualification" class="form-control" />*@
+											</div>
+											<div class="col-md-1 col-sm-1">
+												<label style="font-weight:700; ">FROM</label>
+												<input type="text" id="txtFromYear" class="form-control" style="width:100%;" />
+											</div>
+											<div class="col-md-1 col-sm-1">
+												<label style="font-weight:700; ">TO YEAR</label>
+												<input type="text" id="txtToYear" class="form-control" style="width:100%;" />
+											</div>	
 											
+											<div class="col-md-2 col-sm-2">
+												<label style="font-weight:700; ">SPECIALIZATION</label>
+												<select data-placeholder="Select Specialization" class="select-search col-sm-3 col-md-3" id="specializationSelect"></select>
+												@*<input type="text" id="txtSpecialization" class="form-control" style="width:75%;" />*@
+											</div>															
 
-												<div class="row">
-													<div class="content-group-lg col-md-3 col-sm-3">
-														<label style="font-weight:700; ">SCHOOL NAME</label>														
-														<select data-placeholder="Select School Name" class="select-search col-sm-3 col-md-3" id="searchselect">
-														
-														</select>
-													</div>
-													<div class="col-md-2 col-sm-2">
-														<label style="font-weight:700; ">FROM YEAR</label>
-														<input type="text" id="txtFromYear" class="form-control"  style="width:75%;" />
-														</div>
-													<div class="col-md-2 col-sm-2">
-														<label style="font-weight:700; ">TO YEAR</label>
-														<input type="text" id="txtToYear" class="form-control" style="width:75%;" />
-													</div>
+											@*<div class="col-md-2 col-sm-2">
+												<label style="font-weight:700; ">COMMENTS</label>
+												<input type="text" id="txtComments" class="form-control" />
+											</div>*@
 
-													<div class="col-md-2 col-sm-2">
-														<label style="font-weight:700; ">LEAVING REASON</label>
-														<input type="text" id="txtLeavingReason" class="form-control"  />
-													</div>
-
-													<div class="col-md-2 col-sm-2">
-														<label style="font-weight:700; ">COMMENTS</label>
-														<input type="text" id="txtComments" class="form-control" />
-													</div>
-
-													<div class="col-md-1 col-sm-1">
-														<input type="button" id="btnAdd" value="ADD"  class="btn btn-primary btn-success" style="margin-top:35%;"/>
-													</div>
-
-
-													</div>
-											<div style="overflow-y:auto;height:150px;min-height:100px;" class="row">
-												<table class="table  table-striped table-bordered table-responsive col-md-12 col-sm-12" id="tblStudentPrevSchool">
-													<thead class="bg-primary-400">
-														<tr>
-															<th>School Name</th>
-															<th>From Year</th>
-															<th>To Year</th>
-															<th>Leaving Reason</th>
-															<th>Comments</th>
-															<th>Action</th>
-														</tr>
-													</thead>
-													<tbody></tbody>
-												</table>
-												<div id="noRecords" style="display:none"> There are no records </div>
+											<div class="col-md-1 col-sm-1">
+												<input type="button" id="btnAdd" value="ADD" class="btn btn-primary btn-success" style="margin-top:35%;" />
 											</div>
-											</div>
-								</div>
-								</div>
 
-							
-							</fieldset>
+
+										</div>
+										<div style="overflow-y:auto;height:150px;min-height:100px;" class="row">
+											<table class="table  table-striped table-bordered table-responsive col-md-12 col-sm-12" id="tblStaffEducationalDetails">
+												<thead class="bg-primary-400">
+													<tr>
+														<th>School Name</th>
+														<th>From Year</th>
+														<th>To Year</th>
+														<th>Leaving Reason</th>
+														<th>Comments</th>
+														<th>Action</th>
+													</tr>
+												</thead>
+												<tbody></tbody>
+											</table>
+											<div id="noRecords" style="display:none"> There are no records </div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+						</fieldset>
 						<fieldset>
 							<legend class="text-semibold">
 								<i class="icon-reading position-left" style="color:green;font-size:larger; "></i>
@@ -408,13 +457,13 @@
 
 									<div class="panel-body">
 
-										
+
 										<div class="row">
 											<div class="content-group-lg col-md-4 col-sm-4">
 												<label style="font-weight:700; ">STUDENT NAME</label>
-												<select data-placeholder="Select Student" class="select-search col-sm-3 col-md-3" id="studentsearchselect"></select>
+												<select data-placeholder="Select School" class="select-search col-sm-3 col-md-3" id="schoolSelect"></select>
 											</div>
-											
+
 											<div class="col-md-4 col-sm-4 col-sm-offset-1">
 												<label style="font-weight:700; ">SIBLING RELATION</label>
 												<input type="text" id="txtSiblingRelation" class="form-control" />
@@ -440,7 +489,7 @@
 												</thead>
 												<tbody></tbody>
 											</table>
-											
+
 										</div>
 										<div id="noRecords" style="display:none"> There are no records </div>
 									</div>
@@ -449,11 +498,13 @@
 
 
 						</fieldset>
-						</div>
 					</div>
 				</div>
 			</div>
-		</section>
-	
+		</div>
+	</section>
+
 </body>
 </html>
+
+

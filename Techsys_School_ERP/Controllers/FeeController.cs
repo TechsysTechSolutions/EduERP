@@ -12,9 +12,10 @@ using System.Data.Entity;
 using Techsys_School_ERP.Model.ViewModel;
 using System.Web.Script.Serialization;
 
+
 namespace Techsys_School_ERP.Controllers
 {
-	public class FeeController : Controller
+	public class FeeController : CommonController
 	{
 		int[] nFeeIdArr;
 		public ActionResult TestHandsonDropdown()
@@ -417,6 +418,114 @@ namespace Techsys_School_ERP.Controllers
 			
 		}
 		#endregion
+
+		#region FeePayment
+
+		public ActionResult FeePayment()
+		{
+			GetFrequency();
+			Fee_Payment feePayment = new Fee_Payment();
+			feePayment.Academic_Year = GetAcademicYear();
+			long nFeePaymentId;
+			feePayment.Payment_date = DateTime.Now.Date;
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				if (dbcontext.Fee_Payment.ToList().Count == 0)
+				{
+
+					feePayment.Recipt_no = "1" + " - " + Convert.ToString(GetAcademicYear());
+				}
+				else
+				{
+					nFeePaymentId = Convert.ToInt64(dbcontext.Fee_Payment.Max(x => x.Id) + 1);
+					feePayment.Recipt_no = Convert.ToString(GetAcademicYear()) + " - " + (nFeePaymentId + 1);
+
+					//TempData["Student_Id"] = nFeePaymentId;
+					//TempData.Keep("Student_Id");
+				}
+			}
+
+			return View(feePayment);
+		}
+
+
+		public ActionResult GetStudentList(string q)
+		{
+			return Json(new { items = SearchAndGetStudentList(q) }, JsonRequestBehavior.AllowGet);
+		}
+
+		[HttpPost]
+		public JsonResult PayFeesForStudent(Fee_Payment fee_Payment)
+		{
+			long nYear = GetAcademicYear();
+			string sReturnText = string.Empty;
+			fee_Payment.Created_On = DateTime.Now;
+			fee_Payment.Created_By = 4;
+			fee_Payment.Academic_Year = nYear;
+			fee_Payment.Is_Active = true;
+			fee_Payment.Collected_by = "devi";
+			try
+			{
+				using (var dbcontext = new SchoolERPDBContext())
+				{
+					if (dbcontext.Fee_Payment.Where(a => a.Student_id == fee_Payment.Student_id && a.Frequency == fee_Payment.Frequency && a.Academic_Year == nYear && (a.Is_Deleted == false || a.Is_Deleted == null)).Count() == 0)
+					{
+						dbcontext.Fee_Payment.Add(fee_Payment);
+						dbcontext.SaveChanges();
+						sReturnText = "OK";
+					}
+					else
+					{
+						sReturnText = "Fees Already Paid For the Period";
+					}
+				}
+				
+
+			}
+			catch (Exception ex)
+			{
+				sReturnText = ex.Message.ToString();
+			}
+
+			return Json(sReturnText, JsonRequestBehavior.AllowGet);
+		}
+
+		[HttpPost]
+		public JsonResult GetFeesStructure(string Student_Id, string Frequency)
+		{
+			Dictionary<string, decimal> feeStructure = new Dictionary<string, decimal>();
+			List<FeeConfiguration_ViewModel> feeConfigList = new List<FeeConfiguration_ViewModel>();
+			long nStudent_Id = Convert.ToInt64(Student_Id);
+			int nFrequency = Convert.ToInt32(Frequency);
+			long nAcademicYear = GetAcademicYear();
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				feeConfigList = (from stu in dbcontext.Student
+							   join feeConfig in dbcontext.Fee_Configuration on stu.Class_Id equals feeConfig.Class_Id
+							   join fee in dbcontext.Fee on feeConfig.Fee_Id equals fee.Id
+								where (feeConfig.Is_Deleted == null || feeConfig.Is_Deleted == false) && stu.Student_Id == nStudent_Id && feeConfig.Academic_Year == nAcademicYear 
+								&& feeConfig.Frequency == nFrequency
+								select new 
+								{
+									Name = fee.Name,
+									Amount = feeConfig.Amount,
+									Total = feeConfig.Total
+
+
+									// Total = fc.Total
+								}).ToList().Select(x => new FeeConfiguration_ViewModel()
+								{
+									Name = x.Name,
+									Amount = x.Amount,
+									Total = x.Total
+								}).ToList();
+				
+
+				
+			}
+			return Json(feeConfigList.ToArray(), JsonRequestBehavior.AllowGet);
+		}
+			#endregion
 
 
 	}
