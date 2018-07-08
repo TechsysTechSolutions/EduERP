@@ -12,7 +12,7 @@ namespace Techsys_School_ERP.Model
 
 		[Key]
 		[DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
-		public int Id { get; set; }
+		public long Id { get; set; }
 
 		public long Student_Id { get; set; }
 
@@ -38,7 +38,7 @@ namespace Techsys_School_ERP.Model
 
 		public DateTime? Updated_On { get; set; }
 
-		public int Updated_By { get; set; }
+		public int? Updated_By { get; set; }
 
 
 	}

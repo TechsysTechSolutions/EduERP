@@ -152,8 +152,8 @@ font-weight: 500;
 						}
 						else {
 							$(this).css({
-								"border": "",
-								"background": ""
+								"border": "1px solid #ddd",
+								"background": "white"
 							});
 						}
 					
@@ -226,14 +226,31 @@ font-weight: 500;
 				if ($.trim($(this).val()) == '') {
 					isValid = false;
 					$(this).css({
-						"border": "1px #ddd ",
-						"background": "white"
+						"border": "1px solid red",
+						"background": "#FFCECE"
 					});
 				}
 				else {
 					$(this).css({
-						"border": "",
-						"background": ""
+						"border": "1px solid #ddd",
+						"background": "white"
+					});
+				}
+			});
+
+			$('input[type="datetime"]').on('input', function () {
+
+				if ($.trim($(this).val()) == '') {
+					isValid = false;
+					$(this).css({
+						"border": "1px solid red",
+						"background": "#FFCECE"
+					});
+				}
+				else {
+					$(this).css({
+						"border": "1px solid #ddd",
+						"background": "white"
 					});
 				}
 			});
@@ -485,7 +502,7 @@ font-weight: 500;
 											<div class="col-sm-2 col-md-2">
 												@Html.LabelFor(model => model.Enrollment_Date, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
 												@*<p>Date: <input type="text" id="datepicker"></p>*@
-												@Html.EditorFor(model => model.Enrollment_Date, new { htmlAttributes = new { @class = "form-control", @placeholder = "", @id = "datepicker", @type = "text" } })
+												@Html.EditorFor(model => model.Enrollment_Date, new { htmlAttributes = new { @class = "form-control", @placeholder = "", @id = "datepicker" } })
 												@Html.ValidationMessageFor(model => model.Enrollment_Date)
 												@*@Html.EditorFor(model => model.Enrollment_Date, new { htmlAttributes = new { @class = "form-control date", @placeholder = "" } })*@
 											</div>

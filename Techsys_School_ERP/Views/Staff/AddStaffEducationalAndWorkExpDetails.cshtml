@@ -32,6 +32,8 @@
 	<script type="text/javascript" src="~/Content/assets/js/pages/form_select2.js"></script>
 	<!-- /theme JS files -->
 
+	<script src="~/Scripts/bootstrap.min.js"></script>
+	<script src="~/Scripts/bootstrap-multiselect.js"></script>
 
 	<script type="text/javascript">
 		// Select with search
@@ -39,7 +41,7 @@
 
 		$(document).ready(function () {
 
-
+			//AutoComplete Textbox Population
 			$('#institutionSelect').select2({
 				minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
 				placeholder: "Select items from List",
@@ -100,96 +102,68 @@
 				},
 			});
 
-
-
-
-			$.ajax({
-				url: '/Staff/GetStaffEducationalDetailsOnPageLoad/',
-				type: 'POST',
-				contentType: 'application/json; charset=utf-8',
-				cache: false,
-				data: {},
-				dataType: "json",
-				success: function (data) {
-					populateStaffEducationalDetailsInGrid(data);
+			$('#schoolSelect').select2({
+		
+				minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
+				placeholder: "Select School",
+				ajax: {
+					url: '/Staff/GetSchoolList',
+					data: function (params) {
+						return {
+							q: params.term// search term
+						};
+					},
+					processResults: function (data) {
+						
+						return {
+							results: data.items
+						};
 					}
+				},
 			});
 
 
 
-
-			function populateStaffEducationalDetailsInGrid(data)
-			{
-				debugger
-				$("#tblStaffEducationalDetails").find("tr:gt(0)").remove();
-				if (data.items.length == 0) {
-
-					var rows = "<tr>" +
-						"<td class='' colspan=7 style=\"text-align:center;\" >" + "No Record to Display" + "</td>" +
-							"</tr>";
-
-					$('#tblStaffEducationalDetails tbody').append(rows);
-				}
-				else {
-					for (i = 0 ; i < data.items.length ; i++) {
+			
 
 
-						var rows = "<tr>" +
-							"<td class='Id' >" + data.items[i].Id + "</td>" +
-							"<td class=''>" + data.items[i].Name + "</td>" +
-							"<td class=''>" + data.items[i].From_Year + "</td>" +
-							"<td class=''>" + data.items[i].To_Year + "</td>" +
-							"<td class=''>" + data.items[i].Leaving_Reason + "</td>" +
-							"<td class=''>" + data.items[i].Comments + "</td>" +
-							"<td class=''> <div><button class='deleteRow form-control btn-warning' style=\"width:75%;\" >DELETE</button></div> </td>" +
-							"</tr>";
+			
+			//Delete Button Click 
 
-
-						$('#tblStaffEducationalDetails tbody').append(rows);
-						$('#searchselect').val(null).trigger("change");
-						$(".Id").hide();
-						$("#txtComments").val(""),
-						$("#txtFromYear").val(""),
-						$("#txtToYear").val(""),
-						$("#txtLeavingReason").val("")
-					}
-				}
-			}
-
-			$('#tblStudentPrevSchool').on('click', '.deleteRow', function (e) {
-				//debugger
+			$('#tblStaffEducationalDetails').on('click', '.deleteRow', function (e) {
+				
 				e.preventDefault();
 				var id = $(this).closest('tr')[0].cells['0'].textContent
 
 				$.ajax({
-					url: '/Student/DeleteStudentPrevSchoolDetail/',
+					url: '/Staff/DeleteStaffEducationDetail/',
 					type: 'POST',
 					contentType: 'application/json; charset=utf-8',
 					cache: false,
 					data: '{"id":' + id + '}',
 					dataType: "json",
 					success: function (data) {
-						populatePrevSchoolDetailsInGrid(data);
+						populateStaffEducationalDetailsInGrid(data);
 
 
 					}
 				});
 			});
 
-			$('#tblStudentSiblingDetail').on('click', '.deleteRow', function (e) {
-				debugger
+			$('#tblStaffWorkExpDetail').on('click', '.deleteRow', function (e) {
+			
 				e.preventDefault();
 				var id = $(this).closest('tr')[0].cells['0'].textContent
 
 				$.ajax({
-					url: '/Student/DeleteStudentSiblingDetail/',
+					url: '/Staff/DeleteStaffWorkExpDetail/',
 					type: 'POST',
 					contentType: 'application/json; charset=utf-8',
 					cache: false,
 					data: '{"id":' + id + '}',
 					dataType: "json",
 					success: function (data) {
-						populateStudentSiblingDetailInGrid(data);
+						populateStaffWorkExpDetailsInGrid(data);
 
 
 					}
@@ -217,8 +191,26 @@
 				});
 			}
 
+			function getStaffWorkExpDetail(Staff_Exp_Details) {
+
+				$("#tblStaffWorkExpDetail").find("tr:gt(0)").remove();
+				$.ajax({
+					url: '/Staff/AddStaffWorkExpDetail/',
+					type: 'POST',
+					contentType: 'application/json; charset=utf-8',
+					cache: false,
+					//data: "{'Staff_Exp_Details':'" + JSON.stringify(Staff_Exp_Details) + "','Subject_Ids':'" + $('#subjectList').val() + "'}",
+					data: Staff_Exp_Details,
+					dataType: "json",
+					success: function (data) {
+
+						populateStaffWorkExpDetailsInGrid(data);
+					}
+				});
+			}
+
 			function populateStaffEducationalDetailsInGrid(data) {
-				debugger
+		
 
 				$("#tblStaffEducationalDetails").find("tr:gt(0)").remove();
 				if (data.items.length == 0) {
@@ -238,8 +230,6 @@
 							"<td class=''>" + data.items[i].Qualification + " - " + data.items[i].Specialization + "</td>" +
 							"<td class=''>" + data.items[i].Institution + "</td>" +
 							"<td class=''>" + data.items[i].Year_Of_Passing + "</td>" +
-							"<td class=''>" + "" + "</td>" +
-							"<td class=''>" + "" + "</td>" +
 							"<td class=''> <div><button class='deleteRow form-control btn-warning' style=\"width:75%;\" >DELETE</button></div> </td>" +
 							"</tr>";
 
@@ -247,10 +237,14 @@
 						$('#tblStaffEducationalDetails tbody').append(rows);
 						//$('#searchselect').val(null).trigger("change");
 						$(".Id").hide();
-						//$("#txtComments").val(""),
-						//$("#txtFromYear").val(""),
-						//$("#txtToYear").val(""),
-						//$("#txtLeavingReason").val("")
+						//$('#schoolSelect').val(null).trigger("change");
+						//$(".Id").hide();
+						$('#qualificationSelect').val(null).trigger("change");
+						$("#specializationSelect").val(null).trigger("change");
+						$("#institutionSelect").val(null).trigger("change");
+						$("#txtFromYear").val("");
+						//$('#txtSubjectName').val("");
+						//$("#txtYear").val("");
 					}
 				}
 			}
@@ -264,7 +258,7 @@
 						Qualification_Id: $('#qualificationSelect').val(),
 						Specialization_Id: $("#specializationSelect").val(),
 						Institution_Id: $("#institutionSelect").val(),
-						Year_Of_Passing: "",
+						Year_Of_Passing: $("#txtFromYear").val(),
 						Medium_Of_Instruction: "",
 						Academic_Year: ""
 
@@ -275,236 +269,263 @@
 
 			});
 
+			$("#btnSaveAndContinue").click(function () {
+				window.location.href = "/Staff/AddStaffSalaryDetail";
+			});
+
+			$("#btnStaffWorkExpAdd").click(function () {
+			
+				var Staff_WorkExp_Detail =
+					{
+						Staff_Id: "",
+						School_Id: $('#schoolSelect').val(),
+						Designation_Id: $("#designationList").find(":selected").val(),
+						Subject_Id: $('#txtSubjectName').val(),
+						From_Year: $("#txtYear").val(),
+						Academic_Year: ""
+
+					};
+
+				var staffWorkExpDetail = JSON.stringify(Staff_WorkExp_Detail);
+				getStaffWorkExpDetail(staffWorkExpDetail);
+
+			});		
+
+
 			$.ajax({
-				url: '/Student/GetStudentSiblingDetailsOnPageLoad/',
+				url: '/Staff/GetStaffWorkExpOnPageLoad/',
 				type: 'POST',
 				contentType: 'application/json; charset=utf-8',
 				cache: false,
 				data: {},
 				dataType: "json",
 				success: function (data) {
-
-
-					populateStudentSiblingDetailInGrid(data);
+					populateStaffWorkExpDetailsInGrid(data);					
 				}
 			});
 
-			function populateStudentSiblingDetailInGrid(data) {
+			$.ajax({
+				url: '/Staff/GetStaffEducationalDetailsOnPageLoad/',
+				type: 'POST',
+				contentType: 'application/json; charset=utf-8',
+				cache: false,
+				data: {},
+				dataType: "json",
+				success: function (data) {
+					populateStaffEducationalDetailsInGrid(data);
+				}
+			});
 
-				$("#tblStudentSiblingDetail").find("tr:gt(0)").remove();
+			function populateStaffWorkExpDetailsInGrid(data) {
+				
+			
+				$("#tblStaffWorkExpDetail").find("tr:gt(0)").remove();
 				if (data.items.length == 0) {
 
 					var rows = "<tr>" +
-						"<td class='' colspan=7 style=\"text-align:center;\" >" + "No Record to Display" + "</td>" +
+						"<td class='' colspan=5 style=\"text-align:center;\" >" + "No Record to Display" + "</td>" +
 							"</tr>";
 
-					$('#tblStudentSiblingDetail tbody').append(rows);
+					$('#tblStaffWorkExpDetail tbody').append(rows);
 				}
 				else {
 					for (i = 0 ; i < data.items.length ; i++) {
 
 						var rows = "<tr>" +
-							"<td class='Id' >" +  data.items[i].Sibling_Detail_Id + "</td>" +
-							"<td class=''>" + data.items[i].Student_Name +  "</td>" +
-							"<td class=''>" + data.items[i].Class + " - " + data.items[i].Section  + "</td>" +
-							"<td class=''>" + data.items[i].Roll_No + "</td>" +
-							////"<td class=''>" + data.items[i].Leaving_Reason + "</td>" +
-							"<td class=''>" + "" + "</td>" +
-							"<td class=''> <div><button class='deleteRow form-control btn-warning' style=\"width:75%;\"  >DELETE</button></div> </td>" +
+							"<td class='Id' >" + data.items[i].Id + "</td>" +
+							"<td class='' style='width:75%;'>" + data.items[i].Institution + "</td>" +
+							"<td class=''>" + data.items[i].Designation + "</td>" +
+							"<td class=''>" + data.items[i].Subject + "</td>" +
+							"<td class=''>" + data.items[i].Year_Of_Passing + "</td>" +
+							"<td class=''> <div><button class='deleteRow form-control btn-warning' style=\"width:100%;\"  >DELETE</button></div> </td>" +
 							"</tr>";
 
 
-						$('#tblStudentSiblingDetail tbody').append(rows);
+						$('#tblStaffWorkExpDetail tbody').append(rows);
 						$(".Id").hide();
-						$('#studentsearchselect').val(""),
-						$('#studentsearchselect').val(null).trigger("change");
+						//$('#studentsearchselect').val(""),
+						//$('#studentsearchselect').val(null).trigger("change");
+						$('#schoolSelect').val(null).trigger("change");
+						$(".Id").hide();
+						$("#designationList").val(null).trigger("change");
+						$('#txtSubjectName').val("");
+						$("#txtYear").val("");
+						
 
 					}
 				}
 			}
 
-			$("#btnSiblingAdd").click(function () {
-
-			//	debugger
-
-				var Student_Sibling_Detail =
-					{
-						Student_Id: "1",
-						Sibling_Student_Id: $('#studentsearchselect').val()
-
-					};
-
-				var stuSiblingDetail = JSON.stringify(Student_Sibling_Detail);
-
-				$.ajax({
-					url: '/Student/AddStudentSiblingDetails/',
-					type: 'POST',
-					contentType: 'application/json; charset=utf-8',
-					cache: false,
-					data: stuSiblingDetail,
-					dataType: "json",
-					success: function (data) {
-						populateStudentSiblingDetailInGrid(data);
-					}
-				});
-
-			});
-
-
-
+		
 		});
 	</script>
 </head>
 <body>
-	<section class="content">
-		<div class="content">
+	<div class="page-container" style="height:100%;">
+		<div class="page-content">
 			<div class="container">
-				<div class="row">
-						<div class="panel panel-primary panel-bordered container-fluid" style="min-height:700px;">
-						<div class="panel-heading bg-indigo-400 container-fluid">
-							<h6 class="panel-title ">STAFF EDUCATIONAL & PREV WORK EXPERIENCE DETAIL</h6>
-							<div class="heading-elements ">
-								<ul class="icons-list">
-									<li><a data-action="collapse"></a></li>
-									<li><a data-action="reload"></a></li>
-									<li><a data-action="close"></a></li>
-								</ul>
-							</div>
+				@*<div class="row">*@
+					@*<div class="col-sm-6 col-md-4">col-sm-6 col-md-4</div>
+						<div class="col-sm-6 col-md-4">col-sm-6 col-md-4</div>
+						<div class="col-sm-6 col-md-4">col-sm-6 col-md-4</div>*@
+				<div class="panel panel-primary panel-bordered" style="width:100%;">
+					<div class="panel-heading bg-indigo-400 container-fluid">
+						<h6 class="panel-title ">STAFF EDUCATION & WORK EXP DETAIL</h6>
+						<div class="heading-elements ">
+							<ul class="icons-list">
+								<li><a data-action="collapse"></a></li>
+								<li><a data-action="reload"></a></li>
+								<li><a data-action="close"></a></li>
+							</ul>
 						</div>
-						<fieldset>
-							<legend class="text-semibold">
-								<i class="icon-reading position-left" style="color:green;font-size:larger; "></i>
-								Student Prev School details & SIBLING DETAILS
-							</legend>
+					</div>
+					<fieldset>
+						<legend class="text-semibold">
+							<i class="icon-reading position-left" style="color:green;font-size:larger; "></i>
+							STAFF EDUCATIONAL QUALIFICATION
+						</legend>
 
 
 
-							<div class="col-md-12 col-sm-12" style="min-height:100px;overflow-y:auto">
-								<div class="panel panel-flat">
+						<div class="col-md-12 col-sm-12" style="min-height:100px;overflow-y:auto">
+							<div class="panel panel-flat">
+								<div class="panel-body">
 
-									<div class="panel-body">
-
-
-
-										<div class="row">
-											<div class="content-group-lg col-md-3 col-sm-3">
-												<label style="font-weight:700; ">INSTITUTION</label>
-												<select data-placeholder="Select Instituion" class="select-search col-sm-3 col-md-3" id="institutionSelect"></select>
-											</div>
-											<div class="col-md-4 col-sm-4">
-												<label style="font-weight:700; ">QUALIFICATION</label>
-												<select data-placeholder="Select Qualification" class="select-search col-sm-3 col-md-3" id="qualificationSelect"></select>
-												@*<input type="text" id="txtQualification" class="form-control" />*@
-											</div>
-											<div class="col-md-1 col-sm-1">
-												<label style="font-weight:700; ">FROM</label>
-												<input type="text" id="txtFromYear" class="form-control" style="width:100%;" />
-											</div>
-											<div class="col-md-1 col-sm-1">
-												<label style="font-weight:700; ">TO YEAR</label>
-												<input type="text" id="txtToYear" class="form-control" style="width:100%;" />
-											</div>	
-											
-											<div class="col-md-2 col-sm-2">
-												<label style="font-weight:700; ">SPECIALIZATION</label>
-												<select data-placeholder="Select Specialization" class="select-search col-sm-3 col-md-3" id="specializationSelect"></select>
-												@*<input type="text" id="txtSpecialization" class="form-control" style="width:75%;" />*@
-											</div>															
-
-											@*<div class="col-md-2 col-sm-2">
-												<label style="font-weight:700; ">COMMENTS</label>
-												<input type="text" id="txtComments" class="form-control" />
-											</div>*@
-
-											<div class="col-md-1 col-sm-1">
-												<input type="button" id="btnAdd" value="ADD" class="btn btn-primary btn-success" style="margin-top:35%;" />
-											</div>
-
-
+									<div class="row">
+										<div class="content-group-lg col-md-4 col-sm-4">
+											<label style="font-weight:700; ">INSTITUTION</label>
+											<select data-placeholder="Select Instituion" class="select-search col-sm-4 col-md-4" id="institutionSelect"></select>
 										</div>
-										<div style="overflow-y:auto;height:150px;min-height:100px;" class="row">
-											<table class="table  table-striped table-bordered table-responsive col-md-12 col-sm-12" id="tblStaffEducationalDetails">
-												<thead class="bg-primary-400">
-													<tr>
-														<th>School Name</th>
-														<th>From Year</th>
-														<th>To Year</th>
-														<th>Leaving Reason</th>
-														<th>Comments</th>
-														<th>Action</th>
-													</tr>
-												</thead>
-												<tbody></tbody>
-											</table>
-											<div id="noRecords" style="display:none"> There are no records </div>
+										<div class="col-md-4 col-sm-4">
+											<label style="font-weight:700; ">QUALIFICATION</label>
+											<select data-placeholder="Select Qualification" class="select-search col-sm-3 col-md-3" id="qualificationSelect"></select>
+											@*<input type="text" id="txtQualification" class="form-control" />*@
 										</div>
+										<div class="col-md-1 col-sm-1">
+											<label style="font-weight:700; ">YEAR</label>
+											<input type="text" id="txtFromYear" class="form-control" style="width:100%;" />
+										</div>
+										@*<div class="col-md-1 col-sm-1">
+									<label style="font-weight:700; ">TO YEAR</label>
+									<input type="text" id="txtToYear" class="form-control" style="width:100%;" />
+								</div>*@
+
+										<div class="col-md-2 col-sm-2">
+											<label style="font-weight:700; ">SPECIALIZATION</label>
+											<select data-placeholder="Select Specialization" class="select-search col-sm-3 col-md-3" id="specializationSelect"></select>
+											@*<input type="text" id="txtSpecialization" class="form-control" style="width:75%;" />*@
+										</div>
+										<div class="col-md-1 col-sm-1">
+											<input type="button" id="btnAdd" value="ADD" class="btn btn-primary btn-success" style="margin-top:35%;" />
+										</div>
+
+
 									</div>
-								</div>
-							</div>
-
-
-						</fieldset>
-						<fieldset>
-							<legend class="text-semibold">
-								<i class="icon-reading position-left" style="color:green;font-size:larger; "></i>
-								Student sibling details
-							</legend>
-
-
-
-							<div class="col-md-12 col-sm-12">
-								<div class="panel panel-flat">
-
-									<div class="panel-body">
-
-
-										<div class="row">
-											<div class="content-group-lg col-md-4 col-sm-4">
-												<label style="font-weight:700; ">STUDENT NAME</label>
-												<select data-placeholder="Select School" class="select-search col-sm-3 col-md-3" id="schoolSelect"></select>
-											</div>
-
-											<div class="col-md-4 col-sm-4 col-sm-offset-1">
-												<label style="font-weight:700; ">SIBLING RELATION</label>
-												<input type="text" id="txtSiblingRelation" class="form-control" />
-											</div>
-
-											<div class="col-md-1 col-sm-1 ">
-												<label style="font-weight:700; margin-top:10px;"></label>
-												<input type="button" id="btnSiblingAdd" value="ADD" class="btn btn-primary btn-success" style="margin-top:35%;" />
-											</div>
-
-
-										</div>
-										<div style="overflow-y:auto;height:150px;min-height:100px;" class="row">
-											<table class="table  table-striped table-bordered table-responsive col-md-12 col-sm-12" id="tblStudentSiblingDetail">
-												<thead class="bg-primary-400">
-													<tr>
-														<th>Student Name</th>
-														<th>Class & Section</th>
-														<th>Roll No</th>
-														<th>Sibling Relation</th>
-														<th>Action</th>
-													</tr>
-												</thead>
-												<tbody></tbody>
-											</table>
-
-										</div>
+									<div style="overflow-y:auto;height:150px;min-height:100px;" class="row">
+										<table class="table  table-striped table-bordered table-responsive col-md-12 col-sm-12" id="tblStaffEducationalDetails">
+											<thead class="bg-primary-400">
+												<tr>
+													<th>Qualification</th>
+													<th>Institution</th>
+													<th>Passed Year</th>
+													<th>Action</th>
+												</tr>
+											</thead>
+											<tbody></tbody>
+										</table>
 										<div id="noRecords" style="display:none"> There are no records </div>
 									</div>
 								</div>
 							</div>
+						</div>
 
 
-						</fieldset>
-					</div>
+					</fieldset>
+					<fieldset>
+						@*<legend class="text-semibold">
+					<i class="icon-reading position-left" style="color:green;font-size:larger; "></i>
+					Staff Work Experience
+				</legend>*@
+						<div class="col-md-12 col-sm-12">
+							<div class="panel panel-flat">
+
+								<div class="panel-body">
+
+
+									<div class="row form-group">
+										<div class="col-md-4 col-sm-4">
+											<label style="font-weight:700; ">SCHOOL/INSTITUTION</label>
+											<select data-placeholder="Select School" class="select-search col-sm-3 col-md-3 form-control" id="schoolSelect"></select>
+										</div>
+
+										<div class="col-md-2 col-sm-2">
+											<label style="font-weight:700; ">DESIGNATION</label>
+											<select id="designationList" required name="subjectListName" class="form-control">
+												@if (ViewBag.designationList != null)
+												{
+													<option value='0'>-- Select Designation --</option>		foreach (var item in ViewBag.designationList)
+													{
+														if (item.Text != null)
+														{
+
+															<option value="@item.Value">
+																&nbsp;&nbsp; @item.Text
+															</option>		}
+													}
+												}
+											</select>
+										</div>
+										@*<div class="col-md-3 col-sm-3" style="margin-top:28px;">*@
+										<div class="col-md-3 col-sm-3">
+											<label style="font-weight:700; ">SUBJECT</label>
+											<input type="text" id="txtSubjectName" class="form-control" />
+										</div>
+										<div class="col-md-2 col-sm-2">
+											<label style="font-weight:700; ">YEAR</label>
+											<input type="text" id="txtYear" class="form-control" />
+										</div>
+
+										<div class="col-md-1 col-sm-1 ">
+											<label style="font-weight:700; margin-top:10px;"></label>
+											<input type="button" id="btnStaffWorkExpAdd" value="ADD" class="btn btn-primary btn-success" style="margin-top:35%;" />
+										</div>
+
+
+									</div>
+									<div style="overflow-y:auto;height:150px;min-height:100px;" class="row">
+										<table class="table  table-striped table-bordered table-responsive col-md-12 col-sm-12" id="tblStaffWorkExpDetail">
+											<thead class="bg-primary-400">
+												<tr>
+													<th style="width:75%;">School/Institution</th>
+													<th>SDesignation</th>
+													<th>Subjects Handled</th>
+													<th>Year</th>
+													<th>Action</th>
+												</tr>
+											</thead>
+											<tbody></tbody>
+										</table>
+
+									</div>
+									<div id="noRecords" style="display:none"> There are no records </div>
+									<div class="row">
+										<input type="button" id="btnSaveAndContinue" value="SAVE AND CONTINUE" class="col-sm-2 col-md-2 col-sm-offset-10 col-sm-offset-10 btn btn-success" />
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+					</fieldset>
 				</div>
+
+				@*</div>*@
 			</div>
 		</div>
-	</section>
+		</div>
 
 </body>
+
 </html>
 
 

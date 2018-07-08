@@ -11,9 +11,9 @@ namespace Techsys_School_ERP.Model
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long StaffDetail_Id { get; set; }
+        public long Id { get; set; }
 
-        public int Staff_Id { get; set; }
+        public long Staff_Id { get; set; }
 
         public int? Qualification_Id { get; set; }
 

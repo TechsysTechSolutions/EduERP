@@ -77,6 +77,8 @@
 
 
 			var total;
+			//$("#btnPayFees").attr('readonly', 'true');
+
 			$('#studentsearchselect').select2({
 				minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
 				placeholder: "Select items from List",
@@ -90,10 +92,60 @@
 					processResults: function (data) {
 						return {
 							results: data.items
+							
 						};
 					}
 				},
 			});
+
+
+			$.ajax({
+				url: '/Fee/GetFeesFrequencyForStudent/',
+				type: 'POST',
+				contentType: 'application/json; charset=utf-8',
+				cache: false,
+				//data: "{'Student_Id':'" + $('#studentsearchselect').val() + "'}",
+				data: "{'Student_Id':'" + 85 + "'}",
+				dataType: "json",
+				success: function (data) {
+
+					// first remove the current options if any
+					$('#FreqList').find('option').remove();
+
+					$('#FreqList').append($('<option></option>').val(0).html("-- Select Frequency --"));
+					for (var i = 0; i < data.length; i++) {
+
+						//$('#SectionList').append($('<option></option>').val(data[i].Id).html(data[i].Name))
+
+						var opt = new Option(data[i].Name, data[i].Id);
+						$('#FreqList').append(opt);
+
+					}
+				}
+			});
+
+			$('#studentsearchselect').keyup(function () {
+			
+				PopulateFeeFrequencyForStudent();
+			});
+
+			function PopulateFeeFrequencyForStudent() {
+				$('#studentsearchselect').val()
+				
+				$.ajax({
+					url: '/Fee/GetFeesFrequencyForStudent/',
+					type: 'POST',
+					contentType: 'application/json; charset=utf-8',
+					cache: false,
+					data: "{'Student_Id':'" + $('#studentsearchselect').val()+ "'}",
+					dataType: "json",
+					success: function (data) {
+
+						populateFeeStructureInGrid(data);
+
+					}
+				});
+			}
 				
 
 			$('#searchselect').val('Select items from List').trigger("change");
@@ -108,10 +160,10 @@
 
 
 			function populateFeeStructureInGrid(data) {
-				debugger
+			
 				$("#tblFeeStructure").find("tr:gt(0)").remove();
 				if (data.length == 0) {
-					debugger
+					
 
 					var rows = "<tr>" +
 						"<td class='' colspan=2 style=\"text-align:center;\" >" + "No Record to Display" + "</td>" +
@@ -131,12 +183,14 @@
 							"</tr>";
 						total = data[i].Total
 
-						$('#tblFeeStructure tbody').append(rows);
-						//$(".Id").hide();
-						//$('#studentsearchselect').val(""),
-						//$('#txtSiblingRelation').val(""),
-						//$('#studentsearchselect').val(null).trigger("change");
+						if (i == 0) {
 
+						
+							$("#Next_Due_Date").val(data[0].Next_Due_Date);
+						}
+
+						$('#tblFeeStructure tbody').append(rows);
+						
 					}
 
 					var rows = "<tr>" +
@@ -148,6 +202,7 @@
 
 
 					$('#tblFeeStructure tbody').append(rows);
+
 				}
 			}
 
@@ -163,9 +218,15 @@
 					success: function (data) {
 
 						populateFeeStructureInGrid(data);
-
+						//$("#btnPayFees").attribute('readonly', 'false');
 					}
 				});
+
+			});
+
+			$("#btnNext").click(function () {
+
+				window.location.href = "/Fee/FeePayment";
 
 			});
 
@@ -179,7 +240,7 @@
 						Frequency: $("#FreqList").find(":selected").val(),
 						Academic_Year: $("#Academic_Year").val(),
 						Late_fees: $("#Late_fees").val(),
-						Next_due_date: ($("#Next_due_date").val()),
+						Next_due_date: ($("#Next_Due_Date").val()),
 						Collected_by: $("#Collected_by").val(),
 						Total_Amount : total
 					};
@@ -193,8 +254,16 @@
 					data: JSON.stringify(fee_Payment),
 					dataType: "json",
 					success: function (data) {
+						if (data == "OK") {
+							alert("Fees Successfully Paid For the Student");
+							window.location.href = "/Fee/DownloadPDF?Id=" + $('#studentsearchselect').val() + "&Recipt_no=" + $("#Recipt_no").val();
+						}
+						else if (data == "Already Paid") {
 
-						//populateFeeStructureInGrid(data);
+							alert("Fees Already Paid For the Student");
+						}
+
+						
 
 					}
 				});
@@ -291,7 +360,7 @@
 								<div class="col-md-1 col-sm-1">
 								</div>*@
 
-								<div style="overflow-y:auto;height:300px;min-height:300px ;" class="row col-sm-8 col-md-8 col-md-offset-2">
+								<div style="overflow-y:auto;height:300px;min-height:300px ;" class="row col-sm-10 col-md-10 col-md-offset-1">
 									@*<div style="height:450px;min-height:700px;overflow-y:auto;" class="col-sm-4 col-md-4 col-md-offset-2">*@
 									<table class="table  table-striped table-bordered table-responsive" id="tblFeeStructure">
 										<thead class="bg-primary-400">
@@ -313,22 +382,25 @@
 							<div class="row form-group">
 								
 								<div class="col-md-2 col-sm-2 col-sm-offset-1 col-md-offset-1">
-									@Html.EditorFor(model => model.Collected_by, new { htmlAttributes = new { @class = "form-control", @placeholder = "Collected By"} })
+									<input type="text" id="Collected_by" class="form-control" />
+									@*@Html.EditorFor(model => model.Collected_by, new { htmlAttributes = new { @class = "form-control", @placeholder = "Collected By"} })*@
 								</div>
 								<div class="col-md-1 col-sm-1">
 									<label style="font-weight:700;margin-top:10px; ">LATE FEES</label>
 								</div>
 								<div class="col-md-2 col-sm-2">
-									@Html.EditorFor(model => model.Late_fees, new { htmlAttributes = new { @class = "form-control", @placeholder = "", @readonly = "readonly" } })
+									@Html.EditorFor(model => model.Late_fees, new { htmlAttributes = new { @class = "form-control", @placeholder = ""} })
 								</div>
 								<div class="col-md-1 col-sm-1">
 									<label style="font-weight:700; margin-top:10px;">NEXT DUE</label>
 								</div>
 								<div class="col-md-2 col-sm-2">
-									@Html.EditorFor(model => model.Next_due_date, new { htmlAttributes = new { @class = "form-control", @placeholder = "Collected By", @readonly = "readonly" } })
+									<input type="text" id="Next_Due_Date" class="form-control" />
+									@*@Html.EditorFor(model => model.Next_due_date, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })*@
 								</div>
-								<div class="col-md-2 col-sm-2 col-md-offset-1 col-sm-offset-1">
-									<input type="button" id="btnPayFees" class="btn btn-primary bg-green-400" value="PAY FEES" />
+								<div class="col-md-2 col-sm-2 col-md-offset-0 col-sm-offset-0">
+									<input type="button" id="btnPayFees" class="btn btn-primary bg-green-400" value="PAY FEES"  style="margin-left:30px;" />
+									<input type="button" id="btnNext" class="btn btn-primary bg-green-400" value=">>" />
 								</div>
 								</div>
 </fieldset>

@@ -1,17 +1,37 @@
-﻿using System;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Web;
+//using System.Web.Mvc;
+//using System.Threading;
+//using System.Threading.Tasks;
+//using Techsys_School_ERP.DBAccess;
+//using Techsys_School_ERP.Model;
+//using System.Web.Security;
+//using System.Data.Entity;
+//using Techsys_School_ERP.Model.ViewModel;
+//using System.Web.Script.Serialization;
+//using iTextSharp.text;
+//using System.IO;
+//using iTextSharp.text.pdf;
+
+
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 using Techsys_School_ERP.DBAccess;
 using Techsys_School_ERP.Model;
-using System.Web.Security;
-using System.Data.Entity;
 using Techsys_School_ERP.Model.ViewModel;
-using System.Web.Script.Serialization;
-
 
 namespace Techsys_School_ERP.Controllers
 {
@@ -151,11 +171,11 @@ namespace Techsys_School_ERP.Controllers
 		}
 
 		[HttpPost]
-		public JsonResult GetFeeConfiguration(string Class_Id , string Academic_Year)
+		public JsonResult GetFeeConfiguration(string Class_Id, string Academic_Year)
 		{
 			List<FeeConfiguration_ViewModel> feeConfiguration_ViewModel = new List<Model.ViewModel.FeeConfiguration_ViewModel>();
 			FeeConfiguration_ViewModel emptyFeeConfiguration_ViewModel = new FeeConfiguration_ViewModel();
-			List< FeeConfiguration_ViewModel> editModefeeConfiguration_ViewModel = new List<Model.ViewModel.FeeConfiguration_ViewModel>();
+			List<FeeConfiguration_ViewModel> editModefeeConfiguration_ViewModel = new List<Model.ViewModel.FeeConfiguration_ViewModel>();
 			List<FeeConfiguration_ViewModel> newlyAddedfeeConfiguration_ViewModel = new List<Model.ViewModel.FeeConfiguration_ViewModel>();
 			ViewData["Class_Id"] = Class_Id;
 			long nAcademicYear = Convert.ToInt64(Academic_Year);
@@ -199,7 +219,7 @@ namespace Techsys_School_ERP.Controllers
 				{
 					feeConfiguration_ViewModel = (from usr in dbcontext.Users
 												  join fee in dbcontext.Fee on usr.Id equals fee.Created_By
-												   join fc in dbcontext.Fee_Configuration on fee.Id equals fc.Fee_Id
+												  join fc in dbcontext.Fee_Configuration on fee.Id equals fc.Fee_Id
 												  where (fc.Is_Deleted == null || fee.Is_Deleted == false) && fc.Class_Id == nClass_Id && fc.Academic_Year == nAcademicYear
 												  select new FeeConfiguration_ViewModel
 												  {
@@ -209,15 +229,15 @@ namespace Techsys_School_ERP.Controllers
 													  User_Id = usr.User_Id,
 													  Frequency = fc.Frequency,
 													  Amount = fc.Amount
-													 // Total = fc.Total
+													  // Total = fc.Total
 												  }).ToList();
 
 					//If new fee is added in "Fee" table but fees structure is already configured for the section
-					var newFeeComponent = (from fc in dbcontext.Fee_Configuration where fc.Class_Id == nClass_Id && fc.Academic_Year == nAcademicYear  select fc.Fee_Id).Distinct().ToList();
+					var newFeeComponent = (from fc in dbcontext.Fee_Configuration where fc.Class_Id == nClass_Id && fc.Academic_Year == nAcademicYear select fc.Fee_Id).Distinct().ToList();
 
 
 					List<int> lstOtherFeeComponent = (from e in dbcontext.Fee
-								  select e.Id).Except(newFeeComponent).ToList();
+													  select e.Id).Except(newFeeComponent).ToList();
 
 
 					for (int i = 0; i < lstOtherFeeComponent.Count(); i++)
@@ -233,12 +253,12 @@ namespace Techsys_School_ERP.Controllers
 						newlyAddedFeeComponent.Yearly_Amount = null;
 
 						newlyAddedfeeConfiguration_ViewModel.Add(newlyAddedFeeComponent);
-						
+
 					}
 
 					int[] nFeeIdArr = feeConfiguration_ViewModel.Select(l => l.Id).Distinct().ToArray();
 					int[] nFreqArr = feeConfiguration_ViewModel.Select(l => l.Frequency).Distinct().ToArray();
-					
+
 					for (int nrecordLoopCount = 0; nrecordLoopCount < nFeeIdArr.Count(); nrecordLoopCount++)
 					{
 						FeeConfiguration_ViewModel oFeeConfiguration_ViewModel = new FeeConfiguration_ViewModel();
@@ -247,7 +267,7 @@ namespace Techsys_School_ERP.Controllers
 						temp_oFeeConfiguration_ViewModel.Id = oFeeConfiguration_ViewModel.Id;
 						temp_oFeeConfiguration_ViewModel.Name = oFeeConfiguration_ViewModel.Name;
 						temp_oFeeConfiguration_ViewModel.Academic_Year = oFeeConfiguration_ViewModel.Academic_Year;
-					
+
 						for (int nfreqLoopCount = 1; nfreqLoopCount <= nFreqArr.Count(); nfreqLoopCount++)
 						{
 							if (nfreqLoopCount == 1)
@@ -266,7 +286,7 @@ namespace Techsys_School_ERP.Controllers
 							if (nfreqLoopCount == 3)
 							{
 								temp_oFeeConfiguration_ViewModel.Second_Term_Amount = feeConfiguration_ViewModel.Where(a => a.Id == nFeeIdArr[nrecordLoopCount] && a.Frequency == 3).ToList()[0].Amount;
-							//	emptyFeeConfiguration_ViewModel.Second_Term_Amount = feeConfiguration_ViewModel.Where(a => a.Id == nFeeIdArr[nrecordLoopCount] && a.Frequency == 3).ToList()[0].Total;
+								//	emptyFeeConfiguration_ViewModel.Second_Term_Amount = feeConfiguration_ViewModel.Where(a => a.Id == nFeeIdArr[nrecordLoopCount] && a.Frequency == 3).ToList()[0].Total;
 								continue;
 							}
 							else
@@ -279,7 +299,7 @@ namespace Techsys_School_ERP.Controllers
 
 					}
 
-					
+
 
 					feeConfiguration_ViewModel.Clear();
 					feeConfiguration_ViewModel.AddRange(editModefeeConfiguration_ViewModel);
@@ -293,7 +313,7 @@ namespace Techsys_School_ERP.Controllers
 					TempData.Keep("Class_Id");
 					feeConfiguration_ViewModel.Add(emptyFeeConfiguration_ViewModel);
 					feeConfiguration_ViewModel.Add(emptyFeeConfiguration_ViewModel);
-					
+
 
 
 				}
@@ -304,11 +324,11 @@ namespace Techsys_School_ERP.Controllers
 		}
 
 		[HttpPost]
-		public JsonResult SaveFeeConfiguration(List<string[]> myData , string Academic_Year )
+		public JsonResult SaveFeeConfiguration(List<string[]> myData, string Academic_Year)
 		{
 			Fee_Configuration newFeeConfig = new Fee_Configuration();
 			int nUser_Id;
-		
+
 			nFeeIdArr = (int[])TempData.Peek("FeeIdArr");
 
 			string sReturnText = string.Empty;
@@ -376,34 +396,34 @@ namespace Techsys_School_ERP.Controllers
 									}
 									else
 									{
-										
-											var feeConfigId = dbcontext.Fee_Configuration.Where(x => x.Fee_Id == newFeeConfig.Fee_Id && x.Class_Id == newFeeConfig.Class_Id && x.Academic_Year == newFeeConfig.Academic_Year && x.Frequency == newFeeConfig.Frequency && (x.Is_Deleted == false || x.Is_Deleted == null)).FirstOrDefault().Id;
 
-											Fee_Configuration feeConfigToBeUpdated = dbcontext.Fee_Configuration.Find(feeConfigId);
+										var feeConfigId = dbcontext.Fee_Configuration.Where(x => x.Fee_Id == newFeeConfig.Fee_Id && x.Class_Id == newFeeConfig.Class_Id && x.Academic_Year == newFeeConfig.Academic_Year && x.Frequency == newFeeConfig.Frequency && (x.Is_Deleted == false || x.Is_Deleted == null)).FirstOrDefault().Id;
 
-											feeConfigToBeUpdated.Fee_Id = newFeeConfig.Fee_Id;
-											feeConfigToBeUpdated.Class_Id = newFeeConfig.Class_Id;
-											feeConfigToBeUpdated.Frequency = newFeeConfig.Frequency;
-											feeConfigToBeUpdated.Amount = newFeeConfig.Amount;
-											feeConfigToBeUpdated.Academic_Year = newFeeConfig.Academic_Year;
-											feeConfigToBeUpdated.Total = newFeeConfig.Total;
-											feeConfigToBeUpdated.Is_Active = true;
+										Fee_Configuration feeConfigToBeUpdated = dbcontext.Fee_Configuration.Find(feeConfigId);
 
-											dbcontext.Entry(feeConfigToBeUpdated).State = EntityState.Modified;
-											dbcontext.SaveChanges();
-										
-											if (nCount - 3 == i && j == 3)
-											{
-												transaction.Commit();
-												sReturnText = "Updated";
-											}
-										
+										feeConfigToBeUpdated.Fee_Id = newFeeConfig.Fee_Id;
+										feeConfigToBeUpdated.Class_Id = newFeeConfig.Class_Id;
+										feeConfigToBeUpdated.Frequency = newFeeConfig.Frequency;
+										feeConfigToBeUpdated.Amount = newFeeConfig.Amount;
+										feeConfigToBeUpdated.Academic_Year = newFeeConfig.Academic_Year;
+										feeConfigToBeUpdated.Total = newFeeConfig.Total;
+										feeConfigToBeUpdated.Is_Active = true;
+
+										dbcontext.Entry(feeConfigToBeUpdated).State = EntityState.Modified;
+										dbcontext.SaveChanges();
+
+										if (nCount - 3 == i && j == 3)
+										{
+											transaction.Commit();
+											sReturnText = "Updated";
+										}
+
 									}
 
 								}
 
 							}
-							
+
 
 						}
 					}
@@ -415,7 +435,7 @@ namespace Techsys_School_ERP.Controllers
 				}
 				return Json(sReturnText, JsonRequestBehavior.AllowGet);
 			}
-			
+
 		}
 		#endregion
 
@@ -438,7 +458,7 @@ namespace Techsys_School_ERP.Controllers
 				else
 				{
 					nFeePaymentId = Convert.ToInt64(dbcontext.Fee_Payment.Max(x => x.Id) + 1);
-					feePayment.Recipt_no = Convert.ToString(GetAcademicYear()) + " - " + (nFeePaymentId + 1);
+					feePayment.Recipt_no = Convert.ToString(GetAcademicYear()) + " - " + (nFeePaymentId );
 
 					//TempData["Student_Id"] = nFeePaymentId;
 					//TempData.Keep("Student_Id");
@@ -454,6 +474,48 @@ namespace Techsys_School_ERP.Controllers
 			return Json(new { items = SearchAndGetStudentList(q) }, JsonRequestBehavior.AllowGet);
 		}
 
+		public void DownloadPDF(string Id, string Recipt_no)
+		{
+			try
+			{
+				string sFile_Name;
+				using (var dbcontext = new SchoolERPDBContext())
+				{
+
+					sFile_Name = (dbcontext.Fee_Payment.ToList().Where(x => x.Recipt_no == Recipt_no)).ToList()[0].File_Name;
+
+				}
+
+				string path = Server.MapPath("~/views//billing" + "//" + sFile_Name );
+
+				//severFilePath + "//" + "" + "_" + "FEE_RECIPT" + fee_Payment.Student_id + "_" + "" + "_Triplicate" + ".pdf"
+
+				System.IO.FileInfo file = new System.IO.FileInfo(path);
+				if (file.Exists)
+				{
+					Response.Clear();
+					Response.AddHeader("Content-Disposition", "attachment; filename=" + file.Name);
+					Response.AddHeader("Content-Length", file.Length.ToString());
+					Response.ContentType = "application/....";
+					Response.WriteFile(file.FullName);
+					Response.End();
+				}
+				else
+				{
+					Response.Write("This file does not exist.");
+				}
+			}
+
+
+
+			catch (Exception rt)
+			{
+				// Response.Write(rt.Message);
+			}
+
+		}
+
+
 		[HttpPost]
 		public JsonResult PayFeesForStudent(Fee_Payment fee_Payment)
 		{
@@ -464,6 +526,8 @@ namespace Techsys_School_ERP.Controllers
 			fee_Payment.Academic_Year = nYear;
 			fee_Payment.Is_Active = true;
 			fee_Payment.Collected_by = "devi";
+			//fee_Payment.Next_due_date = (fee_Payment.Next_due_date ==  : 
+			fee_Payment.File_Name = "FEE_RECIPT" + fee_Payment.Student_id + "_" + fee_Payment.Recipt_no + ".pdf";
 			try
 			{
 				using (var dbcontext = new SchoolERPDBContext())
@@ -472,14 +536,47 @@ namespace Techsys_School_ERP.Controllers
 					{
 						dbcontext.Fee_Payment.Add(fee_Payment);
 						dbcontext.SaveChanges();
+						System.IO.FileStream fs;
+						Document pdfDoc;
+						pdfDoc = new Document(PageSize.A2, 0f, 0f, 80f, 30f);
+
+						string severFilePath = Server.MapPath("~/views//billing//");
+
+						if (!Directory.Exists(severFilePath))
+						{ // if it doesn't exist, create
+
+							System.IO.Directory.CreateDirectory(severFilePath);
+						}
+
+						//fs = new FileStream(severFilePath + "//" + ""+ "_" + "FEE_RECIPT" + fee_Payment.Student_id + "_" + "" + "_Triplicate" + ".pdf", FileMode.Create);
+						fs = new FileStream(severFilePath + "//" + fee_Payment.File_Name, FileMode.Create);
+						PdfWriter writer = PdfWriter.GetInstance(pdfDoc, fs);
+
+						writer.CloseStream = false;
+
+
+						iTextSharp.text.Font NormalFont = FontFactory.GetFont("Arial", 12, BaseColor.BLUE);
+						Paragraph paragraph = new Paragraph("                                                                                          INVOICE                                                                                               (Original)");
+						pdfDoc.Open();
+
+						pdfDoc.Add(PDFGenerateController.GenerateFeesPaymentRecipt(fee_Payment));
+						pdfDoc.Close();
+						// Close the writer instance
+						writer.Close();
+						// Always close open filehandles explicity
+						fs.Close();
+
+
+						//oPDFGenerateController.GenerateFeesPaymentRecipt(fee_Payment);
 						sReturnText = "OK";
+
 					}
 					else
 					{
-						sReturnText = "Fees Already Paid For the Period";
+						sReturnText = "Already Paid";
 					}
 				}
-				
+
 
 			}
 			catch (Exception ex)
@@ -493,40 +590,44 @@ namespace Techsys_School_ERP.Controllers
 		[HttpPost]
 		public JsonResult GetFeesStructure(string Student_Id, string Frequency)
 		{
-			Dictionary<string, decimal> feeStructure = new Dictionary<string, decimal>();
-			List<FeeConfiguration_ViewModel> feeConfigList = new List<FeeConfiguration_ViewModel>();
+			TempData["Fees_Structure_Student_Id"] = Student_Id;
+			TempData.Keep("Fees_Structure_Student_Id");
+
+			TempData["Fees_Structure_Frequency"] = Frequency;
+			TempData.Keep("Fees_Structure_Frequency");
+
+
+			return Json(GetFeeStructureForStudent(Student_Id, Frequency).ToArray(), JsonRequestBehavior.AllowGet);
+		}
+
+		[HttpPost]
+		public JsonResult GetFeesFrequencyForStudent(string Student_Id)
+		{
 			long nStudent_Id = Convert.ToInt64(Student_Id);
-			int nFrequency = Convert.ToInt32(Frequency);
-			long nAcademicYear = GetAcademicYear();
+			long nAcedemic_Year = GetAcademicYear();
+			List<Frequency> freqList = new List<Frequency>();
+
 			using (var dbcontext = new SchoolERPDBContext())
 			{
-				feeConfigList = (from stu in dbcontext.Student
-							   join feeConfig in dbcontext.Fee_Configuration on stu.Class_Id equals feeConfig.Class_Id
-							   join fee in dbcontext.Fee on feeConfig.Fee_Id equals fee.Id
-								where (feeConfig.Is_Deleted == null || feeConfig.Is_Deleted == false) && stu.Student_Id == nStudent_Id && feeConfig.Academic_Year == nAcademicYear 
-								&& feeConfig.Frequency == nFrequency
-								select new 
-								{
-									Name = fee.Name,
-									Amount = feeConfig.Amount,
-									Total = feeConfig.Total
+				var studentFreqList = dbcontext.Fee_Payment.Where(x => x.Student_id == nStudent_Id && x.Academic_Year == nAcedemic_Year).Select(x => x.Frequency).ToList();
 
+				freqList = dbcontext.Frequency.ToList();				
 
-									// Total = fc.Total
-								}).ToList().Select(x => new FeeConfiguration_ViewModel()
-								{
-									Name = x.Name,
-									Amount = x.Amount,
-									Total = x.Total
-								}).ToList();
-				
+				foreach (var freqloop in studentFreqList)
+				{
+					Frequency freq = freqList.Where(x => x.Id == freqloop).FirstOrDefault();
 
-				
+					freqList.Remove(freq);
+				}
+
+				if (dbcontext.Fee_Payment.Where(x => x.Student_id == nStudent_Id && x.Academic_Year == nAcedemic_Year && (x.Frequency == 2 || x.Frequency == 3 || x.Frequency == 4)).Count() > 0)
+				//if (freqList.Where((x=>x.Id == 2 || x.Id == 3 || x.Id == 4)).ToList().Count > 1)
+				{
+					freqList.RemoveAt(0);
+				}
 			}
-			return Json(feeConfigList.ToArray(), JsonRequestBehavior.AllowGet);
+			 return Json(freqList, JsonRequestBehavior.AllowGet); ;
 		}
-			#endregion
-
-
+		#endregion
 	}
 }

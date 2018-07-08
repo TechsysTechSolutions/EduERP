@@ -22,6 +22,57 @@ namespace Techsys_School_ERP.Controllers
 			return View();
 		}
 
+
+		public ActionResult SearchAndGetSchoolList(string q)
+		{
+			var list = new List<SearchList>();
+
+			List<School> schoolList = new List<School>();
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+
+				if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+				{
+
+					schoolList = (from school in dbcontext.School
+								  where school.Name.Contains(q.ToLower())
+								  select new
+								  {
+									  Text = school.Name,
+									  Id = school.Id
+								  }).ToList().
+									   Select(x => new School
+
+									   {
+
+										   Name = x.Text,
+										   Id = x.Id
+
+									   }).ToList();
+
+				}
+			}
+
+
+			for (int i = 0; i < schoolList.Count(); i++)
+			{
+				SearchList oSelect2Model = new SearchList();
+				oSelect2Model.text = schoolList[i].Name;
+				oSelect2Model.id = schoolList[i].Id.ToString();
+
+				list.Add(oSelect2Model);
+
+
+			}
+
+
+			if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+			{
+				list = list.Where(x => x.text.ToLower().Contains(q.ToLower())).ToList();
+			}
+			return Json(new { items = list }, JsonRequestBehavior.AllowGet);
+		}
 		public ActionResult SearchAndGetStudentList(string q)
 		{
 			var list = new List<SearchList>();
@@ -80,6 +131,60 @@ namespace Techsys_School_ERP.Controllers
 			return Json(new { items = list }, JsonRequestBehavior.AllowGet);
 		}
 
+		public JsonResult SearchAndGetStaffList(string q)
+		{
+			var list = new List<SearchList>();
+
+			List<Staff> staffList = new List<Staff>();
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+
+				if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+				{
+					string newLine = ((char)13).ToString() + ((char)10).ToString(); ;
+
+					staffList = (from staff in dbcontext.Staff
+								 where staff.First_Name.Contains(q.ToLower())
+								  select new
+								  {
+									  Text = staff.First_Name + " " + staff.Last_Name + " " +
+									  Environment.NewLine
+									  + "[" + staff.Employee_Id + "]" ,
+									  Id = staff.Staff_Id
+								  }).ToList().
+								   Select(x => new Staff
+
+								   {
+
+									   First_Name = x.Text,
+									   Staff_Id = x.Id
+
+								   }).ToList();
+
+
+				}
+			}
+
+
+			for (int i = 0; i < staffList.Count(); i++)
+			{
+				SearchList oSelect2Model = new SearchList();
+				oSelect2Model.text = staffList[i].First_Name;
+				oSelect2Model.id = staffList[i].Staff_Id.ToString();
+				list.Add(oSelect2Model);
+			}
+
+
+			if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+			{
+				list = list.Where(x => x.text.ToLower().Contains(q.ToLower())).ToList();
+			}
+
+			//return Json(new { items = list }, JsonRequestBehavior.AllowGet);
+			return Json( list , JsonRequestBehavior.AllowGet);
+		}
+
 		public void GetClass()
 		{
 			using (var dbcontext = new SchoolERPDBContext())
@@ -88,6 +193,18 @@ namespace Techsys_School_ERP.Controllers
 				if (clsList != null)
 				{
 					ViewBag.classList = clsList.Select(N => new SelectListItem { Text = N.Name, Value = N.Id.ToString() });
+				}
+			}
+		}
+
+		public void GetDesignation()
+		{
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				var designationList = (from desgnList in dbcontext.Designation select desgnList).ToList();
+				if (designationList != null)
+				{
+					ViewBag.designationList = designationList.Select(N => new SelectListItem { Text = N.Name, Value = N.Id.ToString() });
 				}
 			}
 		}
@@ -126,6 +243,60 @@ namespace Techsys_School_ERP.Controllers
 					ViewBag.staffList = staffList.Select(N => new SelectListItem { Text = N.Name, Value = N.Id.ToString() });
 				}
 			}
+		}
+
+		public List<AutoComplete_ViewModel> GetCountryNameBasedOnId(string sCountry_Id)
+		{
+			int nCountry_Id = Convert.ToInt16(sCountry_Id);
+			var list = new List<AutoComplete_ViewModel>();
+
+			List<Country> countryList = new List<Country>();
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+
+				if (!(string.IsNullOrEmpty(sCountry_Id)))
+				{
+
+					countryList = (from country in dbcontext.Country
+								//  where country.Name.Contains(q.ToLower())
+								   where country.Id == nCountry_Id
+								   select new
+								   {
+									   Text = country.Name,
+									   Id = country.Id
+								   }).ToList().
+								   Select(x => new Country
+
+								   {
+
+									   Name = x.Text,
+									   Id = x.Id
+
+								   }).ToList();
+
+				}
+			}
+
+
+			for (int i = 0; i < countryList.Count(); i++)
+			{
+				AutoComplete_ViewModel oAutoCompleteViewModel = new AutoComplete_ViewModel();
+				oAutoCompleteViewModel.text = countryList[i].Name;
+				oAutoCompleteViewModel.id = countryList[i].Id.ToString();
+
+				list.Add(oAutoCompleteViewModel);
+
+
+			}
+
+
+			//if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+			//{
+			//	list = list.Where(x => x.text.ToLower().Contains(q.ToLower())).ToList();
+			//}
+
+			return list;
 		}
 
 
@@ -307,6 +478,7 @@ namespace Techsys_School_ERP.Controllers
 							   });
 
 				stateList = state.ToList();
+				ViewBag.stateList = stateList;
 				return stateList;
 			}
 		}
@@ -334,6 +506,7 @@ namespace Techsys_School_ERP.Controllers
 							   });
 
 				cityList = city.ToList();
+				ViewBag.cityList = cityList;
 				return cityList;
 
 
@@ -343,6 +516,24 @@ namespace Techsys_School_ERP.Controllers
 		}
 
 
+		public bool CheckIfEmailAlreadyExists(string Email_Id, bool? Is_Student, bool? Is_Staff)
+		{
+			bool bEmailIdExists = false;
+			
+				using (var dbcontext = new SchoolERPDBContext())
+				{
+					if (Is_Student == true)
+					{
+						bEmailIdExists = dbcontext.Student.Any(x => x.Email_Id == Email_Id);
+					}
+					else if (Is_Staff == true)
+					{
+						bEmailIdExists = dbcontext.Staff.Any(x => x.Email_Id == Email_Id);
+					}
+				}
+			
+			return bEmailIdExists;
+		}
 
 
 		public List<Section> GetSectionForClass(string sClass_Id)
@@ -368,6 +559,7 @@ namespace Techsys_School_ERP.Controllers
 							   });
 
 				sectionList = section.ToList();
+				ViewBag.SectionListForClass = sectionList;
 				return sectionList;
 
 
@@ -402,6 +594,79 @@ namespace Techsys_School_ERP.Controllers
 				sectionList = section.ToList();
 				return sectionList;
 			}
+		}
+
+
+		public string GetClassANdSectionForStudent(long nStudent_id)
+		{
+			string sClassAndSectionName = string.Empty;
+			//long nStudent_Id = Convert.ToInt64(sStudent_id);
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				sClassAndSectionName = (from stu in dbcontext.Student
+											   join cls in dbcontext.Class on stu.Class_Id equals cls.Id
+											   join sec in dbcontext.Section on stu.Section_Id equals sec.Id
+											   where stu.Student_Id == nStudent_id
+										select new
+											   {
+												   Text =  cls.Name + " " + sec.Name
+											   }).ToList()[0].Text;
+
+			}
+
+			return sClassAndSectionName;
+		}
+
+		public List<FeeConfiguration_ViewModel> GetFeeStructureForStudent(string Student_Id, string Frequency)
+		{
+			Dictionary<string, decimal> feeStructure = new Dictionary<string, decimal>();
+			List<FeeConfiguration_ViewModel> feeConfigList = new List<FeeConfiguration_ViewModel>();
+			long nStudent_Id = Convert.ToInt64(Student_Id);
+			int nFrequency = Convert.ToInt32(Frequency);
+			long nAcademicYear = GetAcademicYear();
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				feeConfigList = (from stu in dbcontext.Student
+								 join feeConfig in dbcontext.Fee_Configuration on stu.Class_Id equals feeConfig.Class_Id
+								 join fee in dbcontext.Fee on feeConfig.Fee_Id equals fee.Id
+								 where (feeConfig.Is_Deleted == null || feeConfig.Is_Deleted == false) && stu.Student_Id == nStudent_Id && feeConfig.Academic_Year == nAcademicYear
+								 && feeConfig.Frequency == nFrequency
+								 select new
+								 {
+									 Name = fee.Name,
+									 Amount = feeConfig.Amount,
+									 Total = feeConfig.Total
+									 
+
+									 // Total = fc.Total
+								 }).ToList().Select(x => new FeeConfiguration_ViewModel()
+								 {
+									 Name = x.Name,
+									 Amount = x.Amount,
+									 Total = x.Total
+									
+									 
+								 }).ToList();
+
+				if (feeConfigList.Count() > 0)
+				{
+					if (nFrequency == 1 || nFrequency == 4)
+					{
+						feeConfigList[0].Next_Due_Date = "NA";
+					}
+					else
+					{
+						//int ntempFreq = nFrequency + 1;
+						feeConfigList[0].Next_Due_Date = dbcontext.Term_Fee_Date.Where(x => x.Term_Id == nFrequency).FirstOrDefault().Fee_Pay_CutOff_Date.ToString();
+					}
+
+					//feeConfigList[0].Late_Fees = dbcontext.Fee_Payment.Where(x => x.Student_id == nStudent_Id && x.Academic_Year == nAcademicYear && x.Frequency == nFrequency).FirstOrDefault().Late_fees;
+				}
+
+			}
+
+			return feeConfigList;
 		}
 	}
 }

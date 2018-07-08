@@ -97,7 +97,7 @@ namespace Techsys_School_ERP.Controllers
 								newSubjClassDetail.Class_Id = nClassIds;
 								newSubjClassDetail.Subject_Id = Convert.ToInt16(nSubjectIds[nSubjectLoopCount]);
 								newSubjClassDetail.Section_Id = Convert.ToInt16(nClassSectionIds[nClassSubLoopCount]);
-								newSubjClassDetail.Academic_Year = (DateTime.Now.Month <= 4) ? DateTime.Now.Year - 1 : DateTime.Now.Year;
+								newSubjClassDetail.Academic_Year = GetAcademicYear();
 								newSubjClassDetail.Is_Active = true;
 								newSubjClassDetail.Created_By = nUser_Id;
 								newSubjClassDetail.Created_On = DateTime.Now;
@@ -116,7 +116,7 @@ namespace Techsys_School_ERP.Controllers
 								}
 								else
 								{
-									return Json("Updated", JsonRequestBehavior.AllowGet);
+									return Json("Already Exists", JsonRequestBehavior.AllowGet);
 								}
 
 
@@ -236,10 +236,14 @@ namespace Techsys_School_ERP.Controllers
 							{
 							
 								newMarkDetail.GetType().GetProperty("Subject_Id" + (nSubjectCount + 1)).SetValue(newMarkDetail, nSubjectIdArr[nSubjectCount], null);
-								newMarkDetail.GetType().GetProperty("Mark" + (nSubjectCount + 1)).SetValue(newMarkDetail, Convert.ToInt16(myData[iMarkDetailLoopCount][nSubjectCount+2]), null);
+								newMarkDetail.GetType().GetProperty("Mark" + (nSubjectCount + 1)).SetValue(newMarkDetail, myData[iMarkDetailLoopCount][nSubjectCount+2] == "" ? 0 : Convert.ToInt16(myData[iMarkDetailLoopCount][nSubjectCount + 2]), null);
+								//newMarkDetail.GetType().GetProperty("Total").SetValue(newMarkDetail, myData[iMarkDetailLoopCount][12] == "" ? 0 : Convert.ToInt32(myData[iMarkDetailLoopCount][12]), null);
+								//newMarkDetail.GetType().GetProperty("Average").SetValue(newMarkDetail, myData[iMarkDetailLoopCount][12] == "" ? 0 : Convert.ToDecimal(myData[iMarkDetailLoopCount][13]), null);
 
 							}
 
+							newMarkDetail.GetType().GetProperty("Total").SetValue(newMarkDetail, myData[iMarkDetailLoopCount][12] == "" ? 0 : Convert.ToInt32(myData[iMarkDetailLoopCount][12]), null);
+							newMarkDetail.GetType().GetProperty("Average").SetValue(newMarkDetail, myData[iMarkDetailLoopCount][13] == "" ? 0 : Convert.ToDecimal(myData[iMarkDetailLoopCount][13]), null);
 							if (dbcontext.Mark.Where(a => a.Student_Id == newMarkDetail.Student_Id && a.Academic_Year == newMarkDetail.Academic_Year && a.Exam_Id == newMarkDetail.Exam_Id && (a.Is_Deleted == false || a.Is_Deleted == null)).Count() == 0)
 									{
 
@@ -265,6 +269,8 @@ namespace Techsys_School_ERP.Controllers
 										markToBeUpdated.Mark8 = newMarkDetail.Mark8;
 										markToBeUpdated.Mark9 = newMarkDetail.Mark9;
 										markToBeUpdated.Mark10 = newMarkDetail.Mark10;
+										markToBeUpdated.Total = newMarkDetail.Total;
+										markToBeUpdated.Average = newMarkDetail.Average;
 
 										dbcontext.Entry(markToBeUpdated).State = EntityState.Modified;
 										dbcontext.SaveChanges();
@@ -323,7 +329,9 @@ namespace Techsys_School_ERP.Controllers
 
 			List<MarkList_ViewModel> mark_ViewModelList = new List<MarkList_ViewModel>();
 			List<Subject> classSubjectList = new List<Subject>();
-			using (var dbcontext = new SchoolERPDBContext())
+
+		
+				using (var dbcontext = new SchoolERPDBContext())
 			{
 				studentList = (from stu in dbcontext.Student
 							   where stu.Academic_Year == nYear && (stu.Is_Deleted == false) && stu.Class_Id == nClassId && stu.Section_Id == nSectionId
@@ -363,9 +371,11 @@ namespace Techsys_School_ERP.Controllers
 			}
 
 			TempData["SubjectId_For_Marks"] = classSubjectList.ToList().Select(l => l.Id).Distinct().ToArray();
-			//TempData["StudentIdArr"] = nSectionIdArr;
+			
 
 			PropertyInfo[] properties = typeof(MarkList_ViewModel).GetProperties();
+
+	
 
 			for (int nCount = 0; nCount <= studentList.Count; nCount++)
 			{
@@ -374,7 +384,7 @@ namespace Techsys_School_ERP.Controllers
 				int nPropertyCount = 0;
 				foreach (PropertyInfo property in properties)
 				{
-					
+					//For generating the headers in handsontable
 					if (nCount == 0)
 					{
 
@@ -382,32 +392,50 @@ namespace Techsys_School_ERP.Controllers
 						{
 							int nSubjectId = Convert.ToInt16(property.Name.Replace("Subject_Id", ""));
 
-							property.SetValue(markViewModel, classSubjectList[nPropertyCount].Name);
+							property.SetValue(markViewModel, classSubjectList[nPropertyCount].Name.ToUpper());
 							nPropertyCount++;
+
+
+						}
+						else if ((property.Name.Contains("Subject_Id") && nPropertyCount >= classSubjectList.Count()))
+						{
+							//properties.ToList().RemoveAt(nPropertyCount);
+
+							//	property.SetValue(markViewModel, null);
+							continue;
 
 
 						}
 						else if (property.Name == "Student_Name")
 						{
-							property.SetValue(markViewModel, property.Name);
+							property.SetValue(markViewModel, "STUDENT NAME");
+						}
+						else if (property.Name == "Roll_No")
+						{
+							property.SetValue(markViewModel, "ROLL NO");
 						}
 						else if (property.Name == "Total")
 						{
-							property.SetValue(markViewModel, property.Name);
+							property.SetValue(markViewModel, property.Name.ToUpper());
 						}
 						else if (property.Name == "Average")
 						{
-							property.SetValue(markViewModel, property.Name);
+							property.SetValue(markViewModel, property.Name.ToUpper());
 						}
 
 
 
 					}
+					//Other records
 					else
 					{
 						if (property.Name == "Student_Name")
 						{
 							markViewModel.Student_Name = studentList[nCount - 1].First_Name + " " + studentList[nCount - 1].Last_Name;
+						}
+						else if (property.Name == "Roll_No")
+						{
+							markViewModel.Roll_No = studentList[nCount - 1].Roll_No;
 						}
 						else if (property.Name == "Student_Id")
 						{
@@ -420,21 +448,43 @@ namespace Techsys_School_ERP.Controllers
 						using (var dbcontext = new SchoolERPDBContext())
 						{
 							long nStudentId = studentList[nCount - 1].Student_Id;
-							if (dbcontext.Mark.Where(a => a.Student_Id == nStudentId  && a.Academic_Year == nYear && a.Exam_Id == nTermId && (a.Is_Deleted == false || a.Is_Deleted == null)).Count() > 0)
+							if (dbcontext.Mark.Where(a => a.Student_Id == nStudentId && a.Academic_Year == nYear && a.Exam_Id == nTermId && (a.Is_Deleted == false || a.Is_Deleted == null)).Count() > 0)
 							{
 								Mark existingMark = dbcontext.Mark.Where(a => a.Student_Id == nStudentId && a.Academic_Year == nYear && a.Exam_Id == nTermId && (a.Is_Deleted == false || a.Is_Deleted == null)).ToList()[0];
-								markViewModel.Subject_Id1 = Convert.ToString(existingMark.Mark1);
-								markViewModel.Subject_Id2 = Convert.ToString(existingMark.Mark2);
-								markViewModel.Subject_Id3 = Convert.ToString(existingMark.Mark3);
-								markViewModel.Subject_Id4 = Convert.ToString(existingMark.Mark4);
-								markViewModel.Subject_Id5 = Convert.ToString(existingMark.Mark5);
-								markViewModel.Subject_Id6 = Convert.ToString(existingMark.Mark6);
-								markViewModel.Subject_Id7 = Convert.ToString(existingMark.Mark7);
-								markViewModel.Subject_Id8 = Convert.ToString(existingMark.Mark8);
-								markViewModel.Subject_Id9 = Convert.ToString(existingMark.Mark9);
-								markViewModel.Subject_Id10 = Convert.ToString(existingMark.Mark10);
+								
+								markViewModel.Subject_Id1 = (mark_ViewModelList[0].Subject_Id1 == null) ? null : Convert.ToString(existingMark.Mark1);
+								markViewModel.Subject_Id2 = (mark_ViewModelList[0].Subject_Id2 == null) ? null :  Convert.ToString(existingMark.Mark2);
+								markViewModel.Subject_Id3 = (mark_ViewModelList[0].Subject_Id3 == null) ? null : Convert.ToString(existingMark.Mark3);
+								markViewModel.Subject_Id4 = (mark_ViewModelList[0].Subject_Id4 == null) ? null : Convert.ToString(existingMark.Mark4);
+								markViewModel.Subject_Id5 = (mark_ViewModelList[0].Subject_Id5 == null) ? null : Convert.ToString(existingMark.Mark5);
+								markViewModel.Subject_Id6 = (mark_ViewModelList[0].Subject_Id6 == null) ? null : Convert.ToString(existingMark.Mark6);
+								markViewModel.Subject_Id7 = (mark_ViewModelList[0].Subject_Id7 == null) ? null : Convert.ToString(existingMark.Mark7);
+							    markViewModel.Subject_Id8 = (mark_ViewModelList[0].Subject_Id8 == null) ? null : Convert.ToString(existingMark.Mark8);					
+								markViewModel.Subject_Id9 = (mark_ViewModelList[0].Subject_Id9 == null) ? null : Convert.ToString(existingMark.Mark9);
+								markViewModel.Subject_Id10 = (mark_ViewModelList[0].Subject_Id10 == null) ? null : Convert.ToString(existingMark.Mark10);
+								markViewModel.Total =  Convert.ToString(existingMark.Total);
+								markViewModel.Average =  Convert.ToString(existingMark.Average);
 
 
+							}
+							else
+							{
+								markViewModel.Subject_Id1 = (mark_ViewModelList[0].Subject_Id1 == null) ? null : "";
+								markViewModel.Subject_Id2 = (mark_ViewModelList[0].Subject_Id2 == null) ? null : "";
+								markViewModel.Subject_Id3 = (mark_ViewModelList[0].Subject_Id3 == null) ? null : ""; ;
+								markViewModel.Subject_Id4 = (mark_ViewModelList[0].Subject_Id4 == null) ? null : "";
+								markViewModel.Subject_Id5 = (mark_ViewModelList[0].Subject_Id5 == null) ? null : "";
+								markViewModel.Subject_Id6 = (mark_ViewModelList[0].Subject_Id6 == null) ? null : "";
+								markViewModel.Subject_Id7 = (mark_ViewModelList[0].Subject_Id7 == null) ? null : "";
+								markViewModel.Subject_Id8 = (mark_ViewModelList[0].Subject_Id8 == null) ? null : "";
+								markViewModel.Subject_Id9 = (mark_ViewModelList[0].Subject_Id9 == null) ? null : "";
+								markViewModel.Subject_Id10 = (mark_ViewModelList[0].Subject_Id10 == null) ? null : "";
+								markViewModel.Total = (mark_ViewModelList[0].Total == null) ? "0" : "";
+								markViewModel.Average = (mark_ViewModelList[0].Average == null) ? "0" : "";
+								//if (markViewModel.Subject_Id1 != null)
+								//{
+								//	markViewModel.Subject_Id1 = 
+								//}
 							}
 						}
 					}

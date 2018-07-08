@@ -11,7 +11,7 @@ namespace Techsys_School_ERP.Model
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long StaffExp_Id { get; set; }
+        public long Id { get; set; }
 
         public long? Staff_Id { get; set; }
 
@@ -35,11 +35,11 @@ namespace Techsys_School_ERP.Model
 
         public DateTime? Created_On { get; set; }
 
-        public string Created_By { get; set; }
+        public int Created_By { get; set; }
 
         public DateTime? Updated_On { get; set; }
 
-        public string Updated_By { get; set; }
+        public int? Updated_By { get; set; }
 
         public byte[] Upload_Document1 { get; set; }
 

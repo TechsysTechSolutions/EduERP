@@ -61,6 +61,10 @@ namespace Techsys_School_ERP.Model
 
 		public int Mark10 { get; set; }
 
+		public int Total { get; set; }
+
+		public decimal Average { get; set; }
+
 		public long Academic_Year { get; set; }
 
 		public bool Is_Active { get; set; }

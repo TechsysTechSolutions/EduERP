@@ -130,8 +130,10 @@ namespace Techsys_School_ERP.Controllers
 			string sReturn_Text = string.Empty;
 			Student_Other_Details newStudentOtherDetailsToBeAdded = new Student_Other_Details();
 			newStudentOtherDetailsToBeAdded = Student_Other_Detail;
+			newStudentOtherDetailsToBeAdded.Mother_Occupation_Id = Student_Other_Detail.Mother_Occupation_Id;
+			newStudentOtherDetailsToBeAdded.Father_Occupation_Id = Student_Other_Detail.Father_Occupation_Id;
 			newStudentOtherDetailsToBeAdded.Is_Active = true;
-			newStudentOtherDetailsToBeAdded.Created_By = "5";
+			newStudentOtherDetailsToBeAdded.Created_By = 5;
 			//newStudentOtherDetailsToBeAdded.Student_Id = 113;
 			newStudentOtherDetailsToBeAdded.Student_Id =  Convert.ToInt64(TempData.Peek("Student_Id"));
 			newStudentOtherDetailsToBeAdded.Created_On = DateTime.Now;
@@ -299,6 +301,8 @@ namespace Techsys_School_ERP.Controllers
 			modifiedStudentSiblingDetails = getStudenSiblingDetail();
 			return Json(new { items = modifiedStudentSiblingDetails }, JsonRequestBehavior.AllowGet);
 		}
+
+
 
 		public List<Student_PrevSchoolList_ViewModel>  GetStudentPrevSchoolDetails(Student_Prev_School_Details stuPrevSchoolDetail)
 			{
@@ -751,7 +755,180 @@ namespace Techsys_School_ERP.Controllers
 		}
 
 
+		#region StudentList
+
+		public ActionResult StudentList()
+		{
+			long nYear = GetAcademicYear();
+			List<Student_ViewModel> studentVieModelList = new List<Student_ViewModel>();
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				studentVieModelList = (from stu in dbcontext.Student 
+									   join cls in dbcontext.Class on stu.Class_Id equals cls.Id
+									   join sec in dbcontext.Section on stu.Section_Id equals sec.Id
+									   where  stu.Academic_Year == sec.Academic_Year &&  stu.Is_Deleted == false &&  stu.Academic_Year == nYear
+									   select new Student_ViewModel
+									   {
+
+										 Id = stu.Student_Id,
+										 Name = stu.First_Name + " " + stu.Last_Name + " " + stu.Middle_Name,
+										 ClassAndSection = cls.Name + " - " + sec.Name ,
+										 Emergency_ContactNo = stu.Phone_No1  ,
+										 Academic_Year = nYear,
+										 Created_On = stu.Created_On
+
+
+
+									   }).OrderBy(x => x.Created_On).ToList();
+			}
+			return View(studentVieModelList);
+		}
+		#endregion
+
+		#region EditStudent
+
+		public ActionResult Edit(long? id)
+		{
+
+			Student studentToBeEdited = new Student();
+			GetBloodGroup();
+			GetGender();
+			
+			GetCountries();
+			GetClass();
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				var studentEdited = dbcontext.Student.Find(id);
+				GetSectionForClass(Convert.ToString(studentEdited.Class_Id));
+				GetStatesForCountry(Convert.ToString(studentEdited.Country_Id));
+				GetCitiesForState(Convert.ToString(studentEdited.State_Id));
+
+				studentToBeEdited = studentEdited;
+
+				byte[] byteData = studentEdited.Photo;
+				//Convert byte arry to base64string   
+				string imreBase64Data = Convert.ToBase64String(byteData);
+				string imgDataURL = string.Format("data:image/png;base64,{0}", imreBase64Data);
+				//Passing image data in viewbag to view  
+				ViewBag.ImageData = imgDataURL;
+
+
+			}
+
+			return View(studentToBeEdited);
+		}
+
+		
+		public JsonResult FetchCountryNameBasedOnId(string countryId)
+		{
+			return Json(new { items = GetCountryNameBasedOnId(countryId) }, JsonRequestBehavior.AllowGet);
+
+		}
+
+
+		[HttpPost]
+		public ActionResult EditStudent(Student student)
+		{
+			string sReturnText = string.Empty;
+			try
+			{
+				if (ModelState.IsValid)
+				{
+					using (var dbcontext = new SchoolERPDBContext())
+					{
+						Student studentToBeUpdated = dbcontext.Student.Find(student.Student_Id);
+
+						studentToBeUpdated.First_Name = student.First_Name;
+						studentToBeUpdated.Last_Name = student.Last_Name;
+						studentToBeUpdated.Middle_Name = student.Middle_Name;
+						studentToBeUpdated.Father_Name = student.Father_Name;
+						studentToBeUpdated.Mother_Name = student.Mother_Name;
+						studentToBeUpdated.Aadhar_No = student.Aadhar_No;
+						studentToBeUpdated.Address_Line1 = student.Address_Line1;
+						studentToBeUpdated.Address_Line2 = student.Address_Line2;
+						studentToBeUpdated.Blood_Group_Id = student.Blood_Group_Id;
+						studentToBeUpdated.Email_Id = student.Email_Id;
+						studentToBeUpdated.DOB = student.DOB;
+						studentToBeUpdated.Enrollment_Date = student.Enrollment_Date;
+						studentToBeUpdated.City_Id = student.City_Id;
+						studentToBeUpdated.State_Id = student.State_Id;
+						studentToBeUpdated.Country_Id = student.Country_Id;
+						studentToBeUpdated.Blood_Group_Id = student.Blood_Group_Id;
+						studentToBeUpdated.Is_HostelStudent = student.Is_HostelStudent;
+						studentToBeUpdated.Phone_No1 = student.Phone_No1;
+						studentToBeUpdated.Phone_No2 = student.Phone_No2;
+						studentToBeUpdated.Section_Id = student.Section_Id;
+						studentToBeUpdated.Class_Id = student.Class_Id;
+						studentToBeUpdated.Gender_Id = student.Gender_Id;
+						studentToBeUpdated.Pincode = student.Pincode;
+						studentToBeUpdated.Photo = student.Photo;
+
+						byte[] byteData = student.Photo;
+						//Convert byte arry to base64string   
+						string imreBase64Data = Convert.ToBase64String(byteData);
+						string imgDataURL = string.Format("data:image/png;base64,{0}", imreBase64Data);
+						//Passing image data in viewbag to view  
+						ViewBag.ImageData = imgDataURL;
+
+						if (student.Email_Id.Trim() != studentToBeUpdated.Email_Id.Trim())
+						{
+							if (!CheckIfEmailAlreadyExists(student.Email_Id, true, false))
+							{
+
+								dbcontext.Entry(studentToBeUpdated).State = EntityState.Modified;
+								dbcontext.SaveChanges();
+								sReturnText = "OK";
+							}
+							else
+							{
+								sReturnText = "Email Already Exists";
+							}
+						}
+						else
+						{
+							dbcontext.Entry(studentToBeUpdated).State = EntityState.Modified;
+							dbcontext.SaveChanges();
+							sReturnText = "OK";
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				sReturnText = ex.InnerException.Message.ToString();
+			}
+		
+			return Json(sReturnText, JsonRequestBehavior.AllowGet);
+	}
+
+		public ActionResult EditStudentOtherDetails(string sStudent_Id)
+		{
+			long nStudent_Id = Convert.ToInt64(sStudent_Id);
+			Student_Other_Details student_OtherDetails_ToBeEdited = new Student_Other_Details();
+			GetCategory();
+			GetOccupation();
+
+			using (	var dbcontext = new SchoolERPDBContext())
+			{
+				var id = dbcontext.Student_Other_Details.Where(x => x.Student_Id == nStudent_Id).FirstOrDefault().StudentDetail_Id;
+				var studen_OtherDetailsTotEdit = dbcontext.Student_Other_Details.Find(id);
+				//GetSectionForClass(Convert.ToString(studentEdited.Class_Id));
+				//GetStatesForCountry(Convert.ToString(studentEdited.Country_Id));
+				//GetCitiesForState(Convert.ToString(studentEdited.State_Id));
+				student_OtherDetails_ToBeEdited = studen_OtherDetailsTotEdit;
+
+			}
+
+			return View(student_OtherDetails_ToBeEdited);
+		//	return View();
+		}
+		#endregion
+
+
 
 
 	}
+
+
 }

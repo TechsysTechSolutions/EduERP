@@ -52,6 +52,10 @@
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="itextsharp, Version=5.5.13.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.13\lib\itextsharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.0.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.0.6\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
       <Private>True</Private>
@@ -3066,6 +3070,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Authorize\RoleProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AssignmentController.cs" />
     <Compile Include="Controllers\AttendanceController.cs" />
     <Compile Include="Controllers\ClassAndSectionController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
@@ -3073,6 +3078,7 @@
     <Compile Include="Controllers\FeeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MarkController.cs" />
+    <Compile Include="Controllers\PDFGenerateController.cs" />
     <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Controllers\StudentController.cs" />
     <Compile Include="DBAccess\SchoolERPDBContext.cs" />
@@ -3080,12 +3086,14 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Frequency.cs" />
+    <Compile Include="Models\Model\Assignment.cs" />
     <Compile Include="Models\Model\Attendance.cs" />
     <Compile Include="Models\Model\Blood_Group.cs" />
     <Compile Include="Models\Model\Category.cs" />
     <Compile Include="Models\Model\City.cs" />
     <Compile Include="Models\Model\Class.cs" />
     <Compile Include="Models\Model\Country.cs" />
+    <Compile Include="Models\Model\Designation.cs" />
     <Compile Include="Models\Model\Employee.cs" />
     <Compile Include="Models\Model\Exam.cs" />
     <Compile Include="Models\Model\Fee.cs" />
@@ -3102,9 +3110,11 @@
     <Compile Include="Models\Model\Section.cs" />
     <Compile Include="Models\Model\SearchList.cs" />
     <Compile Include="Models\Model\Staff.cs" />
+    <Compile Include="Models\Model\Staff_Attendance.cs" />
     <Compile Include="Models\Model\Staff_Educational_Details.cs" />
     <Compile Include="Models\Model\Staff_Exp_Details.cs" />
     <Compile Include="Models\Model\Staff_Salary_Detail.cs" />
+    <Compile Include="Models\Model\Staff_Salary_Slip.cs" />
     <Compile Include="Models\Model\Staff_Type.cs" />
     <Compile Include="Models\Model\State.cs" />
     <Compile Include="Models\Model\Student_Other_Details.cs" />
@@ -3112,8 +3122,10 @@
     <Compile Include="Models\Model\Student_Sibling_Detail.cs" />
     <Compile Include="Models\Model\Subject_Class_Detail.cs" />
     <Compile Include="Models\Model\Term.cs" />
+    <Compile Include="Models\Model\Term_Fee_Date.cs" />
     <Compile Include="Models\Model\User.cs" />
     <Compile Include="Models\Model\User_Role.cs" />
+    <Compile Include="Models\Model\ViewModel\AssignmentList_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\Attendance_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\AutoComplete_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\ClassList_ViewModel.cs" />
@@ -3122,8 +3134,13 @@
     <Compile Include="Models\Model\ViewModel\FeeList_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\HolidayList_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\MarkList_ViewModel.cs" />
+    <Compile Include="Models\Model\ViewModel\StaffSalarySlip_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\SectionList_ViewModel.cs" />
+    <Compile Include="Models\Model\ViewModel\StaffAttendance_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\StaffEduList_ViewModel.cs" />
+    <Compile Include="Models\Model\ViewModel\StaffSalary_ViewModel.cs" />
+    <Compile Include="Models\Model\ViewModel\StaffWorkExp_ViewModel.cs" />
+    <Compile Include="Models\Model\ViewModel\Staff_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\Student_PrevSchoolList_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\Student_SiblingList_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\Student_ViewModel.cs" />
@@ -3457,6 +3474,14 @@
     <Content Include="Views\Staff\CreateTeachingStaff.cshtml" />
     <Content Include="Views\Staff\AddStaffEducationalAndWorkExpDetails.cshtml" />
     <Content Include="Views\Fee\FeePayment.cshtml" />
+    <Content Include="Views\Staff\AddStaffSalaryDetail.cshtml" />
+    <Content Include="Views\Student\StudentList.cshtml" />
+    <Content Include="Views\Staff\StaffList.cshtml" />
+    <Content Include="Views\Attendance\AddStaffAttendance.cshtml" />
+    <Content Include="Views\Staff\GenerateSalarySlips.cshtml" />
+    <Content Include="Views\Assignment\AddAssignmentForClassAndSection.cshtml" />
+    <Content Include="Views\Student\Edit.cshtml" />
+    <Content Include="Views\Student\EditStudentOtherDetails.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

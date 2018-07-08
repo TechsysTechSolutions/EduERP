@@ -29,7 +29,7 @@ namespace Techsys_School_ERP.Controllers
 			return View();
 			
         }
-
+		#region StudentAttendance
 		[HttpPost]
 		public JsonResult GetAttendanceForClass(string class_Id ,string section_Id , string term_Id , string year)
 		{
@@ -137,6 +137,14 @@ namespace Techsys_School_ERP.Controllers
 					else if (property.Name == "Student_Id")
 					{
 						nStudentIdArr = studentList.ToList().Select(l => l.Student_Id).Distinct().ToArray();
+						if (nCount == 0)
+						{
+							property.SetValue(attendanceViewModel, "STUDENT ID");
+						}
+						else
+						{
+							attendanceViewModel.Student_Id = Convert.ToString(studentList[nCount - 1].Student_Id);
+						}
 						TempData["StudentIdArr"] = nStudentIdArr;
 						TempData.Keep("StudentIdArr");			
 						continue;
@@ -153,7 +161,7 @@ namespace Techsys_School_ERP.Controllers
 						{
 							if (nCount == 0)
 							{
-								property.SetValue(attendanceViewModel, dDateToBeCompared.Day + "-" + dDateToBeCompared.ToString("MMM"));
+								property.SetValue(attendanceViewModel, dDateToBeCompared.Day + "-" + dDateToBeCompared.ToString("MMM").ToUpper());
 								continue;
 							}
 
@@ -374,7 +382,6 @@ namespace Techsys_School_ERP.Controllers
 			}
 			return View(holidayListViewModel);
 		}
-
 		
 
 		[HttpPost]
@@ -445,8 +452,127 @@ namespace Techsys_School_ERP.Controllers
 
 			//return View();
 		}
+		#endregion
 
-		
-		
-    }
+		#region StaffAttendance
+		public ActionResult AddStaffAttendance()
+		{
+			long nYear = GetAcademicYear();
+			List<StaffAttendance_ViewModel> staffAttendanceListViewModel = new List<StaffAttendance_ViewModel>();
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				
+				staffAttendanceListViewModel = (from staff in dbcontext.Staff
+												join staffAttendance in dbcontext.Staff_Attendance on staff.Staff_Id equals staffAttendance.Staff_Id
+												
+												where staffAttendance.Is_Deleted == null || staffAttendance.Is_Deleted == false
+												select new StaffAttendance_ViewModel
+												{
+													//Id = hol.Id,
+													Id = staffAttendance.Id,
+													From_Date = staffAttendance.From_Date,
+													To_Date = staffAttendance.To_Date,
+													Leave_Reason = staffAttendance.Reason,
+													Leave_Days_Taken = 0,
+													Academic_Year = nYear,
+													Name = staff.First_Name + " " + staff.Last_Name,
+													Employee_No = staff.Employee_Id,
+													Created_On = staffAttendance.Created_On
+
+												}).ToList();
+
+
+
+
+				if (staffAttendanceListViewModel.Count() == 0)
+				{
+					staffAttendanceListViewModel = null;
+				}
+
+
+			}
+			
+			return View(staffAttendanceListViewModel);
+			
+		}
+
+		public JsonResult GetStaffList(string q)
+		{
+			return Json(SearchAndGetStaffList(q), JsonRequestBehavior.AllowGet);
+			//return Json(new { items = SearchAndGetStaffList(q) }, JsonRequestBehavior.AllowGet);
+		}
+
+		[HttpPost]
+		public ActionResult AddStaffAttendance(string Staff_Id , string From_Date , string To_Date , string Reason)
+		{
+			DataTable dt = new DataTable();
+
+			int nUser_Id;
+			string sReturnText = string.Empty;
+			long nYear = GetAcademicYear();
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				//nUser_Id = dbcontext.Users.Where(x => x.User_Id == User.Identity.Name).ToList()[0].Id; ;
+				nUser_Id = 5;
+			}
+			DateTime dtFromDate = DateTime.ParseExact(From_Date, "dd/MM/yyyy", null);
+			DateTime dtToDate = DateTime.ParseExact(To_Date, "dd/MM/yyyy", null);
+			TimeSpan ts = dtToDate - dtFromDate;
+			int nDays = Convert.ToInt16(ts.TotalDays) + 1;
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				using (var transaction = dbcontext.Database.BeginTransaction())
+				{
+					try
+					{
+						for (int nHolidayCount = 0; nHolidayCount < nDays; nHolidayCount++)
+						{
+							Staff_Attendance newStaffAttendance = new Staff_Attendance();
+							newStaffAttendance.Staff_Id = Convert.ToInt16(Staff_Id) ;
+							
+							newStaffAttendance.Academic_Year = nYear;
+							newStaffAttendance.Is_Active = true;
+							newStaffAttendance.Created_By = nUser_Id;
+							newStaffAttendance.Created_On = DateTime.Now;
+							newStaffAttendance.Leave_Date = dtFromDate.AddDays(nHolidayCount);
+
+							newStaffAttendance.From_Date = dtFromDate;
+							newStaffAttendance.To_Date = dtToDate;
+							newStaffAttendance.Reason = Reason;
+
+							//if (dbcontext.Holiday.Where(a => a.Name.Replace(" ", "").Trim().ToString() == Name.Replace(" ", "").Trim().ToString() && (a.Is_Deleted == false || a.Is_Deleted == null) && a.Academic_Year == nYear).Count() == 0)
+							if (dbcontext.Staff_Attendance.Where(x=>x.Staff_Id == newStaffAttendance.Staff_Id && x.Leave_Date ==  newStaffAttendance.Leave_Date && (x.Is_Deleted == null || x.Is_Deleted == null) && x.Academic_Year == nYear).Count() == 0)
+							//if (dbcontext.Holiday.Where(a => a.From_Date >= newStaffAttendance.Leave_Date && a.To_Date <= newStaffAttendance.Leave_Date && (a.Is_Deleted == false || a.Is_Deleted == null) && a.Academic_Year == nYear).Count() == 0)
+							{	
+								dbcontext.Staff_Attendance.Add(newStaffAttendance);
+								dbcontext.SaveChanges();
+								sReturnText = "OK";
+								//return Json("OK", JsonRequestBehavior.AllowGet);
+							}
+							else
+							{
+								return Json("Holiday Already Exists.", JsonRequestBehavior.AllowGet);
+							}
+
+							if (nHolidayCount == (nDays - 1))
+							{
+								transaction.Commit();
+							}
+						}
+					}
+					catch (Exception e)
+					{
+						transaction.Rollback();
+						return Json("Failure", JsonRequestBehavior.AllowGet);
+					}
+				}
+				return Json(sReturnText, JsonRequestBehavior.AllowGet);
+			}
+		}
+		#endregion
+
+
+
+	}
 }

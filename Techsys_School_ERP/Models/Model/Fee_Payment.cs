@@ -25,7 +25,7 @@ namespace Techsys_School_ERP.Model
 
 		public decimal Late_fees { get; set; }
 
-		public DateTime Next_due_date { get; set; }
+		public DateTime? Next_due_date { get; set; }
 
 		public string Collected_by { get; set; }
 
@@ -42,5 +42,7 @@ namespace Techsys_School_ERP.Model
 		public DateTime? Updated_On { get; set; }
 
 		public int? Updated_By { get; set; }
+
+		public string File_Name { get; set; }
 	}
 }

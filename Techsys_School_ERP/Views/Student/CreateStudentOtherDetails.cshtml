@@ -24,6 +24,78 @@
 			$('#Allergy_Details').attr("readonly", false)
 			})
 
+
+			$("#Photo").change(function () {
+
+				if ($(this)[0].files && $(this)[0].files[0]) {
+					var reader = new FileReader();
+
+					reader.onload = function (e) {
+						$('#birthCertificateImg')
+							.attr('src', e.target.result)
+							.width(100)
+							.height(80);
+					};
+
+					reader.readAsDataURL($(this)[0].files[0]);
+
+				}
+			});
+
+
+			$("#UploadDocument1").change(function () {
+
+				if ($(this)[0].files && $(this)[0].files[0]) {
+					var reader = new FileReader();
+
+					reader.onload = function (e) {
+						$('#UploadDocument1Img')
+							.attr('src', e.target.result)
+							.width(100)
+							.height(80);
+					};
+
+					reader.readAsDataURL($(this)[0].files[0]);
+
+				}
+			});
+
+
+			$("#UploadDocument2").change(function () {
+
+				if ($(this)[0].files && $(this)[0].files[0]) {
+					var reader = new FileReader();
+
+					reader.onload = function (e) {
+						$('#UploadDocument2Img')
+							.attr('src', e.target.result)
+							.width(100)
+							.height(80);
+					};
+
+					reader.readAsDataURL($(this)[0].files[0]);
+
+				}
+			});
+
+
+			$("#IDcard").change(function () {
+
+				if ($(this)[0].files && $(this)[0].files[0]) {
+					var reader = new FileReader();
+
+					reader.onload = function (e) {
+						$('#IDcardImg')
+							.attr('src', e.target.result)
+							.width(100)
+							.height(80);
+					};
+
+					reader.readAsDataURL($(this)[0].files[0]);
+
+				}
+			});
+
 			$("#btnSaveAndContinue").click(function () {
 
 				var Student_Other_Detail =
@@ -37,7 +109,7 @@
 						Father_Annual_Income: $("#Father_Annual_Income").val(),
 						Mother_Office_Address: $("#Mother_Office_Address").val(),
 						Father_Office_Address: $("#Father_Office_Address").val(),
-						Mother_Occupation_Id: $("#Mother_Occupation_Id").find(":selected").val(),
+						//Mother_Occupation_Id: $("#Mother_Occupation_Id").find(":selected").val(),
 						Mother_Annual_Income: $("#Mother_Annual_Income").val(),
 						//Category_Id: $("#Category_Id").find(":selected").val(),
 						Category_Id: $("#CategoryList").find(":selected").val(),
@@ -298,17 +370,17 @@
 								<div class="col-sm-3 col-md-3">
 									@Html.LabelFor(model => model.Upload_Document1, new { htmlAttributes = new { @class = "form-control" } })
 									<img id="UploadDocument1Img" src="~/Content/images/imageupload_-_Copy.png" alt="your image" style="height:100px;width:110px;margin-top:0%;margin-left:0%;background-size:auto; align-content:flex-start; " class="img-responsive">
-									<input type="file" name="Photo" style="display:none;  " id="Photo" />
+									<input type="file" name="Photo" style="display:none;  " id="UploadDocument1" />
 								</div>
 								<div class="col-sm-3 col-md-3">
 									@Html.LabelFor(model => model.Upload_Document2, new { htmlAttributes = new { @class = "form-control" } })
 									<img id="UploadDocument2Img" src="~/Content/images/imageupload_-_Copy.png" alt="your image" style="height:100px;width:110px;margin-top:0%;margin-left:0%;background-size:auto; align-content:flex-start; " class="img-responsive">
-									<input type="file" name="Photo" style="display:none;  " id="Photo" />
+									<input type="file" name="Photo" style="display:none;  " id="UploadDocument2" />
 									</div>
 								<div class="col-sm-3 col-md-3">
 									@Html.LabelFor(model => model.ID_Card, new { htmlAttributes = new { @class = "form-control" } })
 									<img id="IDcardImg" src="~/Content/images/imageupload_-_Copy.png" alt="your image" style="height:100px;width:110px;margin-top:0%;margin-left:0%;background-size:auto; align-content:flex-start; " class="img-responsive">
-									<input type="file" name="Photo" style="display:none;  " id="Photo" />
+									<input type="file" name="Photo" style="display:none;  " id="IDCard" />
 									</div>
 
 
@@ -317,9 +389,9 @@
 								</div>
 						</fieldset>
 						</div>
-						<div class="row vert-margin-top vert-margin-top col-sm-offset-9 col-md-offset-9">
+						<div class="row  vert-margin-top col-sm-offset-9 col-md-offset-9">
 						
-							<input type="button" id="btncancel" class="btn btn-primary bg-green-400" value="CANCEL" style="margin-left:25%;" />
+							<input type="button" id="btncancel" class="btn btn-primary bg-green-400" value="CANCEL" style="margin-left:17%;" />
 							<input type="button" id="btnSaveAndContinue" class="btn btn-primary bg-green-400" value="SAVE & CONTINUE" />
 
 						</div>

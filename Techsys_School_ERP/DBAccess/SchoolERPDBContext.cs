@@ -54,6 +54,10 @@ namespace Techsys_School_ERP.DBAccess
 		public DbSet<Occupation> Occupation { get; set; }
 		public DbSet<Fee_Payment> Fee_Payment { get; set; }
 		public DbSet<Frequency> Frequency { get; set; }
+		public DbSet<Designation> Designation { get; set; }
+		public DbSet<Staff_Attendance> Staff_Attendance { get; set; }
+		public DbSet<Assignment> Assignment { get; set; }
+		public DbSet<Term_Fee_Date> Term_Fee_Date { get; set; }
 
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -82,14 +86,18 @@ namespace Techsys_School_ERP.DBAccess
 			modelBuilder.Entity<Category>().HasKey(s => s.Id);
 			modelBuilder.Entity<Staff_Type>().HasKey(s => s.Id);
 			modelBuilder.Entity<Staff>().HasKey(s => s.Staff_Id);
-			modelBuilder.Entity<Staff_Educational_Details>().HasKey(s => s.StaffDetail_Id);
-			modelBuilder.Entity<Staff_Exp_Details>().HasKey(s => s.StaffExp_Id);
-			modelBuilder.Entity<Staff_Salary_Detail>().HasKey(s => s.Staff_Salary_Id);
+			modelBuilder.Entity<Staff_Educational_Details>().HasKey(s => s.Id);
+			modelBuilder.Entity<Staff_Exp_Details>().HasKey(s => s.Id);
+			modelBuilder.Entity<Staff_Salary_Detail>().HasKey(s => s.Id);
 			modelBuilder.Entity<Institution>().HasKey(s => s.Id);
 			modelBuilder.Entity<Qualification>().HasKey(s => s.Id);
 			modelBuilder.Entity<Occupation>().HasKey(s => s.Id);
 			modelBuilder.Entity<Fee_Payment>().HasKey(s => s.Id);
 			modelBuilder.Entity<Frequency>().HasKey(s => s.Id);
+			modelBuilder.Entity<Designation>().HasKey(s => s.Id);
+			modelBuilder.Entity<Staff_Attendance>().HasKey(s => s.Id);
+			modelBuilder.Entity<Assignment>().HasKey(s => s.Id);
+			modelBuilder.Entity<Term_Fee_Date>().HasKey(s => s.Id);
 
 			base.OnModelCreating(modelBuilder);
 		}

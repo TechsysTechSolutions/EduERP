@@ -81,13 +81,13 @@ namespace Techsys_School_ERP.Model
 		public DateTime? Created_On { get; set; }
 
 		[Display(Name = "CREATED BY")]
-		public string Created_By { get; set; }
+		public int Created_By { get; set; }
 
 		[Display(Name = "UPDATED DATE")]
 		public DateTime? Updated_On { get; set; }
 
 		[Display(Name = "UPDATED BY")]
-		public string Updated_By { get; set; }
+		public int? Updated_By { get; set; }
 
 		public bool Is_Active { get; set; }
 

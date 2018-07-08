@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -7,10 +8,12 @@ namespace Techsys_School_ERP.Model.ViewModel
 {
 	public class Attendance_ViewModel
 	{
-		public int Student_Id { get; set; }
+		public string Student_Id { get; set; }
 
+		[Display(Name = "STUDENT NAME")]
 		public string Student_Name { get; set; }
 
+		[Display(Name = "ROLL NO")]
 		public string Roll_No { get; set; }
 
 		public string Day_1 { get; set; }

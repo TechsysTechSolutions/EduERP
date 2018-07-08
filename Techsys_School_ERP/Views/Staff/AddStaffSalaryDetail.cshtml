@@ -1,0 +1,392 @@
+﻿@model Techsys_School_ERP.Model.ViewModel.StaffSalary_ViewModel
+
+@{
+ 
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+
+	<!-- /theme JS files -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script type="text/javascript" src="~/Scripts/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="~/Scripts/jquery-ui.js"></script>
+
+	<!-- /core JS files -->
+	<!-- Theme JS files -->
+	<script type="text/javascript" src="~/Content/assets/js/core/libraries/jquery_ui/interactions.min.js"></script>
+	<script type="text/javascript" src="~/Content/assets/js/plugins/forms/selects/select2.min.js"></script>
+	<script type="text/javascript" src="~/Content/assets/js/pages/form_select2.js"></script>
+
+	<script type="text/javascript">
+	
+		$(document).ready(function () {
+
+			var basic, DA, Medical, Conveyance, HRA, LTA, Other, Provident_Fund, ESIC, Professional_Tax, Gross_Salary, Net_Salary, Other_Deductions;
+
+			$('.salary').change(function () {
+				//debugger
+				setDefaultValue();
+				var total = parseInt(basic) + parseInt(DA) + parseInt(Medical) + parseInt(Conveyance) + parseInt(HRA) + parseInt(LTA) + parseInt(Other);
+				var deductions = parseInt(Provident_Fund) + parseInt(Professional_Tax) + parseInt(ESIC) + parseInt(Other_Deductions);
+
+				var gross_Salary = parseInt(total);
+				$("#Gross_Salary").val(gross_Salary);
+				var net_Salary = parseInt(total - deductions);
+				$("#Net_Salary").val(net_Salary);
+			});
+
+			function setDefaultValue() {
+
+				if ($("#Basic").val() == "") {
+					basic = 0;
+				}
+				else {
+					basic = $("#Basic").val();
+				}
+
+				if ($("#DA").val() == "") {
+					DA = 0;
+				}
+				else {
+					DA = $("#DA").val();
+				}
+
+				if ($("#Medical").val() == "") {
+					Medical = 0;
+				}
+				else {
+					Medical = $("#Medical").val();
+				}
+
+				if ($("#Conveyance").val() == "") {
+					Conveyance = 0;
+				}
+				else {
+					Conveyance = $("#Conveyance").val();
+				}
+
+				if ($("#HRA").val() == "") {
+					HRA = 0;
+				}
+				else {
+					HRA = $("#HRA").val();
+				}
+
+				if ($("#LTA").val() == "") {
+					LTA = 0;
+				}
+				else {
+					LTA = $("#LTA").val();
+				}
+
+				if ($("#Other").val() == "") {
+					Other = 0;
+				}
+				else {
+					Other = $("#Other").val();
+				}
+
+				if ($("#Provident_Fund").val() == "") {
+					Provident_Fund = 0;
+				}
+				else {
+					Provident_Fund = $("#Provident_Fund").val();
+				}
+
+				if ($("#ESIC").val() == "") {
+					ESIC = 0;
+				}
+				else {
+					ESIC = $("#ESIC").val();
+				}
+
+				if ($("#Professional_Tax").val() == "") {
+					Professional_Tax = 0;
+				}
+				else {
+					Professional_Tax = $("#Professional_Tax").val();
+
+				}
+
+				if ($("#Other_Deductions").val() == "") {
+					Other_Deductions = 0;
+				}
+				else {
+					Other_Deductions = $("#Other_Deductions").val();
+
+				}
+
+			}
+
+			$("#btnSaveAndContinue").click(function () {
+
+				var Staff_Salary_Detail =
+					{
+						Staff_Id: 3,
+						Basic: $('#Basic').val(),
+						DA: $("#DA").val(),
+						Medical: $('#Medical').val(),
+						Conveyance: $("#Conveyance").val(),
+						HRA: $('#HRA').val(),
+						LTA: $("#LTA").val(),
+						Other: $('#Other').val(),
+						Provident_Fund: $("#Provident_Fund").val(),
+						ESIC: $('#ESIC').val(),
+						Professional_Tax: $("#Professional_Tax").val(),
+						Gross_Salary: $("#Gross_Salary").val(),
+						Net_Salary: $('#Net_Salary').val(),
+						Other_Deductions: $("#Other_Deductions").val(),
+						PF_Account_No: $('#PF_Account_No').val(),
+						PAN_No: $("#PAN_No").val(),
+						Bank_Name : $("#Bank_Name").val(),
+						Branch_Name : $("#Branch_Name").val(),
+						Bank_AddressLine1 : $("#Bank_AddressLine1").val(),
+						City : $("#City").val(),
+						Bank_Account_No : $("#Bank_Account_No").val()
+					};
+
+				var staffSalaryDetail = JSON.stringify(Staff_Salary_Detail);
+
+				$.ajax({
+					url: '/Staff/AddStaffSalaryDetail/',
+					type: 'POST',
+					contentType: 'application/json; charset=utf-8',
+					cache: false,
+					data: staffSalaryDetail,
+					dataType: "json",
+					success: function (data) {
+
+						if (data == "OK") {
+							alert("Staff Salary Detail Succesfully Saved!");
+						}
+						else {
+							alert(data);
+						}
+						
+					}
+				});
+
+
+			});
+	})
+	</script>
+</head>
+<body>
+	<div class="page-container" style="height:100%;">
+		<div class="page-content">
+			<div class="container">
+				@*<div class="row">*@
+
+				<div class="panel panel-primary panel-bordered" style="width:100%;">
+					<div class="panel-heading bg-indigo-400">
+						<h6 class="panel-title ">STAFF SALARY DETAIL</h6>
+						<div class="heading-elements ">
+							<ul class="icons-list">
+								<li><a data-action="collapse"></a></li>
+								<li><a data-action="reload"></a></li>
+								<li><a data-action="close"></a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="panel-body">
+						<fieldset>
+							@*<legend class="text-semibold" style="font-weight:900;">
+								<i class="icon-reading position-left" style="color:green;font-size:larger;font-weight:bolder; "></i>
+								Add Staff Salary
+							</legend>*@
+							<div class="row form-group">
+								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
+									<label style="font-weight:700; " >EMPLOYEE NO </label>
+									@Html.EditorFor(model => model.Employee_No, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-3 col-md-3 col-sm-offset-0 col-md-offset-0">
+									<label style="font-weight:700; ">EMPLOYEE NAME </label>
+									@Html.EditorFor(model => model.Staff_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
+									<label style="font-weight:700; ">YEAR </label>
+									@Html.EditorFor(model => model.Academic_Year, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-3 col-md-3 col-sm-offset-0 col-md-offset-0">
+									<label style="font-weight:700; ">PF ACCOUNT NO </label>
+									@Html.EditorFor(model => model.PF_Account_No, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
+									<label style="font-weight:700; ">PAN NO </label>
+									@Html.EditorFor(model => model.PAN_No, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+
+							</div>
+							<div class="row form-group">
+
+								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
+									<label style="font-weight:700; ">BANK NAME </label>
+									@Html.EditorFor(model => model.Bank_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-3 col-md-3 col-sm-offset-0 col-md-offset-0">
+									<label style="font-weight:700; ">ACCOUNT NAME </label>
+									@Html.EditorFor(model => model.Bank_Account_No, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
+									<label style="font-weight:700; ">BRANCH </label>
+									@Html.EditorFor(model => model.Branch_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-3 col-md-3 col-sm-offset-0 col-md-offset-0">
+									<label style="font-weight:700; ">BANK ADDRESS </label>
+									@Html.EditorFor(model => model.Bank_AddressLine1, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
+									<label style="font-weight:700; ">CITY </label>
+									@Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								</div>
+</fieldset>
+						<fieldset>
+							<legend class="text-semibold" style="font-weight:900;">
+								<i class="icon-reading position-left" style="color:green;font-size:larger;font-weight:bolder; "></i>
+								Salary Detail
+							</legend>
+							<div class="row form-group">
+								<div class="col-sm-2 col-md-2 col-sm-offset-3 col-md-offset-3">
+									<label style="font-weight:700;text-underline-position:auto; ">SALARY COMPONENT</label>
+									</div>
+								<div class="col-sm-2 col-md-2 col-sm-offset-4 col-md-offset-4">
+									<label style="font-weight:700; ">DEDUCTIONS</label>
+								</div>
+								</div>
+							<div class="row form-group">
+								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
+									@Html.LabelFor(model => model.Basic, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									</div>
+								<div class="col-sm-2 col-md-2">
+									@Html.EditorFor(model => model.Basic, new { htmlAttributes = new { @class = "form-control salary", @placeholder = "" } })
+								</div>
+								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
+									@Html.LabelFor(model => model.HRA, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-2 col-md-2">
+									@Html.EditorFor(model => model.HRA, new { htmlAttributes = new { @class = "form-control salary", @placeholder = "" } })
+								</div>
+								@*<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
+
+								</div>
+								<div class="col-sm-2 col-md-2">
+									<label style="font-weight:700; ">OTHER DEDUCTIONS</label>
+								</div>*@
+								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
+									@Html.LabelFor(model => model.Provident_Fund, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-2 col-md-2">
+									@Html.EditorFor(model => model.Provident_Fund, new { htmlAttributes = new { @class = "form-control salary", @placeholder = "" } })
+								</div>
+								</div>
+
+							<div class="row form-group">
+								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
+									@Html.LabelFor(model => model.DA, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-2 col-md-2">
+									@Html.EditorFor(model => model.DA, new { htmlAttributes = new { @class = "form-control salary", @placeholder = "" } })
+								</div>
+								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
+									@Html.LabelFor(model => model.LTA, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-2 col-md-2">
+									@Html.EditorFor(model => model.LTA, new { htmlAttributes = new { @class = "form-control salary", @placeholder = "" } })
+								</div>
+
+								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
+									@Html.LabelFor(model => model.ESIC, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-2 col-md-2">
+									@Html.EditorFor(model => model.ESIC, new { htmlAttributes = new { @class = "form-control salary", @placeholder = "" } })
+								</div>
+
+
+
+							</div>
+							<div class="row form-group">
+
+								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
+									@Html.LabelFor(model => model.Medical, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-2 col-md-2">
+									@Html.EditorFor(model => model.Medical, new { htmlAttributes = new { @class = "form-control salary", @placeholder = "" } })
+								</div>
+								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
+									@Html.LabelFor(model => model.Other, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-2 col-md-2">
+									@Html.EditorFor(model => model.Other, new { htmlAttributes = new { @class = "form-control salary", @placeholder = "" } })
+								</div>
+								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
+									@Html.LabelFor(model => model.Professional_Tax, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-2 col-md-2">
+									@Html.EditorFor(model => model.Professional_Tax, new { htmlAttributes = new { @class = "form-control salary", @placeholder = "" } })
+								</div>
+							
+
+
+							</div>
+							<div class="row form-group">
+
+
+								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
+									@Html.LabelFor(model => model.Conveyance, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-2 col-md-2">
+									@Html.EditorFor(model => model.Conveyance, new { htmlAttributes = new { @class = "form-control salary", @placeholder = "" } })
+								</div>
+
+								<div class="col-sm-2 col-md-2 col-sm-offset-4 col-md-offset-4">
+									@Html.LabelFor(model => model.Other_Deductions, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-2 col-md-2">
+									@Html.EditorFor(model => model.Other_Deductions, new { htmlAttributes = new { @class = "form-control salary", @placeholder = "" } })
+								</div>
+
+
+							
+
+
+
+							</div>
+						
+							
+
+														<hr />
+							<div class="row form-group">
+								<div class="col-sm-2 col-md-2 col-sm-offset-1 col-md-offset-1">
+									<label style="font-weight:700; ">GROSS SALARY</label>
+								</div>
+								<div class="col-sm-2 col-md-2">
+									@Html.EditorFor(model => model.Gross_Salary, new { htmlAttributes = new { @class = "form-control salary", @placeholder = "", @style = "font-weight:800;" } })
+								</div>
+								<div class="col-sm-2 col-md-2 col-sm-offset-1 col-md-offset-1">
+									<label style="font-weight:700; ">NET SALARY</label>
+								</div>
+								<div class="col-sm-2 col-md-2">
+									@Html.EditorFor(model => model.Net_Salary, new { htmlAttributes = new { @class = "form-control salary", @placeholder = "", @style = "font-weight:800;" } })
+								</div>
+								</div>
+							<hr />
+							@*<div class="row form-group">
+								</div>*@
+								<div class="row form-group">
+									<input type="button" id="btnCancel" value="CANCEL" class="col-sm-1 col-md-1 col-sm-offset-9 col-sm-offset-9 btn btn-primary bg-warning-400"  />
+									<input type="button" id="btnSaveAndContinue" value="SAVE" class="col-sm-1 col-md-1  btn btn-primary bg-green-400" style="margin-left:10px;" />
+								</div>
+</fieldset>
+</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
