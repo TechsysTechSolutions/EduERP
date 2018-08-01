@@ -462,7 +462,7 @@ namespace Techsys_School_ERP.Controllers
 			using (var dbcontext = new SchoolERPDBContext())
 			{
 				
-				staffAttendanceListViewModel = (from staff in dbcontext.Staff
+				var staffAttendanceList = (from staff in dbcontext.Staff
 												join staffAttendance in dbcontext.Staff_Attendance on staff.Staff_Id equals staffAttendance.Staff_Id
 												
 												where staffAttendance.Is_Deleted == null || staffAttendance.Is_Deleted == false
@@ -470,19 +470,22 @@ namespace Techsys_School_ERP.Controllers
 												{
 													//Id = hol.Id,
 													Id = staffAttendance.Id,
-													From_Date = staffAttendance.From_Date,
-													To_Date = staffAttendance.To_Date,
+													Leave_Date = staffAttendance.Leave_Date,
+													From_Date = staffAttendance.From_Date + " To " + staffAttendance.To_Date,
+													//To_Date = staffAttendance.To_Date,
 													Leave_Reason = staffAttendance.Reason,
 													Leave_Days_Taken = 0,
 													Academic_Year = nYear,
 													Name = staff.First_Name + " " + staff.Last_Name,
 													Employee_No = staff.Employee_Id,
-													Created_On = staffAttendance.Created_On
+													//Created_On = staffAttendance.Created_On
+													Created_On = null
 
-												}).ToList();
+												}).Distinct().ToList();
 
 
 
+			staffAttendanceListViewModel = staffAttendanceList;
 
 				if (staffAttendanceListViewModel.Count() == 0)
 				{
@@ -491,7 +494,9 @@ namespace Techsys_School_ERP.Controllers
 
 
 			}
-			
+
+			//var staffAttendanceList = staffAttendanceListViewModel.Distinct().ToList();
+
 			return View(staffAttendanceListViewModel);
 			
 		}

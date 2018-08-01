@@ -11,6 +11,7 @@ using System.Web.Security;
 using System.Data.Entity;
 using Techsys_School_ERP.Model.ViewModel;
 using System.Web.Script.Serialization;
+using System.IO;
 
 namespace Techsys_School_ERP.Controllers
 {
@@ -131,6 +132,58 @@ namespace Techsys_School_ERP.Controllers
 			return Json(new { items = list }, JsonRequestBehavior.AllowGet);
 		}
 
+		public JsonResult SearchAndGetSubjectList(string q)
+		{
+			var list = new List<SearchList>();
+
+			List<Subject> subjectList = new List<Subject>();
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+
+				if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+				{
+					string newLine = ((char)13).ToString() + ((char)10).ToString(); ;
+
+					subjectList = (from sub in dbcontext.Subject
+								 where sub.Name.Contains(q.ToLower())
+								 select new
+								 {
+									 Text = sub.Name.Substring(0,3),
+									 Id = sub.Id
+								 }).ToList().
+								   Select(x => new Subject
+
+								   {
+
+									   Name = x.Text,
+									   Id = x.Id
+
+								   }).ToList();
+
+
+				}
+			}
+
+
+			for (int i = 0; i < subjectList.Count(); i++)
+			{
+				SearchList oSelect2Model = new SearchList();
+				oSelect2Model.text = subjectList[i].Name;
+				oSelect2Model.id = subjectList[i].Id.ToString();
+				list.Add(oSelect2Model);
+			}
+
+
+			if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+			{
+				list = list.Where(x => x.text.ToLower().Contains(q.ToLower())).ToList();
+			}
+
+			//return Json(new { items = list }, JsonRequestBehavior.AllowGet);
+			return Json(list, JsonRequestBehavior.AllowGet);
+		}
+
 		public JsonResult SearchAndGetStaffList(string q)
 		{
 			var list = new List<SearchList>();
@@ -185,6 +238,128 @@ namespace Techsys_School_ERP.Controllers
 			return Json( list , JsonRequestBehavior.AllowGet);
 		}
 
+		public ActionResult SearchAndGetInventoryList(string q)
+		{
+			var list = new List<SearchList>();
+
+			List<Inventory> inventoryList = new List<Inventory>();
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+
+				if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+				{
+
+					if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+					{
+
+						inventoryList = (from invtry in dbcontext.Inventory
+									  where invtry.Name.Contains(q.ToLower())
+									  select new
+									  {
+										  Text = invtry.Name,
+										  Id = invtry.Id
+									  }).ToList().
+										   Select(x => new Inventory
+
+										   {
+
+											   Name = x.Text,
+											   Id = x.Id
+
+										   }).ToList();
+
+					}
+				}
+			}
+
+
+			for (int i = 0; i < inventoryList.Count(); i++)
+			{
+				SearchList oSelect2Model = new SearchList();
+				oSelect2Model.text = inventoryList[i].Name;
+				oSelect2Model.id = inventoryList[i].Id.ToString();
+
+				list.Add(oSelect2Model);
+
+
+			}
+
+
+			if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+			{
+				list = list.Where(x => x.text.ToLower().Contains(q.ToLower())).ToList();
+			}
+			return Json( list , JsonRequestBehavior.AllowGet);
+		}
+
+		public ActionResult SearchAndGetClassAndSectionList(string q)
+		{
+			var list = new List<SearchList>();
+
+			List<Inventory> inventoryList = new List<Inventory>();
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+
+				if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+				{
+
+					if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+					{
+
+
+						
+						inventoryList = (from usr in dbcontext.Users
+										 join cls in dbcontext.Class on usr.Id equals cls.Created_By
+										 join sec in dbcontext.Section on cls.Id equals sec.Class_Id
+										 where (sec.Is_Deleted == null || sec.Is_Deleted == false)
+										 
+										 select new
+										 {
+											 Text = cls.Name + "-" + sec.Name ,
+											 Id = sec.Id
+										 }).ToList().
+										   Select(x => new Inventory
+
+										   {
+
+											   Name = x.Text,
+											   Id = x.Id
+
+										   }).ToList();
+
+					}
+				}
+			}
+
+
+			for (int i = 0; i < inventoryList.Count(); i++)
+			{
+				SearchList oSelect2Model = new SearchList();
+				oSelect2Model.text = inventoryList[i].Name;
+				oSelect2Model.id = inventoryList[i].Id.ToString();
+
+				list.Add(oSelect2Model);
+
+
+			}
+
+			//To Add Free Period 
+			SearchList oFreePeriodSelect2Model = new SearchList();
+			oFreePeriodSelect2Model.text = "FREE PERIOD";
+			oFreePeriodSelect2Model.id = "-1";
+
+			list.Add(oFreePeriodSelect2Model);
+
+
+			if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+			{
+				list = list.Where(x => x.text.ToLower().Contains(q.ToLower())).ToList();
+			}
+			return Json(list, JsonRequestBehavior.AllowGet);
+		}
+
 		public void GetClass()
 		{
 			using (var dbcontext = new SchoolERPDBContext())
@@ -197,7 +372,7 @@ namespace Techsys_School_ERP.Controllers
 			}
 		}
 
-		public void GetDesignation()
+		    public void GetDesignation()
 		{
 			using (var dbcontext = new SchoolERPDBContext())
 			{
@@ -209,6 +384,38 @@ namespace Techsys_School_ERP.Controllers
 			}
 		}
 
+		public void GetMonth()
+		{
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				var monthList = (from monList in dbcontext.Month select monList).ToList();
+				if (monthList != null)
+				{
+					ViewBag.monthList = monthList.Select(N => new SelectListItem { Text = N.Name, Value = N.Id.ToString() });
+				}
+			}
+		}
+
+		public byte[] ConvertFiletoBYteStream(HttpPostedFileBase file)
+			{
+				byte[] bytes;
+				using (BinaryReader br = new BinaryReader(file.InputStream))
+				{
+				bytes = br.ReadBytes(file.ContentLength);
+				}
+				return bytes;
+			}
+
+			public string ConvertByteStreamToString(byte[] imgByteStream)
+			{
+				byte[] byteData = imgByteStream;
+				//Convert byte arry to base64string   
+				string imreBase64Data = Convert.ToBase64String(byteData);
+				string imgDataURL = string.Format("data:image/png;base64,{0}", imreBase64Data);
+				return imgDataURL;
+		
+			}
+
 		public void GetCategory()
 		{
 			using (var dbcontext = new SchoolERPDBContext())
@@ -217,6 +424,43 @@ namespace Techsys_School_ERP.Controllers
 				if (categoryList != null)
 				{
 					ViewBag.categoryList = categoryList.Select(N => new SelectListItem { Text = N.Name, Value = N.Id.ToString() });
+				}
+			}
+		}
+
+		public void GetVehicleList()
+		{
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				var transportList = (from transport in dbcontext.Transport select transport).ToList();
+				if (transportList != null)
+				{
+					ViewBag.transportList = transportList.Select(N => new SelectListItem { Text = N.Name, Value = N.Id.ToString() });
+				}
+			}
+		}
+
+
+		public void GetHostelRoomList()
+		{
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				var hostelRoomList = (from hostelRoom in dbcontext.Hostel_Room select hostelRoom).ToList();
+				if (hostelRoomList != null)
+				{
+					ViewBag.hostelRoomList = hostelRoomList.Select(N => new SelectListItem { Text = N.Room_No, Value = N.Id.ToString() });
+				}
+			}
+		}
+
+		public void GetSecondLanguage()
+		{
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				var secondLanguageList = (from secLangList in dbcontext.Second_Language select secLangList).ToList();
+				if (secondLanguageList != null)
+				{
+					ViewBag.secondLanguageList = secondLanguageList.Select(N => new SelectListItem { Text = N.Name, Value = N.Id.ToString() });
 				}
 			}
 		}
@@ -298,6 +542,116 @@ namespace Techsys_School_ERP.Controllers
 
 			return list;
 		}
+
+		public List<AutoComplete_ViewModel> GetSubjectNameBasedOnId(string sSubject_Id)
+		{
+			int nSubject_Id = Convert.ToInt16(sSubject_Id);
+			var list = new List<AutoComplete_ViewModel>();
+
+			List<Subject> subjectList = new List<Subject>();
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+
+				if (!(string.IsNullOrEmpty(sSubject_Id)))
+				{
+
+					subjectList = (from subject in dbcontext.Subject
+									   //  where country.Name.Contains(q.ToLower())
+								   where subject.Id == nSubject_Id
+								   select new
+								   {
+									   Text = subject.Name.Substring(0,3).ToUpper(),
+									   Id = subject.Id
+								   }).ToList().
+								   Select(x => new Subject
+
+								   {
+
+									   Name = x.Text,
+									   Id = x.Id
+
+								   }).ToList();
+
+				}
+			}
+
+
+			for (int i = 0; i < subjectList.Count(); i++)
+			{
+				AutoComplete_ViewModel oAutoCompleteViewModel = new AutoComplete_ViewModel();
+				oAutoCompleteViewModel.text = subjectList[i].Name;
+				oAutoCompleteViewModel.id = subjectList[i].Id.ToString();
+
+				list.Add(oAutoCompleteViewModel);
+
+
+			}
+
+
+			return list;
+		}
+
+		public List<AutoComplete_ViewModel> GetClassAndSectionNameBasedOnId(string sSection_Id)
+		{
+			int nSection_Id = Convert.ToInt16(sSection_Id);
+			var list = new List<AutoComplete_ViewModel>();
+
+			List<SearchList> classAndSectionList = new List<SearchList>();
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+
+				if (!(string.IsNullOrEmpty(sSection_Id)))
+				{
+
+					classAndSectionList = (from usr in dbcontext.Users
+								   join cls in dbcontext.Class on usr.Id equals cls.Created_By
+								   join sec in dbcontext.Section on cls.Id equals sec.Class_Id
+								   where (sec.Is_Deleted == null || sec.Is_Deleted == false )&& sec.Id == nSection_Id
+
+								   select new
+								   {
+									   Text = cls.Name + "-" + sec.Name,
+									   Id = sec.Id
+								   }).ToList().
+								   Select(x => new SearchList
+
+								   {
+
+									   text = x.Text,
+									   id =  Convert.ToString(x.Id)
+
+								   }).ToList();
+
+				}
+			}
+
+
+			for (int i = 0; i < classAndSectionList.Count(); i++)
+			{
+				AutoComplete_ViewModel oAutoCompleteViewModel = new AutoComplete_ViewModel();
+				oAutoCompleteViewModel.text = classAndSectionList[i].text;
+				oAutoCompleteViewModel.id = classAndSectionList[i].id.ToString();
+
+				list.Add(oAutoCompleteViewModel);
+
+				
+			}
+
+			if (nSection_Id == -1)
+			{
+				AutoComplete_ViewModel oAutoCompleteViewModelForFreePeriod = new AutoComplete_ViewModel();
+				oAutoCompleteViewModelForFreePeriod.text = "FREE PERIOD";
+				oAutoCompleteViewModelForFreePeriod.id = sSection_Id;
+
+				list.Add(oAutoCompleteViewModelForFreePeriod);
+			}
+
+
+			return list;
+		}
+
 
 
 		public List<AutoComplete_ViewModel> GetCountriesList(string q)
@@ -407,6 +761,20 @@ namespace Techsys_School_ERP.Controllers
 				}
 			}
 		}
+
+
+		public void GetRoles()
+		{
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				var roleList = (from rolesList in dbcontext.User_Roles select rolesList).ToList();
+				if (roleList != null)
+				{
+					ViewBag.roleList = roleList.Select(N => new SelectListItem { Text = N.Name, Value = N.Id.ToString() });
+				}
+			}
+		}
+
 		public void GetOccupation()
 		{
 			using (var dbcontext = new SchoolERPDBContext())
@@ -536,6 +904,8 @@ namespace Techsys_School_ERP.Controllers
 		}
 
 
+
+
 		public List<Section> GetSectionForClass(string sClass_Id)
 		{
 			List<Section> sectionList = new List<Section>();
@@ -592,6 +962,7 @@ namespace Techsys_School_ERP.Controllers
 							   }).OrderBy(x=>x.Name);
 
 				sectionList = section.ToList();
+				ViewBag.classSectionList = sectionList.Select(N => new SelectListItem { Text = N.Name, Value = N.Id.ToString() });
 				return sectionList;
 			}
 		}
@@ -617,6 +988,10 @@ namespace Techsys_School_ERP.Controllers
 
 			return sClassAndSectionName;
 		}
+
+
+		#region SendMail
+		#endregion
 
 		public List<FeeConfiguration_ViewModel> GetFeeStructureForStudent(string Student_Id, string Frequency)
 		{

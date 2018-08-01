@@ -105,7 +105,7 @@ font-weight: 500;
 
 
 			$("#btnSaveAndContinue").click(function () {
-				debugger
+				//debugger
 				var isValid = true;
 				
 				isValid = dropdownSelectValidation(isValid);
@@ -174,7 +174,7 @@ font-weight: 500;
 						contentType: "application/json; charset=utf-8",
 						dataType: "json",
 						success: function (response) {
-							debugger
+							//debugger
 							if (response == "SuccessFully Added") {
 								var data = new FormData();
 								data.append('file', ($("#Photo").get(0).files)[0]);
@@ -275,7 +275,7 @@ font-weight: 500;
 
 			function dropdownSelectValidation(valid) {
 
-				debugger;
+		//		debugger;
 
 				var isValid = valid;
 
@@ -686,6 +686,40 @@ font-weight: 500;
 										</div>
 									</div>
 
+									<div class="row form-group">
+
+										<div class="col-sm-2 col-md-2">
+									
+											@Html.LabelFor(model => model.Is_HostelStudent, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+										
+											<br />
+											@*<select id="State_Id" required name="StateName" class="form-control"></select>*@
+										@Html.CheckBox("chkIsHostelStudent")
+											@*@Html.EditorFor(model => model.State_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })*@
+										</div>
+
+										<div class="col-sm-2 col-md-2">
+											@Html.LabelFor(model => model.Hostel_Room_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+											<select id="Hostel_Room_Id" required name="HostelRoomName" class="form-control"></select>
+											@*@Html.EditorFor(model => model.City_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })*@
+										</div>
+										<div class="col-sm-3 col-md-3">
+											@Html.LabelFor(model => model.School_Bus_Availed, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+										
+											<br />
+											@Html.CheckBox("chkIfSchoolBusAvailed")
+											@*@Html.CheckBoxFor(model => model.School_Bus_Availed, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })*@
+										</div>
+										<div class="col-sm-3 col-md-3">
+											@Html.LabelFor(model => model.Vehicle_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+											<select id="VehicleList" required name="VehicleName" class="form-control"></select>
+										</div>
+										@*<div class="col-sm-3 col-md-3">
+											@Html.LabelFor(model => model.Email_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+											@Html.EditorFor(model => model.Email_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+										</div>*@
+									</div>
+
 								</fieldset>
 							</div>
 
@@ -693,11 +727,11 @@ font-weight: 500;
 									
 
 
-									<div class="row col-sm-offset-9 col-md-offset-9 form-group">
+									<div class="row col-sm-offset-9 col-md-offset-9 col-sm-3 col-md-3 form-group">
 										@*<input type="button" id="btncancel" class="btn btn-primary bg-green-400" style="width:25%;margin-left:30.5%;" value="CANCEL"/>
 					<input type="button" id="btnSaveAndContinue" class="btn btn-primary bg-green-400" style="width:40%;" value="SAVE & CONTINUE" />*@
-										<input type="button" id="btncancel" class="btn btn-primary bg-green-400" value="CANCEL" style="margin-left:22%;" />
-										<input type="button" id="btnSaveAndContinue" class="btn btn-primary bg-green-400" value="SAVE & CONTINUE" />
+										<input type="button" id="btncancel" class="btn btn-primary bg-green-400  col-md-1 col-sm-1 " value="CANCEL" style="width:30%; margin-right:1%;  " />
+										<input type="button" id="btnSaveAndContinue" class="btn btn-primary bg-green-400 col-md-2 col-sm-2" value="SAVE & CONTINUE" style="width:60%; "/>
 
 									</div>
 

@@ -88,6 +88,10 @@ namespace Techsys_School_ERP.Model
 		[Display(Name = "BANK ACCOUNT NO")]
 		public string Bank_Account_No { get; set; }
 
+		
+	    [Display(Name = "NAME ON ACCOUNT")]
+		public string Name_on_Acount { get; set; }
+
 
 
 	}

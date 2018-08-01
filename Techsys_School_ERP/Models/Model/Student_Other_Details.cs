@@ -32,19 +32,19 @@ namespace Techsys_School_ERP.Model
 		[Display(Name = "FATHER'S OCCUPATION")]
 		public int Father_Occupation_Id { get; set; }
 
-		[Display(Name = "FATHER'S ANUUAL INCOME")]
+		[Display(Name = "ANUUAL INCOME")]
 		public decimal Father_Annual_Income { get; set; }
 
-		[Display(Name = "FATHER'S OFFICE ADDRESS")]
+		[Display(Name = " OFFICE ADDRESS")]
 		public string Father_Office_Address { get; set; }
 
-		[Display(Name = "MOTHER'S OFFICE ADDRESS")]
+		[Display(Name = "OFFICE ADDRESS")]
 		public string Mother_Office_Address { get; set; }
 
 		[Display(Name = "MOTHER'S OCCUPATION")]
 		public int Mother_Occupation_Id { get; set; }
 
-		[Display(Name = "MOTHER'S ANUUAL INCOME")]
+		[Display(Name = " ANUUAL INCOME")]
 		public decimal Mother_Annual_Income { get; set; }
 
 		[Display(Name = "CATEGORY")]
@@ -64,6 +64,22 @@ namespace Techsys_School_ERP.Model
 
 		[Display(Name = "BIRTH CERTIFICATE")]
 		public byte[] Birth_Certificate { get; set; }
+
+		[Display(Name = "MEDICAL HISTORY DETAILS(IF ANY)")]
+		public string Medical_History_Details { get; set; }
+
+		[Display(Name = "COMPANY NAME")]
+		public string Father_Company_Name { get; set; }
+
+
+		[Display(Name = "COMPANY NAME")]
+		public string Mother_Company_Name { get; set; }
+
+		[Display(Name = "DESIGNATION")]
+		public string Father_Designation { get; set; }
+
+		[Display(Name = "DESIGNATION")]
+		public string Mother_Designation { get; set; }
 
 		[Display(Name = "ID CARD")]
 		public byte[] ID_Card { get; set; }

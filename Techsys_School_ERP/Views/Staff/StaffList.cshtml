@@ -81,6 +81,7 @@
 									<th>Emergency Contact No</th>
 									<th>Created on </th>
 									<th>Action</th>
+
 								</tr>
 							</thead>
 							<tbody>
@@ -95,7 +96,7 @@
 										<td>@item.Created_On</td>
 										@*<td>@User.Identity.Name</td>*@
 										<td>
-											@Html.ActionLink("Edit", "Edit", new { id = item.Id })|
+											@Html.ActionLink("Edit", "EditTeachingStaff", new { id = item.Id })|
 											@Html.ActionLink("Delete", "Delete", new { id = item.Id })
 										</td>
 									</tr>

@@ -51,7 +51,7 @@
 	<script type="text/javascript">
 		$(document).ready(function () {
 			var isdropdownValidvalid = true;
-			debugger
+		//	debugger
 
 
 			$('#CountriesList').select2({
@@ -77,7 +77,7 @@
 
 			//$(function () {
 
-				debugger
+				//debugger
 
 			//	$("#BloodGroupList").find(":selected").val(model.Blood_Group_Id);
 
@@ -99,7 +99,7 @@
 			    $("#SectionList option[value=" + $("#Section_Id").val() + "]").attr("selected", "selected")
 			    $("#StateList option[value=" + $("#State_Id").val() + "]").attr("selected", "selected");
 			    $("#CityList option[value=" + $("#City_Id").val() + "]").attr("selected", "selected");
-			    debugger
+			  //  debugger
 
 
 			// Fetch the preselected item, and add to the control
@@ -109,7 +109,7 @@
 			    	type: 'GET',
 			    	url: '/Student/FetchCountryNameBasedOnId?countryId=' + countryId
 			    }).then(function (data) {
-			    	debugger
+			    //	debugger
 			    	// create the option and append to Select2
 			    	var option = new Option(data.items[0].text, data.items[0].id, true, true);
 			    	//$('#CountriesList').val(countryId).trigger('change');
@@ -128,7 +128,7 @@
 			    	//});
 			    });
 
-			debugger
+			//debugger
 			    $('#blah1').attr("src", '@ViewBag.ImageData');
 
 			$("#blah1").click(function () {
@@ -143,7 +143,7 @@
 
 
 			$("#btnSaveAndContinue").click(function () {
-				debugger
+			//	debugger
 				var isValid = true;
 
 				isValid = dropdownSelectValidation(isValid);
@@ -158,15 +158,11 @@
 						Father_Name: $("#Father_Name").val(),
 						Mother_Name: $("#Mother_Name").val(),
 						Blood_Group_Id: $("#BloodGroupList").find(":selected").val(),
-						//Blood_Group_Id: 12,
 						Address_Line1: $("#Address_Line1").val(),
 						Address_Line2: $("#Address_Line2").val(),
-						City_Id: $("#City_Id").find(":selected").val(),
-						State_Id: $("#State_Id").find(":selected").val(),
-						//City_Id: 1177,
-						//State_Id: 39,
-						//Country_Id: $("#CountriesList").find(":selected").val(),
-						Country_Id: 101,
+						City_Id: $("#CityList").find(":selected").val(),
+						State_Id: $("#StateList").find(":selected").val(),
+						Country_Id: $("#CountriesList").find(":selected").val(),
 						Phone_No1: $("#Phone_No1").val(),
 						Phone_No2: $("#Phone_No2").val(),
 						LandLine: $("#LandLine").val(),
@@ -176,8 +172,8 @@
 						Photo: ($("#Photo").get(0).files)[0],
 						Aadhar_No: $("#Aadhar_No").val(),
 						Class_Id: $("#ClassList").find(":selected").val(),
-						Section_Id: $('#Section_Id').find(":selected").val(),
-						Section_Id:14,
+						Section_Id: $('#SectionList').find(":selected").val(),
+						//Section_Id:14,
 						Roll_No: $("#Roll_No").val(),
 						Student_Id : $("#Student_Id").val()
 
@@ -219,8 +215,38 @@
 						contentType: "application/json; charset=utf-8",
 						dataType: "json",
 						success: function (response) {
-							debugger
-							window.location.href = "/Student/EditStudentOtherDetails?sStudent_Id=" + $('#Student_Id').val();
+							if (response == "OK") {
+								var data = new FormData();
+								data.append('file', ($("#Photo").get(0).files)[0]);
+								data.append('student_Id', ($("#Student_Id").val()));
+											$.ajax({
+
+												url: "/Student/Upload",
+												type: "POST",
+												data: data,
+												cache: false,
+												processData: false,
+												contentType: false,
+												success: function (data) {
+													if (data == "OK") {
+														alert("Student Details Successfully Updated");
+														window.location.href = "/Student/EditStudentOtherDetails?sStudent_Id=" + $('#Student_Id').val();
+													}
+												},
+												error: function (ex) {
+													alert('Error in Updating Student Details.' + ex);
+												}
+											});
+								
+								
+							}
+							else if (response == "Email Already Exists") {
+								alert("Email Id already exists");
+
+							}
+							else {
+								alert("Error in Updating Student Details.Please retry with correct input");
+							}
 					//		if (response == "SuccessFully Added") {
 					//			var data = new FormData();
 					//			data.append('file', ($("#Photo").get(0).files)[0]);
@@ -306,7 +332,7 @@
 
 			function dropdownSelectValidation(valid) {
 
-				debugger;
+			//	debugger;
 
 				var isValid = valid;
 
@@ -360,7 +386,7 @@
 			});
 
 		function getSectionForClass(Class_Id) {
-			debugger
+			//debugger
 
 				$.ajax({
 					url: '/Student/FetchSectionIDForClass/',
@@ -372,7 +398,7 @@
 					processData: false,
 					cache: false,
 					success: function (data) {
-						debugger
+					//	debugger
 						// first remove the current options if any
 						$('#SectionList').find('option').remove();
 
@@ -413,7 +439,7 @@
 					processData: false,
 					cache: false,
 					success: function (data) {
-						debugger
+						//debugger
 
 						// first remove the current options if any
 						$('#StateList').find('option').remove();
@@ -426,7 +452,7 @@
 							var opt = new Option(data[i].Name, data[i].Id);
 							$('#StateList').append(opt);
 							$('#StateList').append("<div style=\"margin-top:4px;display:none;\"></div>");
-							debugger
+						//	debugger
 
 
 

@@ -188,6 +188,82 @@ namespace Techsys_School_ERP.Controllers
 		}
 
 		[HttpPost]
+		public ActionResult EditTeachingStaff(Staff staff)
+		{
+			string sReturnText = string.Empty;
+			try
+			{
+				if (ModelState.IsValid)
+				{
+					using (var dbcontext = new SchoolERPDBContext())
+					{
+						Staff staffToBeUpdated = dbcontext.Staff.Find(staff.Staff_Id);
+
+						staffToBeUpdated.First_Name = staff.First_Name;
+						staffToBeUpdated.Employee_Id = staff.Employee_Id;
+						staffToBeUpdated.Date_Of_Joining = staff.Date_Of_Joining;
+						staffToBeUpdated.Last_Name = staff.Last_Name;
+						staffToBeUpdated.Middle_Name = staff.Middle_Name;
+						staffToBeUpdated.Father_Name = staff.Father_Name;
+						staffToBeUpdated.Is_Married = staff.Is_Married;
+						staffToBeUpdated.Aadhar_Number = staff.Aadhar_Number;
+						staffToBeUpdated.Address_Line1 = staff.Address_Line1;
+						staffToBeUpdated.Address_Line2 = staff.Address_Line2;
+						staffToBeUpdated.Blood_Group_Id = staff.Blood_Group_Id;
+						staffToBeUpdated.Mobile_No = staff.Mobile_No;
+						staffToBeUpdated.Alt_Mobile_No = staff.Alt_Mobile_No;
+						staffToBeUpdated.Email_Id = staff.Email_Id;
+						staffToBeUpdated.DOB = staff.DOB;
+						staffToBeUpdated.Academic_Year = GetAcademicYear();
+						staffToBeUpdated.City_Id = staff.City_Id;
+						staffToBeUpdated.State_Id = staff.State_Id;
+						staffToBeUpdated.Country_Id = staff.Country_Id;
+						staffToBeUpdated.Blood_Group_Id = staff.Blood_Group_Id;
+						staffToBeUpdated.Experience_in_Years = staff.Experience_in_Years;
+						staffToBeUpdated.Handling_Subjects = staff.Handling_Subjects;
+						//staffToBeUpdated.Is_HostelStudent = staff.Is_HostelStudent;
+						//staffToBeUpdated.Phone_No1 = staff.Phone_No1;
+						//staffToBeUpdated.Phone_No2 = staff.Phone_No2;
+						//staffToBeUpdated.Section_Id = staff.Section_Id;
+						//staffToBeUpdated.Class_Id = staff.Class_Id;
+						staffToBeUpdated.Gender_Id = staff.Gender_Id;
+						staffToBeUpdated.PinCode = staff.PinCode;
+						staffToBeUpdated.Updated_On = DateTime.Now;
+						staffToBeUpdated.Updated_By = 5;
+
+
+						if (staff.Email_Id.Trim() != staffToBeUpdated.Email_Id.Trim())
+						{
+							if (!CheckIfEmailAlreadyExists(staff.Email_Id, true, false))
+							{
+
+								dbcontext.Entry(staffToBeUpdated).State = EntityState.Modified;
+								dbcontext.SaveChanges();
+								sReturnText = "OK";
+							}
+							else
+							{
+								sReturnText = "Email Already Exists";
+							}
+						}
+						else
+						{
+							dbcontext.Entry(staffToBeUpdated).State = EntityState.Modified;
+							dbcontext.SaveChanges();
+							sReturnText = "OK";
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				sReturnText = ex.InnerException.Message.ToString();
+			}
+
+			return Json(sReturnText, JsonRequestBehavior.AllowGet);
+		}
+
+		[HttpPost]
 		public JsonResult Upload(HttpPostedFileBase file)
 		{
 			long nStaff_Id = Convert.ToInt64(TempData.Peek("Staff_Id"));
@@ -401,6 +477,28 @@ namespace Techsys_School_ERP.Controllers
 			return View();
 		}
 
+
+		#region DeleteStudent
+
+		public ActionResult Delete(long id)
+		{
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				var staffToBeDeleted = dbcontext.Staff.Find(id);
+				staffToBeDeleted.Is_Deleted = true;
+				staffToBeDeleted.Is_Active = true;
+				staffToBeDeleted.Updated_By = 5;
+				staffToBeDeleted.Updated_On = DateTime.Now;
+
+				dbcontext.Entry(staffToBeDeleted).State = EntityState.Modified;
+				dbcontext.SaveChanges();
+
+			}
+			return RedirectToAction("StaffList");
+		}
+
+		#endregion
+
 		[HttpPost]
 		public JsonResult FetchStateForCountry(string Country_Id)
 		{
@@ -593,10 +691,31 @@ namespace Techsys_School_ERP.Controllers
 		return addedStaffWorkExpDetails;
 		}
 
+		public ActionResult AddOrEditStaffSalaryDetail()
+		{
+			long nStaff_Id = Convert.ToInt64(TempData.Peek("Staff_Id"));
+			long nAcademic_Year = GetAcademicYear();
+
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				if (dbcontext.Staff_Salary_Detail.Where(x => x.Staff_Id == nStaff_Id && x.Academic_Year == nAcademic_Year && (x.Is_Deleted == null || x.Is_Deleted ==false)) .ToList().Count() == 0)
+				{
+					return RedirectToAction("AddStaffSalaryDetail");
+
+				}
+				else
+				{
+					return RedirectToAction("EditStaffSalaryDetail");
+				}
+			}
+
+		}
+
 		public ActionResult AddStaffSalaryDetail()
 		{
 			StaffSalary_ViewModel staffSalary_ViewModel = new StaffSalary_ViewModel();
-			long nStaff_Id = 4;
+			long nStaff_Id = Convert.ToInt64(TempData.Peek("Staff_Id")); ;
 			using (var dbcontext = new SchoolERPDBContext())
 			{
 				var existingStaffDetail = dbcontext.Staff.Find(nStaff_Id);
@@ -604,6 +723,119 @@ namespace Techsys_School_ERP.Controllers
 				staffSalary_ViewModel.Staff_Name = existingStaffDetail.First_Name + " " + existingStaffDetail.Last_Name;
 				staffSalary_ViewModel.Employee_No = existingStaffDetail.Employee_Id;
 				staffSalary_ViewModel.Academic_Year = GetAcademicYear();
+				staffSalary_ViewModel.Staff_Id = Convert.ToInt32(nStaff_Id);
+			}
+			return View(staffSalary_ViewModel);
+		}
+
+		[HttpPost]
+		public ActionResult EditStaffSalaryDetail(Staff_Salary_Detail staffSalaryDetail)
+		{
+
+			StaffSalary_ViewModel staffSalary_ViewModel = new StaffSalary_ViewModel();
+			string sReturnText = string.Empty;
+			try
+			{
+				long nStaff_Id = Convert.ToInt64(TempData.Peek("Staff_Id")); ;
+				long nAcademicYear = GetAcademicYear();
+				using (var dbcontext = new SchoolERPDBContext())
+				{
+					var existingStaffDetail = dbcontext.Staff.Find(nStaff_Id);
+
+					staffSalary_ViewModel.Staff_Name = existingStaffDetail.First_Name + " " + existingStaffDetail.Last_Name;
+					staffSalary_ViewModel.Employee_No = existingStaffDetail.Employee_Id;
+					staffSalary_ViewModel.Academic_Year = GetAcademicYear();
+
+					if (dbcontext.Staff_Salary_Detail.Where(x => x.Staff_Id == nStaff_Id && x.Academic_Year == nAcademicYear && (x.Is_Deleted == false || x.Is_Deleted == null)).ToList().Count() > 0)
+					{
+						var staffSalaryDetailId_ToBeEdited = dbcontext.Staff_Salary_Detail.Where(x => x.Staff_Id == nStaff_Id && x.Academic_Year == nAcademicYear && (x.Is_Deleted == false || x.Is_Deleted == null)).FirstOrDefault().Id;
+						var staffSalaryDetailToBeEdited = dbcontext.Staff_Salary_Detail.Find(staffSalaryDetailId_ToBeEdited);
+						staffSalaryDetailToBeEdited.Bank_Account_No = staffSalaryDetail.Bank_Account_No;
+						staffSalaryDetailToBeEdited.Bank_AddressLine1 = staffSalaryDetail.Bank_AddressLine1;
+						staffSalaryDetailToBeEdited.Bank_AddressLine2 = staffSalaryDetail.Bank_AddressLine2;
+						staffSalaryDetailToBeEdited.Bank_Name = staffSalaryDetail.Bank_Name;
+						staffSalaryDetailToBeEdited.Basic = staffSalaryDetail.Basic;
+						staffSalaryDetailToBeEdited.Branch_Name = staffSalaryDetail.Branch_Name;
+						staffSalaryDetailToBeEdited.City = staffSalaryDetail.City;
+						staffSalaryDetailToBeEdited.Conveyance = staffSalaryDetail.Conveyance;
+						staffSalaryDetailToBeEdited.DA = staffSalaryDetail.DA;
+						staffSalaryDetailToBeEdited.ESIC = staffSalaryDetail.ESIC;
+						staffSalaryDetailToBeEdited.Gross_Salary = staffSalaryDetail.Gross_Salary;
+						staffSalaryDetailToBeEdited.HRA = staffSalaryDetail.HRA;
+						staffSalaryDetailToBeEdited.LTA = staffSalaryDetail.LTA;
+						staffSalaryDetailToBeEdited.Medical = staffSalaryDetail.Medical;
+						staffSalaryDetailToBeEdited.Net_Salary = staffSalaryDetail.Net_Salary;
+						staffSalaryDetailToBeEdited.Other = staffSalaryDetail.Other;
+						staffSalaryDetailToBeEdited.Other_Deductions = staffSalaryDetail.Other_Deductions;
+						staffSalaryDetailToBeEdited.PAN_No = staffSalaryDetail.PAN_No;
+						staffSalaryDetailToBeEdited.PF_Account_No = staffSalaryDetail.PF_Account_No;
+						staffSalaryDetailToBeEdited.Professional_Tax = staffSalaryDetail.Professional_Tax;
+						staffSalaryDetailToBeEdited.Provident_Fund = staffSalaryDetail.Provident_Fund;
+						dbcontext.Entry(staffSalaryDetailToBeEdited).State = EntityState.Modified;
+						dbcontext.SaveChanges();
+
+					}
+					else
+					{
+						staffSalaryDetail.Created_By = 5;
+						staffSalaryDetail.Created_On = DateTime.Now;
+						dbcontext.Staff_Salary_Detail.Add(staffSalaryDetail);
+						dbcontext.SaveChanges();
+
+
+					}
+					sReturnText = "OK";
+				}
+			}
+			catch (Exception ex)
+			{
+				sReturnText = ex.InnerException.Message.ToString();
+			}
+
+				return Json(sReturnText.ToString(), JsonRequestBehavior.AllowGet);
+			
+
+		}
+
+		public ActionResult EditStaffSalaryDetail()
+		{
+			StaffSalary_ViewModel staffSalary_ViewModel = new StaffSalary_ViewModel();
+			long nStaff_Id = Convert.ToInt64(TempData.Peek("Staff_Id")); ;
+			long nAcademicYear = GetAcademicYear();
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				var existingStaffDetail = dbcontext.Staff.Find(nStaff_Id);
+
+				staffSalary_ViewModel.Staff_Name = existingStaffDetail.First_Name + " " + existingStaffDetail.Last_Name;
+				staffSalary_ViewModel.Employee_No = existingStaffDetail.Employee_Id;
+				staffSalary_ViewModel.Academic_Year = GetAcademicYear();
+
+				if (dbcontext.Staff_Salary_Detail.Where(x => x.Staff_Id == nStaff_Id && x.Academic_Year == nAcademicYear && ( x.Is_Deleted == false || x.Is_Deleted == null)).ToList().Count() > 0)
+				{
+					var staffSalaryDetailToBeEdited = dbcontext.Staff_Salary_Detail.Where(x => x.Staff_Id == nStaff_Id && x.Academic_Year == nAcademicYear && (x.Is_Deleted == false || x.Is_Deleted == null)).FirstOrDefault();
+					staffSalary_ViewModel.Bank_Account_No = staffSalaryDetailToBeEdited.Bank_Account_No;
+					staffSalary_ViewModel.Bank_AddressLine1 = staffSalaryDetailToBeEdited.Bank_AddressLine1;
+					staffSalary_ViewModel.Bank_AddressLine2 = staffSalaryDetailToBeEdited.Bank_AddressLine2;
+					staffSalary_ViewModel.Bank_Name = staffSalaryDetailToBeEdited.Bank_Name;
+					staffSalary_ViewModel.Basic = staffSalaryDetailToBeEdited.Basic;
+					staffSalary_ViewModel.Branch_Name = staffSalaryDetailToBeEdited.Branch_Name;
+					staffSalary_ViewModel.City = staffSalaryDetailToBeEdited.City;
+					staffSalary_ViewModel.Conveyance = staffSalaryDetailToBeEdited.Conveyance;
+					staffSalary_ViewModel.DA = staffSalaryDetailToBeEdited.DA;
+					staffSalary_ViewModel.ESIC = staffSalaryDetailToBeEdited.ESIC;
+					staffSalary_ViewModel.Gross_Salary = staffSalaryDetailToBeEdited.Gross_Salary;
+					staffSalary_ViewModel.HRA = staffSalaryDetailToBeEdited.HRA;
+					staffSalary_ViewModel.LTA = staffSalaryDetailToBeEdited.LTA;
+					staffSalary_ViewModel.Medical = staffSalaryDetailToBeEdited.Medical;
+					staffSalary_ViewModel.Net_Salary = staffSalaryDetailToBeEdited.Net_Salary;
+					staffSalary_ViewModel.Other = staffSalaryDetailToBeEdited.Other;
+					staffSalary_ViewModel.Other_Deductions = staffSalaryDetailToBeEdited.Other_Deductions;
+					staffSalary_ViewModel.PAN_No = staffSalaryDetailToBeEdited.PAN_No;
+					staffSalary_ViewModel.PF_Account_No = staffSalaryDetailToBeEdited.PF_Account_No;
+					staffSalary_ViewModel.Professional_Tax = staffSalaryDetailToBeEdited.Professional_Tax;
+					staffSalary_ViewModel.Provident_Fund = staffSalaryDetailToBeEdited.Provident_Fund;
+				
+				}
 			}
 			return View(staffSalary_ViewModel);
 		}
@@ -1242,6 +1474,214 @@ namespace Techsys_School_ERP.Controllers
 			 * *******************************************************************************************************************************************************************************/
 			
 			return View();
+		}
+		#endregion
+
+		#region EditTeachingStaff
+
+		public ActionResult EditTeachingStaff(long? id)
+		{
+
+			Staff staffToBeEdited = new Staff();
+			GetBloodGroup();
+			GetGender();
+
+			GetCountries();
+			GetClass();
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				var staffEdited = dbcontext.Staff.Find(id);
+				//GetSectionForClass(Convert.ToString(staffEdited.Class_Id));
+				GetStatesForCountry(Convert.ToString(staffEdited.Country_Id));
+				GetCitiesForState(Convert.ToString(staffEdited.State_Id));
+				staffToBeEdited.Staff_Id = Convert.ToInt32(id);
+
+
+				TempData["Staff_Id"] = Convert.ToInt32(id); 
+				TempData.Keep("Staff_Id");
+
+
+				staffToBeEdited = staffEdited;
+
+				byte[] byteData = staffEdited.Photo;
+				//Convert byte arry to base64string   
+				string imreBase64Data = Convert.ToBase64String(byteData);
+				string imgDataURL = string.Format("data:image/png;base64,{0}", imreBase64Data);
+				//Passing image data in viewbag to view  
+				ViewBag.ImageData = imgDataURL;
+
+
+			}
+
+			return View(staffToBeEdited);
+		}
+
+		public JsonResult FetchCountryNameBasedOnId(string countryId)
+		{
+			return Json(new { items = GetCountryNameBasedOnId(countryId) }, JsonRequestBehavior.AllowGet);
+
+		}
+
+		#endregion
+
+		#region SalarySlips
+
+		public List<StaffSalarySlip_ViewModel> GetStaffMonthlySalary(int nYear, int nMonth)
+			{
+			string sYear = Convert.ToString(nYear);
+		//DateTime dtFromSalaryCutOffDate = DateTime.Now.AddMonths(-1);
+		//DateTime dtToSalaryCutOffDate = DateTime.Now.AddMonths(0);
+		var dtFromSalaryCutOffDate = new DateTime(nYear, nMonth, 1);
+		var dtToSalaryCutOffDate = dtFromSalaryCutOffDate.AddMonths(1).AddDays(-1);
+		TimeSpan ts = dtToSalaryCutOffDate - dtFromSalaryCutOffDate;
+		int nDays = ts.Days;
+		List<StaffSalarySlip_ViewModel> staffMonthlySalaryModelList = new List<StaffSalarySlip_ViewModel>();
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				//if (dbcontext.Staff_MonthlySalary_Details.Where(x => x.academic_year == nYear && x.salary_month == nMonth).Count() == 0)
+				//{
+					staffMonthlySalaryModelList = (from staff in dbcontext.Staff
+												   join staff_salary_Detail in dbcontext.Staff_Salary_Detail on staff.Staff_Id equals staff_salary_Detail.Staff_Id
+												   // join  in dbcontext.Staff_Attendance on staff.Staff_Id equals staff_attendance.Staff_Id
+												   where staff.Academic_Year == nYear && (staff.Is_Deleted == false || staff.Is_Deleted == null)
+												   select new StaffSalarySlip_ViewModel
+												   {
+
+													   Id = staff.Staff_Id,
+													   Name = staff.First_Name + " " + staff.Last_Name + " " + staff.Middle_Name,
+													   staff_id = staff.Staff_Id,
+													   no_of_leaves = dbcontext.Staff_Attendance.Where(x => x.Staff_Id == staff.Staff_Id && staff.Academic_Year == nYear && x.Leave_Date >= dtFromSalaryCutOffDate && x.Leave_Date <= dtToSalaryCutOffDate).ToList().Count(),
+													   leaves_remaining = 5 - dbcontext.Staff_Attendance.Where(x => x.Staff_Id == staff.Staff_Id && staff.Academic_Year == nYear).ToList().Count(),
+													   Created_On = staff.Created_On,
+													   salary_deduction = (5 - dbcontext.Staff_Attendance.Where(x => x.Staff_Id == staff.Staff_Id && staff.Academic_Year == nYear).ToList().Count() < 0) ? (dbcontext.Staff_Attendance.Where(x => x.Staff_Id == staff.Staff_Id && staff.Academic_Year == nYear && x.Leave_Date >= dtFromSalaryCutOffDate && x.Leave_Date <= dtToSalaryCutOffDate).ToList().Count() * staff_salary_Detail.Net_Salary) / (nDays) : 0,
+													   gross_salary = staff_salary_Detail.Net_Salary - ((20 - dbcontext.Staff_Attendance.Where(x => x.Staff_Id == staff.Staff_Id && staff.Academic_Year == nYear).ToList().Count() < 0) ? (dbcontext.Staff_Attendance.Where(x => x.Staff_Id == staff.Staff_Id && staff.Academic_Year == nYear && x.Leave_Date >= dtFromSalaryCutOffDate && x.Leave_Date <= dtToSalaryCutOffDate).ToList().Count() * staff_salary_Detail.Net_Salary) / (nDays) : 0),
+													   salary_Month_name = dbcontext.Month.Where(x => x.Id == nMonth).FirstOrDefault().Name + " - " + sYear,
+													   salary_month = nMonth ,
+													   academic_year = nYear
+
+
+												}).OrderBy(x => x.Created_On).ToList();
+
+
+					foreach (var staffMonthlySalary in staffMonthlySalaryModelList)
+					{
+						if (dbcontext.Staff_MonthlySalary_Details.Where(x => x.academic_year == nYear && x.salary_month == nMonth && x.staff_id == staffMonthlySalary.staff_id && (x.Is_Deleted == null && x.Is_Deleted == false)).Count() == 0)
+						{
+							Staff_MonthlySalary_Details staffMonthlySalaryDetails = new Staff_MonthlySalary_Details();
+
+						staffMonthlySalaryDetails.academic_year = staffMonthlySalary.academic_year;
+						staffMonthlySalaryDetails.staff_id = staffMonthlySalary.staff_id;
+						staffMonthlySalaryDetails.salary_month = staffMonthlySalary.salary_month;
+						staffMonthlySalaryDetails.no_of_leaves = staffMonthlySalary.no_of_leaves;
+						staffMonthlySalaryDetails.salary_deduction = Convert.ToDecimal(staffMonthlySalary.salary_deduction);
+						staffMonthlySalaryDetails.leaves_remaining = staffMonthlySalary.leaves_remaining;
+						staffMonthlySalaryDetails.gross_salary = Convert.ToDecimal(staffMonthlySalary.gross_salary);
+						staffMonthlySalaryDetails.Is_Active = true;
+						staffMonthlySalaryDetails.Created_By = 5;
+						staffMonthlySalaryDetails.Created_On = DateTime.Now;
+
+						dbcontext.Staff_MonthlySalary_Details.Add(staffMonthlySalaryDetails);
+						dbcontext.SaveChanges();
+					}
+
+
+
+					}
+				//}
+				//else
+				//{
+				//	staffMonthlySalaryModelList = (from staff_monthlySalaryDetail in dbcontext.Staff_MonthlySalary_Details
+				//								   join staff in dbcontext.Staff on staff_monthlySalaryDetail.staff_id equals staff.Staff_Id
+				//								   where staff_monthlySalaryDetail.academic_year == nYear && staff_monthlySalaryDetail.salary_month == nMonth
+				//								   select new StaffSalarySlip_ViewModel
+				//								   {
+				//									   Id = staff_monthlySalaryDetail.staff_id,
+				//									   Name = staff.First_Name + " " + staff.Last_Name + " " + staff.Middle_Name,
+				//									   staff_id = staff_monthlySalaryDetail.staff_id,
+				//									   no_of_leaves = staff_monthlySalaryDetail.no_of_leaves,
+				//									   leaves_remaining = staff_monthlySalaryDetail.leaves_remaining,
+				//									   Created_On = DateTime.Now,
+				//									   salary_deduction = staff_monthlySalaryDetail.salary_deduction,
+				//									   gross_salary = staff_monthlySalaryDetail.gross_salary,
+				//									   salary_month = staff_monthlySalaryDetail.salary_month,
+				//									   salary_Month_name = dbcontext.Month.Where(x => x.Id == nMonth).FirstOrDefault().Name + " - " + sYear,
+				//									   academic_year = staff_monthlySalaryDetail.academic_year
+
+
+
+				//								   }).ToList();
+				//}
+
+				
+			}
+
+			return staffMonthlySalaryModelList;
+		}
+
+		[HttpPost]
+		public ActionResult GetMonthlySalaryForStaff(int nYear , int nMonth)
+		{
+			
+			return Json(GetStaffMonthlySalary(nYear , nMonth), JsonRequestBehavior.AllowGet);
+
+			//	return staffMonthlySalaryModelList;
+		}
+
+		public ActionResult GetStaffListForGeneratingMonthlySalary()
+		{
+			int nYear = Convert.ToInt32(GetAcademicYear());
+			string sYear = Convert.ToString(GetAcademicYear());
+			int nMonth = DateTime.Now.Month;
+			nMonth = nMonth - 1;
+			DateTime dtFromSalaryCutOffDate = DateTime.Now.AddMonths(-1);
+			DateTime dtToSalaryCutOffDate = DateTime.Now.AddMonths(0);
+
+		
+
+			GetMonth();
+			List<StaffSalarySlip_ViewModel> staffMonthlySalaryModelList = new List<StaffSalarySlip_ViewModel>();
+			staffMonthlySalaryModelList = GetStaffMonthlySalary(nYear , nMonth);
+			return View(staffMonthlySalaryModelList);
+			//return View();
+		}
+
+		[HttpPost]
+		public ActionResult GetStaffListForGeneratingMonthlySalary(int nYear, int nMonth)
+		{
+			//int nYear = Convert.ToInt32(GetAcademicYear());
+			//string sYear = Convert.ToString(GetAcademicYear());
+			//int nMonth = DateTime.Now.Month;
+			nMonth = nMonth - 1;
+			DateTime dtFromSalaryCutOffDate = DateTime.Now.AddMonths(-1);
+			DateTime dtToSalaryCutOffDate = DateTime.Now.AddMonths(0);
+
+
+
+			GetMonth();
+			List<StaffSalarySlip_ViewModel> staffMonthlySalaryModelList = new List<StaffSalarySlip_ViewModel>();
+			//staffMonthlySalaryModelList = GetMonthlySalaryForStaff(nYear, nMonth);
+
+			return Json( GetMonthlySalaryForStaff(nYear, nMonth), JsonRequestBehavior.AllowGet);
+			//return View(staffMonthlySalaryModelList);
+			//return View();
+		}
+
+		[HttpPost]
+		public ActionResult GetNoOfWorkingDaysinMonth(string Year, string Month_Id)
+		{
+			int nMonth_Id = Convert.ToInt16(Month_Id);
+			int nYear = Convert.ToInt16(Year);
+			var startDate = new DateTime(nYear, nMonth_Id, 1);
+			var endDate = startDate.AddMonths(1).AddDays(-1);
+			TimeSpan ts = (endDate - startDate);
+			int ntotNoOfDays = ts.Days;
+			int nnoOfWorkingDays;
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				nnoOfWorkingDays = ntotNoOfDays - dbcontext.Holiday.Where(x => x.Holiday_Date >= startDate && x.Holiday_Date <= endDate).Count();
+			}
+			return Json(nnoOfWorkingDays, JsonRequestBehavior.AllowGet);
 		}
 		#endregion
 

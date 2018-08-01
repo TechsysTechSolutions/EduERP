@@ -87,6 +87,7 @@ G:\ERP2\Techsys_School_ERP\bin\Techsys_School_ERP.dll
 G:\ERP2\Techsys_School_ERP\bin\Techsys_School_ERP.pdb
 G:\ERP2\Techsys_School_ERP\bin\EntityFramework.dll
 G:\ERP2\Techsys_School_ERP\bin\EntityFramework.SqlServer.dll
+G:\ERP2\Techsys_School_ERP\bin\itextsharp.dll
 G:\ERP2\Techsys_School_ERP\bin\Microsoft.AI.Agent.Intercept.dll
 G:\ERP2\Techsys_School_ERP\bin\Microsoft.AI.DependencyCollector.dll
 G:\ERP2\Techsys_School_ERP\bin\Microsoft.AI.PerfCounterCollector.dll
@@ -115,6 +116,7 @@ G:\ERP2\Techsys_School_ERP\bin\System.Web.Webpages.dll
 G:\ERP2\Techsys_School_ERP\bin\System.Web.Webpages.Razor.dll
 G:\ERP2\Techsys_School_ERP\bin\EntityFramework.xml
 G:\ERP2\Techsys_School_ERP\bin\EntityFramework.SqlServer.xml
+G:\ERP2\Techsys_School_ERP\bin\itextsharp.xml
 G:\ERP2\Techsys_School_ERP\bin\Microsoft.AI.DependencyCollector.xml
 G:\ERP2\Techsys_School_ERP\bin\Microsoft.AI.ServerTelemetryChannel.xml
 G:\ERP2\Techsys_School_ERP\bin\Microsoft.AI.Web.xml
@@ -138,6 +140,4 @@ G:\ERP2\Techsys_School_ERP\bin\System.Web.Http.xml
 G:\ERP2\Techsys_School_ERP\bin\System.Web.Http.WebHost.xml
 G:\ERP2\Techsys_School_ERP\obj\Debug\Techsys_School_ERP.dll
 G:\ERP2\Techsys_School_ERP\obj\Debug\Techsys_School_ERP.pdb
-G:\ERP2\Techsys_School_ERP\bin\itextsharp.dll
-G:\ERP2\Techsys_School_ERP\bin\itextsharp.xml
 G:\ERP2\Techsys_School_ERP\obj\Debug\Techsys_School_ERP.csprojResolveAssemblyReference.cache

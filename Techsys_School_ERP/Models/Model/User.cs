@@ -36,7 +36,7 @@ namespace Techsys_School_ERP.Model
 
 		public DateTime? Updated_On { get; set; }
 
-		public int Updated_By { get; set; }
+		public int? Updated_By { get; set; }
 
 	}
 }

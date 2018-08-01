@@ -47,6 +47,7 @@ namespace Techsys_School_ERP.Controllers
 			}
 			if (sRole == "Admin" || sRole == "SuperAdmin")
 			{
+				//usr.Role_Id = Convert.toinRole_Type.Admin;
 				usr.Role_Id = 1;
 			}
 			else if (sRole == "Parent" || sRole == "Student")

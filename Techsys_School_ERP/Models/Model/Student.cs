@@ -135,10 +135,24 @@ namespace Techsys_School_ERP.Model
 
 		[Display(Name = "IS HOSTEL STUDENT?")]
 		public bool? Is_HostelStudent { get; set; }
-
+		
 		public bool? Is_FeesDueRemaining { get; set; }
 
 		public decimal? Fees_Due_Amount { get; set; }
+
+
+		[Display(Name = "HOSTEL ROOM NO")]
+		public int? Hostel_Room_Id { get; set; }
+
+
+		[Display(Name = "IF SCHOOL BUS AVAILED?")]
+		public bool? School_Bus_Availed { get; set; }
+
+		[Display(Name = "VEHICLE NO")]
+		public int? Vehicle_Id { get; set; }
+
+
+
 
 
 		//[ForeignKey("Section_Id")]

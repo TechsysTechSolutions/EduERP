@@ -55,8 +55,12 @@ namespace Techsys_School_ERP.Controllers
 		{
 			GetCategory();
 			GetOccupation();
+			GetSecondLanguage();
 			return View();
 		}
+
+
+
 
 
 		[HttpPost]
@@ -81,16 +85,19 @@ namespace Techsys_School_ERP.Controllers
 				{
 					using (var dbcontext = new SchoolERPDBContext())
 					{
-						if (dbcontext.Student.Any(o => o.Email_Id == sEmail_Id))
-						{
-							sReturn_Text = "Email Already Exists";
-						}
-						else
-						{
+						//if (dbcontext.Student.Any(o => o.Email_Id == sEmail_Id))
+						//{
+						//	sReturn_Text = "Email Already Exists";
+						//}
+						//else
+						//{
 							dbcontext.Student.Add(newStudentToBeAdded);
 							dbcontext.SaveChanges();
 							sReturn_Text = "SuccessFully Added";
-						}
+
+						//To create the UserId in the User Table for Login 
+
+						//}
 					}
 					//return Json(sReturn_Text, JsonRequestBehavior.AllowGet);
 				}
@@ -159,6 +166,87 @@ namespace Techsys_School_ERP.Controllers
 		public ActionResult AddStudentSiblingAndPrevSchoolDetail()
 		{
 			return View();
+		}
+
+		public ActionResult AddOrUploadStudentRelatedDocuments()
+		{
+			long nStudent_Id = Convert.ToInt64(TempData.Peek("Student_Id"));
+
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				if (dbcontext.Student_Document.Where(x => x.Student_Id == nStudent_Id).ToList().Count() > 0)
+				{
+					return RedirectToAction("EditUploadedStudentRelatedDocuments");
+					
+				}
+				else
+				{
+					return View();
+				}
+			}
+					
+		}
+
+		public ActionResult EditUploadedStudentRelatedDocuments()
+		{
+
+			Student_Document studentDocumentToBeEdited = new Student_Document();
+
+			long nStudent_Id = Convert.ToInt64(TempData.Peek("Student_Id"));
+
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				if (dbcontext.Student_Document.Where(x => x.Student_Id == nStudent_Id).ToList().Count() > 0)
+				{
+
+					var studentDocumentId = dbcontext.Student_Document.Where(x => x.Student_Id == nStudent_Id).FirstOrDefault().Id;
+					var studentDocumentToEdit = dbcontext.Student_Document.Find(studentDocumentId);
+
+
+					if (studentDocumentToEdit.document1 != null)
+					{
+						ViewBag.Document1 = ConvertByteStreamToString(studentDocumentToEdit.document1);
+					}
+
+					if (studentDocumentToEdit.document2 != null)
+					{
+						ViewBag.Document2 = ConvertByteStreamToString(studentDocumentToEdit.document2);
+					}
+
+					if (studentDocumentToEdit.document3 != null)
+					{
+						ViewBag.Document3 = ConvertByteStreamToString(studentDocumentToEdit.document3);
+					}
+
+					if (studentDocumentToEdit.document4 != null)
+					{
+						ViewBag.Document4 = ConvertByteStreamToString(studentDocumentToEdit.document4);
+					}
+
+					if (studentDocumentToEdit.document5 != null)
+					{
+						ViewBag.Document5 = ConvertByteStreamToString(studentDocumentToEdit.document5);
+					}
+
+					if (studentDocumentToEdit.document6 != null)
+					{
+						ViewBag.Document6 = ConvertByteStreamToString(studentDocumentToEdit.document6);
+					}
+					return View(studentDocumentToBeEdited);
+				}
+				else
+				{
+					return View();
+				}
+
+
+			}
+
+			
+
+			
 		}
 
 		[HttpPost]
@@ -547,9 +635,10 @@ namespace Techsys_School_ERP.Controllers
 		}
 
 		[HttpPost]
-		public JsonResult Upload(HttpPostedFileBase file)
+		public JsonResult Upload(HttpPostedFileBase file, long? student_Id)
 	{
-			long nStudent_Id = Convert.ToInt64( TempData.Peek("Student_Id"));
+			//long nStudent_Id = Convert.ToInt64(TempData.Peek("Student_Id"));
+			long nStudent_Id = Convert.ToInt64(student_Id);
 			Student studentToBeModified = new Student();
 			
 			byte[] bytes;
@@ -573,7 +662,7 @@ namespace Techsys_School_ERP.Controllers
 
 
 				}
-				return Json("Student Details Successfully Added", JsonRequestBehavior.AllowGet);
+				return Json("OK", JsonRequestBehavior.AllowGet);
 			}
 			catch (Exception ex)
 			{
@@ -581,7 +670,97 @@ namespace Techsys_School_ERP.Controllers
 
 			}
 	
-			return null;
+			//return null;
+
+		}
+
+
+		[HttpPost]
+		public JsonResult UploadStudentDocuments(HttpPostedFileBase file1 , HttpPostedFileBase file2 , HttpPostedFileBase file3 , HttpPostedFileBase file4, HttpPostedFileBase file5, HttpPostedFileBase file6)
+		{
+			//long nStudent_Id = 
+			//	long nStudent_Id = Convert.ToInt64(TempData.Peek("Student_Id"));
+			long nStudent_Id = Convert.ToInt64(TempData.Peek("Student_Id")); ;
+			Student_Document StudentDocumentToBeAddededOrUpdated = new Student_Document();
+
+			HttpPostedFileBase[] fileBaseArr = new HttpPostedFileBase[6];
+
+			
+
+		    
+
+			//byte[] bytes1, bytes2 , bytes3, bytes4, bytes5, bytes6;
+
+			try
+			{
+				
+					
+					using (var dbcontext = new SchoolERPDBContext())
+					{
+					
+					if (file1 != null)
+					{
+						StudentDocumentToBeAddededOrUpdated.document1 = ConvertFiletoBYteStream(file1);
+					}
+					else
+					{
+					}
+					if (file2 != null)
+					{
+						StudentDocumentToBeAddededOrUpdated.document2 = ConvertFiletoBYteStream(file2);
+					}
+					if (file3 != null)
+					{
+						StudentDocumentToBeAddededOrUpdated.document3 = ConvertFiletoBYteStream(file3);
+					}
+					if (file4 != null)
+					{
+						StudentDocumentToBeAddededOrUpdated.document4 = ConvertFiletoBYteStream(file4);
+					}
+					if (file5 != null)
+					{
+						StudentDocumentToBeAddededOrUpdated.document5 = ConvertFiletoBYteStream(file5);
+					}
+					if (file6 != null)
+					{
+						StudentDocumentToBeAddededOrUpdated.document6 = ConvertFiletoBYteStream(file6);
+					}
+
+					if (dbcontext.Student_Document.Where(x => x.Student_Id == nStudent_Id).ToList().Count() > 0)
+					{
+						var studentDocumentId = dbcontext.Student_Document.Where(x=>x.Student_Id == nStudent_Id).FirstOrDefault().Id;
+						var studentDocToBeModified = dbcontext.Student_Document.Find(studentDocumentId);
+						studentDocToBeModified.document1 = StudentDocumentToBeAddededOrUpdated.document1 == null ? studentDocToBeModified.document1 : StudentDocumentToBeAddededOrUpdated.document1;
+						studentDocToBeModified.document2 = StudentDocumentToBeAddededOrUpdated.document2 == null ? studentDocToBeModified.document2 : StudentDocumentToBeAddededOrUpdated.document2;
+						studentDocToBeModified.document3 = StudentDocumentToBeAddededOrUpdated.document3 == null ? studentDocToBeModified.document3 : StudentDocumentToBeAddededOrUpdated.document3;
+						studentDocToBeModified.document4 = StudentDocumentToBeAddededOrUpdated.document4 == null ? studentDocToBeModified.document4 : StudentDocumentToBeAddededOrUpdated.document4;
+						studentDocToBeModified.document5 = StudentDocumentToBeAddededOrUpdated.document5 == null ? studentDocToBeModified.document5 : StudentDocumentToBeAddededOrUpdated.document5;
+						studentDocToBeModified.document6 = StudentDocumentToBeAddededOrUpdated.document6 == null ? studentDocToBeModified.document6 : StudentDocumentToBeAddededOrUpdated.document6;
+
+						dbcontext.Entry(studentDocToBeModified).CurrentValues.SetValues(studentDocToBeModified);
+						dbcontext.SaveChanges();
+					}
+					else
+					{
+						StudentDocumentToBeAddededOrUpdated.Student_Id = nStudent_Id;
+						dbcontext.Student_Document.Add(StudentDocumentToBeAddededOrUpdated);
+						dbcontext.SaveChanges();
+					}
+						
+						//
+					}
+
+
+				
+				return Json("Student Documents Successfully Uploaded", JsonRequestBehavior.AllowGet);
+			}
+			catch (Exception ex)
+			{
+				return Json(ex.Message.ToString(), JsonRequestBehavior.AllowGet);
+
+			}
+
+			
 
 		}
 
@@ -785,6 +964,27 @@ namespace Techsys_School_ERP.Controllers
 		}
 		#endregion
 
+		#region DeleteStudent
+
+		public ActionResult Delete(long id)
+		{
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+				var studenToBeDeleted = dbcontext.Student.Find(id);
+				studenToBeDeleted.Is_Deleted = true;
+				studenToBeDeleted.Is_Active = true;
+				studenToBeDeleted.Updated_By = 5;
+				studenToBeDeleted.Updated_On = DateTime.Now;
+
+				dbcontext.Entry(studenToBeDeleted).State = EntityState.Modified;
+				dbcontext.SaveChanges();
+
+			}
+				return RedirectToAction("StudentList");
+		}
+
+		#endregion
+
 		#region EditStudent
 
 		public ActionResult Edit(long? id)
@@ -803,6 +1003,8 @@ namespace Techsys_School_ERP.Controllers
 				GetSectionForClass(Convert.ToString(studentEdited.Class_Id));
 				GetStatesForCountry(Convert.ToString(studentEdited.Country_Id));
 				GetCitiesForState(Convert.ToString(studentEdited.State_Id));
+				studentToBeEdited.Student_Id = Convert.ToInt64(id);
+				
 
 				studentToBeEdited = studentEdited;
 
@@ -862,14 +1064,9 @@ namespace Techsys_School_ERP.Controllers
 						studentToBeUpdated.Class_Id = student.Class_Id;
 						studentToBeUpdated.Gender_Id = student.Gender_Id;
 						studentToBeUpdated.Pincode = student.Pincode;
-						studentToBeUpdated.Photo = student.Photo;
-
-						byte[] byteData = student.Photo;
-						//Convert byte arry to base64string   
-						string imreBase64Data = Convert.ToBase64String(byteData);
-						string imgDataURL = string.Format("data:image/png;base64,{0}", imreBase64Data);
-						//Passing image data in viewbag to view  
-						ViewBag.ImageData = imgDataURL;
+						studentToBeUpdated.Updated_On = DateTime.Now;
+						studentToBeUpdated.Updated_By = 5;
+					
 
 						if (student.Email_Id.Trim() != studentToBeUpdated.Email_Id.Trim())
 						{
@@ -907,21 +1104,91 @@ namespace Techsys_School_ERP.Controllers
 			long nStudent_Id = Convert.ToInt64(sStudent_Id);
 			Student_Other_Details student_OtherDetails_ToBeEdited = new Student_Other_Details();
 			GetCategory();
+			GetSecondLanguage();
 			GetOccupation();
 
 			using (	var dbcontext = new SchoolERPDBContext())
 			{
-				var id = dbcontext.Student_Other_Details.Where(x => x.Student_Id == nStudent_Id).FirstOrDefault().StudentDetail_Id;
-				var studen_OtherDetailsTotEdit = dbcontext.Student_Other_Details.Find(id);
-				//GetSectionForClass(Convert.ToString(studentEdited.Class_Id));
-				//GetStatesForCountry(Convert.ToString(studentEdited.Country_Id));
-				//GetCitiesForState(Convert.ToString(studentEdited.State_Id));
-				student_OtherDetails_ToBeEdited = studen_OtherDetailsTotEdit;
+				if (dbcontext.Student_Other_Details.Where(x => x.Student_Id == nStudent_Id).Count() == 1)
+				{
+					var id = dbcontext.Student_Other_Details.Where(x => x.Student_Id == nStudent_Id).FirstOrDefault().StudentDetail_Id;
+					var studen_OtherDetailsTotEdit = dbcontext.Student_Other_Details.Find(id);
+					//GetSectionForClass(Convert.ToString(studentEdited.Class_Id));
+					//GetStatesForCountry(Convert.ToString(studentEdited.Country_Id));
+					//GetCitiesForState(Convert.ToString(studentEdited.State_Id));
+					student_OtherDetails_ToBeEdited = studen_OtherDetailsTotEdit;
+				}
+				else
+				{
+					student_OtherDetails_ToBeEdited.Student_Id = nStudent_Id;
+				}
 
 			}
 
 			return View(student_OtherDetails_ToBeEdited);
 		//	return View();
+		}
+
+		public ActionResult EditAndSaveStudentOtherDetails(Student_Other_Details Student_Other_Detail)
+		{
+			long nStudent_Id = Convert.ToInt64(Student_Other_Detail.Student_Id);
+			Student_Other_Details student_OtherDetails_ToBeEdited = new Student_Other_Details();
+			string sReturn_Text = string.Empty;
+
+			try
+			{
+				using (var dbcontext = new SchoolERPDBContext())
+				{
+					//var id = dbcontext.Student_Other_Details.Where(x => x.Student_Id == nStudent_Id).FirstOrDefault().StudentDetail_Id;
+					if (dbcontext.Student_Other_Details.Where(x => x.Student_Id == nStudent_Id).Count() == 1)
+					{
+
+						var studen_OtherDetailsTotEdit = dbcontext.Student_Other_Details.Find(Student_Other_Detail.StudentDetail_Id);
+
+						studen_OtherDetailsTotEdit.Identification_Mark1 = Student_Other_Detail.Identification_Mark1;
+						studen_OtherDetailsTotEdit.Identification_Mark2 = Student_Other_Detail.Identification_Mark2;
+						studen_OtherDetailsTotEdit.Is_Allergic = Student_Other_Detail.Is_Allergic;
+						studen_OtherDetailsTotEdit.Allergy_Details = Student_Other_Detail.Allergy_Details;
+						studen_OtherDetailsTotEdit.Father_Occupation_Id = Student_Other_Detail.Father_Occupation_Id;
+						studen_OtherDetailsTotEdit.Father_Designation = Student_Other_Detail.Father_Designation;
+						studen_OtherDetailsTotEdit.Father_Company_Name = Student_Other_Detail.Father_Company_Name;
+						studen_OtherDetailsTotEdit.Father_Office_Address = Student_Other_Detail.Father_Office_Address;
+						studen_OtherDetailsTotEdit.Father_Annual_Income = Student_Other_Detail.Father_Annual_Income;
+						studen_OtherDetailsTotEdit.Mother_Occupation_Id = Student_Other_Detail.Mother_Occupation_Id;
+						studen_OtherDetailsTotEdit.Mother_Designation = Student_Other_Detail.Mother_Designation;
+						studen_OtherDetailsTotEdit.Mother_Company_Name = Student_Other_Detail.Mother_Company_Name;
+						studen_OtherDetailsTotEdit.Mother_Office_Address = Student_Other_Detail.Mother_Office_Address;
+						studen_OtherDetailsTotEdit.Mother_Annual_Income = Student_Other_Detail.Mother_Annual_Income;
+						studen_OtherDetailsTotEdit.Medical_History_Details = Student_Other_Detail.Medical_History_Details;
+						studen_OtherDetailsTotEdit.Second_Language_Opted_Id = Student_Other_Detail.Second_Language_Opted_Id;
+						studen_OtherDetailsTotEdit.Updated_On = DateTime.Now;
+
+
+						dbcontext.Entry(studen_OtherDetailsTotEdit).State = EntityState.Modified;
+						dbcontext.SaveChanges();
+						
+					}
+					else
+					{
+						Student_Other_Detail.Created_On = DateTime.Now;
+						Student_Other_Detail.Created_By = 5;
+						dbcontext.Student_Other_Details.Add(Student_Other_Detail);
+						dbcontext.SaveChanges();
+					}
+
+					TempData["Student_Id"] = nStudent_Id;
+					TempData.Keep("Student_Id");
+					sReturn_Text = "OK";
+
+				}
+			}
+			catch (Exception ex)
+			{
+				sReturn_Text = ex.InnerException.Message.ToString();
+			}
+
+			return Json(sReturn_Text, JsonRequestBehavior.AllowGet);
+			//	return View();
 		}
 		#endregion
 

@@ -11,7 +11,9 @@ namespace Techsys_School_ERP.Model.ViewModel
 
 		public string Name { get; set; }
 
-		public DateTime From_Date { get; set; }
+		public DateTime Leave_Date { get; set; }
+
+		public string From_Date { get; set; }
 
 		public DateTime To_Date { get; set; }
 

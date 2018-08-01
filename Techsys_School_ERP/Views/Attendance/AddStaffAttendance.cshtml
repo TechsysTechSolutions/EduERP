@@ -227,9 +227,9 @@
 						<thead class="bg-primary-400">
 							<tr>
 								<th>Name</th>
-								<th>Employee No</th>
-								<th>From Date</th>
-								<th>To_Date</th>
+								<th>Leave Date</th>
+								<th>Date</th>
+								<th>Leave Reason</th>
 								<th>Academic Year</th>
 								<th>Created On</th>
 								@*<th>Created By</th>*@
@@ -244,10 +244,10 @@
 								foreach (var item in Model)
 								{
 									<tr>
-										<td>@item.Name</td>
-										<td>@item.Employee_No</td>
-										<td>@item.From_Date.ToString("dd/MM/yyyy")</td>
-										<td>@item.To_Date.ToString("dd/MM/yyyy")</td>
+										<td>@item.Name + @item.Employee_No</td>
+										<td>@item.Leave_Date</td>
+										<td>@item.From_Date </td>
+										<td>@item.Leave_Reason</td>
 										<td>@item.Academic_Year</td>
 										<td>@item.Created_On</td>										
 										<td>

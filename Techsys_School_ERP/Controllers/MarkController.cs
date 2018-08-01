@@ -133,33 +133,6 @@ namespace Techsys_School_ERP.Controllers
 					}
 
 			
-			//List<Subject_ClassList_ViewModel> subjectClassListViewModel = new List<Subject_ClassList_ViewModel>();
-			//using (var dbcontext = new SchoolERPDBContext())
-			//{
-			//	subjectClassListViewModel = (from usr in dbcontext.Users
-			//						 join subjClassDetail in dbcontext.Subject_Class_Detail on usr.Id equals subjClassDetail.Created_By
-			//						 join sub in dbcontext.Subject on subjClassDetail.Subject_Id equals sub.Id
-			//						 join sec in dbcontext.Section on subjClassDetail.Section_Id equals sec.Id
-			//						 join cls in dbcontext.Class on subjClassDetail.Class_Id equals cls.Id
-			//						 where subjClassDetail.Is_Deleted == null || subjClassDetail.Is_Deleted == false
-			//						 select new Subject_ClassList_ViewModel
-			//						 {
-			//							 Id = subjClassDetail.Id,
-			//							 ClassSectionName = cls.Name + sec.Name ,
-			//							 Subject_Id = subjClassDetail.Subject_Id,
-			//							 Subject_Name = sub.Name,
-			//							 Academic_Year = usr.Academic_Year,
-			//							 User_Id = usr.User_Id,
-			//							 Is_Deleted = usr.Is_Deleted,
-			//							 Created_On = subjClassDetail.Created_On,
-			//							 Created_By = subjClassDetail.Created_By
-
-			//						 }).ToList();
-
-
-			//}
-			//return  Json(subjectClassListViewModel.ToArray(), JsonRequestBehavior.AllowGet);
-
 			return Json(sReturnText.ToString(), JsonRequestBehavior.AllowGet);
 		}
 
@@ -167,6 +140,14 @@ namespace Techsys_School_ERP.Controllers
 		[HttpPost]
 		public List<Subject_ClassList_ViewModel> populateGrid()
 		{
+			/*//distinct objects
+			List<objects> listObjects = (from obj in db.Objects
+										 select obj).Distinct().ToList();
+			//distinct based on a specific propertie (in this case Mobile and Fax)
+			List<Objects> listObjects = (from obj in db.Objects
+										 select obj).GroupBy(n => new { n.Mobile, n.Fax })
+													   .Select(g => g.FirstOrDefault())
+													   .ToList();*/
 			List<Subject_ClassList_ViewModel> subjectClassListViewModel = new List<Subject_ClassList_ViewModel>();
 			using (var dbcontext = new SchoolERPDBContext())
 			{
@@ -188,7 +169,7 @@ namespace Techsys_School_ERP.Controllers
 												 Created_On = subjClassDetail.Created_On,
 												 Created_By = subjClassDetail.Created_By
 
-											 }).ToList();
+											 }).Distinct().ToList();
 
 
 			}

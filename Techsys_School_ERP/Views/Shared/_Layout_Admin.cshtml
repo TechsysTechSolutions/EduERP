@@ -189,22 +189,23 @@
 						<div class="category-content no-padding">
 							<ul class="navigation navigation-main navigation-accordion">
 								<!-- Main -->
-								<li class="navigation-header"><span>Main</span> <i class="icon-menu" title="Main pages"></i></li>
-@if (User.IsInRole("Admin"))
+								
+
+@if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
 {
-								<li><a href="index.html"><i class="icon-home4"></i> <span>User Management</span></a>
+								<li><a href="index.html"><i class="icon-home4"></i> <span>USER MANAGEMENT</span></a>
 									<ul>
 										<li><a href="/Account/RoleList" id="layout1">Manage Role</a></li>
 										<li><a href="/Account/UserList" id="layout2">Manage User<span class="label bg-warning-400"></span></a></li>
 
 									</ul>
 								</li>
-}
+
 								<li>
-									<a href="#"><i class="icon-stack2"></i> <span>Student Management</span></a>
+									<a href="#"><i class="icon-stack2"></i> <span>STUDENT MANAGEMENT</span></a>
 									<ul>
-										<li><a href="layout_navbar_fixed.html">Configure Class and Section.</a></li>
-										<li><a href="layout_navbar_sidebar_fixed.html">Manage Students</a></li>
+										<li><a href="/Student/StudentList/">Student List</a></li>
+										@*<li><a href="/Student/Edit/">Manage Students</a></li>*@
 										@*<li><a href="layout_sidebar_fixed_native.html">Fixed sidebar native scroll</a></li>
 										<li><a href="layout_navbar_hideable.html">Hideable navbar</a></li>
 										<li><a href="layout_navbar_hideable_sidebar.html">Hideable &amp; fixed sidebar</a></li>
@@ -215,78 +216,134 @@
 										<li><a href="boxed_full.html">Boxed full width</a></li>*@
 									</ul>
 								</li>
-								@if (User.IsInRole("Admin"))								
+}
+								@if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))								
 								{
 								<li>
-									<a href="#"><i class="icon-copy"></i> <span>Staff Management</span></a>
+									<a href="#"><i class="icon-copy"></i> <span>STAFF MANAGEMENT</span></a>
 									<ul>
-										<li><a href="../../../layout_1/LTR/index.html" id="layout1">Manage Staffs</a></li>
-										<li><a href="index.html" id="layout2">Layout 2 <span class="label bg-warning-400"></span></a></li>
+										<li><a href="/Staff/StaffList/" id="layout1">Staff List</a></li>
+										@*<li><a href="/Staff/EditTeachingStaff/" id="layout2"> <span class="label bg-warning-400"></span></a></li>*@
 										
 									</ul>
 								</li>
 								}
-								@if (User.IsInRole("Admin"))
+								@if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
 								{
 									<li>
-										<a href="#"><i class="icon-copy"></i> <span>Assignments</span></a>
+										<a href="#"><i class="icon-copy"></i> <span>ASSIGNMENTS</span></a>
 										<ul>
-											<li><a href="../../../layout_1/LTR/index.html" id="layout1">View Assignments</a></li>
-											<li><a href="index.html" id="layout2">Layout 2 <span class="label bg-warning-400"></span></a></li>
+											<li><a href="/Assignment/AddAssignmentForClassAndSection/" id="Add Assignment"> Assignments</a></li>
+											@*<li><a href="index.html" id="layout2">Layout 2 <span class="label bg-warning-400"></span></a></li>*@
 
 										</ul>
 									</li>
-								}
+
 								<li>
-									<a href="#"><i class="icon-droplet2"></i> <span>Fees Management</span></a>
+									<a href="#"><i class="icon-droplet2"></i> <span>FEES MANAGEMENT</span></a>
 									<ul>
-										<li><a href="colors_primary.html">Configure Fee Component</a></li>
-										<li><a href="colors_danger.html">Fee Payment</a></li>										
+										<li><a href="/Fee/FeeNameList/">Fee Componnent List</a></li>
+										<li><a href="/Fee/FeePayment/">Fee Payment</a></li>
+										<li><a href="/Fee/ConfigureFeesForClass/">Fee Configuration</a></li>											
+									</ul>
+								</li>
+
+								<li>
+									<a href="#"><i class="icon-droplet2"></i> <span>TIMETABLE MANAGEMENT</span></a>
+									<ul>
+										<li><a href="/TimeTable/AddClass_TimeTable/">Class TimeTable</a></li>
+										<li><a href="/TimeTable/AddStaff_TimeTable/">Staff TimeTable</a></li>
+									</ul>
+								</li>
+
+								<li>
+									<a href="#"><i class="icon-droplet2"></i> <span>SYLLABUS</span></a>
+									<ul>
+										<li><a href="/Syllabus/AddSyllabus/">Syllabus</a></li>
+										
 									</ul>
 								</li>
 								<li>
-									<a href="#"><i class="icon-droplet2"></i> <span>Staff Management</span></a>
+									<a href="#"><i class="icon-droplet2"></i> <span>INVENTORY</span></a>
+									<ul>
+										<li><a href="/Inventory/AddInventoryDetail/">INVENTORY DETAIL LIST</a></li>
+										<li><a href="/Inventory/InventoryItemsList/">INVENTORY ITEMS LIST</a></li>
+									</ul>
+								</li>
+								<li>
+									<a href="#"><i class="icon-droplet2"></i> <span>EXAM MANAGEMENT</span></a>
+									<ul>
+										<li><a href="/Exam/ExamList/">Exam List</a></li>
+										<li><a href="/Exam/AddExam_TimeTable/">Exam TimeTable</a></li>
+									</ul>
+								</li>
+								<li>
+									<a href="#"><i class="icon-stack"></i> <span>MARKS MANAGEMENT</span></a>
 									<ul>
 										<li><a href="colors_primary.html">Configure Fee Component</a></li>
 										<li><a href="colors_danger.html">Fee Payment</a></li>
 									</ul>
 								</li>
 								<li>
-									<a href="#"><i class="icon-stack"></i> <span>Marks Management</span></a>
+									<a href="#"><i class="icon-stack"></i> <span>ATTENDANCE</span></a>
 									<ul>
-										<li><a href="starters/horizontal_nav.html">Horizontal navigation</a></li>
-										<li><a href="starters/1_col.html">1 column</a></li>
-										<li><a href="starters/2_col.html">2 columns</a></li>
-										<li>
-											<a href="#">3 columns</a>
-											<ul>
-												<li><a href="starters/3_col_dual.html">Dual sidebars</a></li>
-												<li><a href="starters/3_col_double.html">Double sidebars</a></li>
-											</ul>
-										</li>
-										<li><a href="starters/4_col.html">4 columns</a></li>
-										<li>
-											<a href="#">Detached layout</a>
-											<ul>
-												<li><a href="starters/detached_left.html">Left sidebar</a></li>
-												<li><a href="starters/detached_right.html">Right sidebar</a></li>
-												<li><a href="starters/detached_sticky.html">Sticky sidebar</a></li>
-											</ul>
-										</li>
-										<li><a href="starters/layout_boxed.html">Boxed layout</a></li>
-										<li class="navigation-divider"></li>
-										<li><a href="starters/layout_navbar_fixed_main.html">Fixed main navbar</a></li>
-										<li><a href="starters/layout_navbar_fixed_secondary.html">Fixed secondary navbar</a></li>
-										<li><a href="starters/layout_navbar_fixed_both.html">Both navbars fixed</a></li>
-										<li><a href="starters/layout_fixed.html">Fixed layout</a></li>
+										<li><a href="colors_primary.html">Configure Fee Component</a></li>
+										<li><a href="colors_danger.html">Fee Payment</a></li>
 									</ul>
 								</li>
-								<li><a href="changelog.html"><i class="icon-list-unordered"></i> <span>Attaendance Management <span class="label bg-blue-400">1.4</span></span></a></li>
-								<li><a href="../../RTL/index.html"><i class="icon-width"></i> <span>RTL version</span></a></li>
+								<li><a href="../../RTL/index.html"><i class="icon-width"></i> <span>REPORTS MANAGEMENT</span></a></li>
+								<li><a href="changelog.html"><i class="icon-list-unordered"></i> <span>PROMOTION MANAGEMENT <span class="label bg-blue-400">1.4</span></span></a></li>
+								}
 								<!-- /main -->
 								<!-- Forms -->
 								
-								
+								@if (User.IsInRole("Parent"))
+								{
+									<li style="margin-top:15%; ">
+										<a href="index.html"><i class="icon-home4"></i> <span>TIMETABLE</span></a>
+										<ul>
+											<li><a href="/Account/RoleList" id="layout1">Manage Role</a></li>
+											<li><a href="/Account/UserList" id="layout2">Manage User<span class="label bg-warning-400"></span></a></li>
+
+										</ul>
+									</li>
+									<li style="margin-top:5%; ">
+										<a href="index.html"><i class="icon-home4"></i> <span>ASSIGNMENT</span></a>
+										<ul>
+											<li><a href="/Account/RoleList" id="layout1">Manage Role</a></li>
+											<li><a href="/Account/UserList" id="layout2">Manage User<span class="label bg-warning-400"></span></a></li>
+
+										</ul>
+									</li>
+
+									<li style="margin-top:5%; ">
+										<a href="index.html"><i class="icon-home4"></i> <span>STUDENT REPORT</span></a>
+										<ul>
+											<li><a href="/Account/RoleList" id="layout1">Manage Role</a></li>
+											<li><a href="/Account/UserList" id="layout2">Manage User<span class="label bg-warning-400"></span></a></li>
+
+										</ul>
+									</li>
+
+									<li style="margin-top:5%; ">
+										<a href="index.html"><i class="icon-home4"></i> <span>FEES REPORT</span></a>
+										<ul>
+											<li><a href="/Account/RoleList" id="layout1">Manage Role</a></li>
+											<li><a href="/Account/UserList" id="layout2">Manage User<span class="label bg-warning-400"></span></a></li>
+
+										</ul>
+									</li>
+
+									<li style="margin-top:5%; ">
+										<a href="index.html"><i class="icon-home4"></i> <span>LATEST NEWS</span></a>
+										<ul>
+											<li><a href="/Account/RoleList" id="layout1">Manage Role</a></li>
+											<li><a href="/Account/UserList" id="layout2">Manage User<span class="label bg-warning-400"></span></a></li>
+
+										</ul>
+									</li>
+								}
+
 								
 													
 							
@@ -311,7 +368,7 @@
 					<!-- /dashboard content -->
 					<!-- Footer -->
 					<div class="footer text-muted">
-						&copy; 2015. <a href="#">Limitless Web App Kit</a> by <a href="http://themeforest.net/user/Kopyov" target="_blank">Eugene Kopyov</a>
+						&copy; 2015. <a href="#">Techsys</a> by <a href="http://themeforest.net/user/Kopyov" target="_blank">Eugene Kopyov</a>
 					</div>
 					<!-- /footer -->
 				</div>

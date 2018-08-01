@@ -105,7 +105,10 @@
 			});
 
 
-			
+			$("#btnSaveAndContinue").click(function () {
+
+				window.location.href = "/Student/AddOrUploadStudentRelatedDocuments";
+			});
 
 			function populatePrevSchoolDetailsInGrid(data)
 			{
@@ -208,20 +211,25 @@
 
 			$("#btnAdd").click(function () {
 
-				var Student_Prev_School_Detail =
-					{
-						
-						School_Id: $('#searchselect').val(),
-						Other_School_Name: $("#comments").val(),
-						From_Year: $("#txtFromYear").val(),
-						To_Year: $("#txtToYear").val(),
-						Leaving_Reason: $("#txtLeavingReason").val(),
-						Comments: $("#txtComments").val()
+				if ($('#searchselect').val() == "") {
+					alert("Please Select the School Name");
+				}
+				else {
+					var Student_Prev_School_Detail =
+						{
 
-					};
+							School_Id: $('#searchselect').val(),
+							Other_School_Name: $("#comments").val(),
+							From_Year: $("#txtFromYear").val(),
+							To_Year: $("#txtToYear").val(),
+							Leaving_Reason: $("#txtLeavingReason").val(),
+							Comments: $("#txtComments").val()
 
-				var stuPrevSchoolDetail = JSON.stringify(Student_Prev_School_Detail);
-				getStudentPrevSchoolDetails(stuPrevSchoolDetail);
+						};
+
+					var stuPrevSchoolDetail = JSON.stringify(Student_Prev_School_Detail);
+					getStudentPrevSchoolDetails(stuPrevSchoolDetail);
+				}
 				 
 			});
 
@@ -449,6 +457,12 @@
 
 
 						</fieldset>
+						<div class="row  vert-margin-top col-sm-offset-9 col-md-offset-9">
+
+							<input type="button" id="btncancel" class="btn btn-primary bg-green-400" value="CANCEL" style="margin-left:17%;" />
+							<input type="button" id="btnSaveAndContinue" class="btn btn-primary bg-green-400" value="SAVE & CONTINUE" />
+
+						</div>
 						</div>
 					</div>
 				</div>

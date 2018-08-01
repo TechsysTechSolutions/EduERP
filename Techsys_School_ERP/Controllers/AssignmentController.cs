@@ -13,10 +13,16 @@ namespace Techsys_School_ERP.Controllers
     public class AssignmentController : CommonController
     {
         // GET: Assignment
-        public ActionResult GetAssignmentList()
+        public ActionResult  AssignmentList()
         {
             return View();
         }
+
+
+		public ActionResult EditAssignmentForClassAndSection()
+		{
+			return View();
+		}
 
 		public ActionResult AddAssignmentForClassAndSection()
 		{

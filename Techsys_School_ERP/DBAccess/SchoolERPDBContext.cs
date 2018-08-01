@@ -5,6 +5,7 @@ using System.Web;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using Techsys_School_ERP.Model;
+//using Techsys_School_ERP.Model.ViewModel;
 
 
 
@@ -58,6 +59,19 @@ namespace Techsys_School_ERP.DBAccess
 		public DbSet<Staff_Attendance> Staff_Attendance { get; set; }
 		public DbSet<Assignment> Assignment { get; set; }
 		public DbSet<Term_Fee_Date> Term_Fee_Date { get; set; }
+		public DbSet<Second_Language> Second_Language { get; set; }
+		public DbSet<Student_Document> Student_Document { get; set; }
+		public DbSet<Staff_MonthlySalary_Details> Staff_MonthlySalary_Details { get; set; }
+		public DbSet<Month> Month { get; set; }
+		public DbSet<Inventory> Inventory { get; set; }
+		public DbSet<Inventory_Item_Detail> Inventory_Item_Detail { get; set; }
+		public DbSet<Staff_Subject_Detail> Staff_Subject_Detail { get; set; }
+		public DbSet<Class_TimeTable> Class_TimeTable { get; set; }
+		public DbSet<Staff_TimeTable> Staff_TimeTable { get; set; }
+		public DbSet<Exam_TimeTable> Exam_TimeTable { get; set; }
+		public DbSet<Syllabus> Syllabus { get; set; }
+		public DbSet<Hostel_Room> Hostel_Room { get; set; }
+		public DbSet<Transport> Transport { get; set; }
 
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -98,6 +112,21 @@ namespace Techsys_School_ERP.DBAccess
 			modelBuilder.Entity<Staff_Attendance>().HasKey(s => s.Id);
 			modelBuilder.Entity<Assignment>().HasKey(s => s.Id);
 			modelBuilder.Entity<Term_Fee_Date>().HasKey(s => s.Id);
+			modelBuilder.Entity<Second_Language>().HasKey(s => s.Id);
+			modelBuilder.Entity<Student_Document>().HasKey(s => s.Id);
+			modelBuilder.Entity<Staff_MonthlySalary_Details>().HasKey(s => s.Id);
+			modelBuilder.Entity<Month>().HasKey(s => s.Id);
+			modelBuilder.Entity<Inventory>().HasKey(s => s.Id);
+			modelBuilder.Entity<Inventory_Item_Detail>().HasKey(s => s.Id);
+			modelBuilder.Entity<Staff_Subject_Detail>().HasKey(s => s.Id);
+			modelBuilder.Entity<Staff_TimeTable>().HasKey(s => s.Id);
+			modelBuilder.Entity<Class_TimeTable>().HasKey(s => s.Id);
+			modelBuilder.Entity<Exam_TimeTable>().HasKey(s => s.Id);
+			modelBuilder.Entity<Syllabus>().HasKey(s => s.Id);
+			modelBuilder.Entity<Hostel_Room>().HasKey(s => s.Id);
+			modelBuilder.Entity<Transport>().HasKey(s => s.Id);
+			//	modelBuilder.Entity<StaffSalarySlip_ViewModel>().Property(a => a.salary_deduction).HasPrecision(18, 2);
+
 
 			base.OnModelCreating(modelBuilder);
 		}

@@ -55,10 +55,18 @@ namespace Techsys_School_ERP.Authorize
 			using (var dbcontext = new SchoolERPDBContext())
 			{
 				var sRoleName = (from usr in dbcontext.Users
-									 join rle in dbcontext.User_Roles on usr.Role_Id equals rle.Id
+									 join rle in dbcontext.User_Roles on usr.Role_Id equals rle.Role_Id
 									 where usr.User_Id == username 
 									 select rle.Name).ToList();
-				sRoleNameArr[0] = sRoleName[0].ToString();
+
+				if (sRoleName.Count > 0)
+				{
+					sRoleNameArr[0] = sRoleName[0].ToString();
+				}
+				else
+				{
+					sRoleNameArr[0] = string.Empty;
+				}
 			}
 			return sRoleNameArr;
 		}

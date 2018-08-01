@@ -126,7 +126,7 @@
 
 				var Staff_Salary_Detail =
 					{
-						Staff_Id: 3,
+						Staff_Id:$("#Staff_Id").val(),
 						Basic: $('#Basic').val(),
 						DA: $("#DA").val(),
 						Medical: $('#Medical').val(),
@@ -146,7 +146,8 @@
 						Branch_Name : $("#Branch_Name").val(),
 						Bank_AddressLine1 : $("#Bank_AddressLine1").val(),
 						City : $("#City").val(),
-						Bank_Account_No : $("#Bank_Account_No").val()
+						Bank_Account_No : $("#Bank_Account_No").val(),
+						Name_on_Acount : $("#Name_on_Acount").val()
 					};
 
 				var staffSalaryDetail = JSON.stringify(Staff_Salary_Detail);
@@ -162,6 +163,7 @@
 
 						if (data == "OK") {
 							alert("Staff Salary Detail Succesfully Saved!");
+							window.location.href = "/Staff/StaffList";
 						}
 						else {
 							alert(data);
@@ -202,8 +204,9 @@
 								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
 									<label style="font-weight:700; " >EMPLOYEE NO </label>
 									@Html.EditorFor(model => model.Employee_No, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									@Html.HiddenFor(model => model.Staff_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
 								</div>
-								<div class="col-sm-3 col-md-3 col-sm-offset-0 col-md-offset-0">
+								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
 									<label style="font-weight:700; ">EMPLOYEE NAME </label>
 									@Html.EditorFor(model => model.Staff_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
 								</div>
@@ -211,7 +214,7 @@
 									<label style="font-weight:700; ">YEAR </label>
 									@Html.EditorFor(model => model.Academic_Year, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
 								</div>
-								<div class="col-sm-3 col-md-3 col-sm-offset-0 col-md-offset-0">
+								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
 									<label style="font-weight:700; ">PF ACCOUNT NO </label>
 									@Html.EditorFor(model => model.PF_Account_No, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
 								</div>
@@ -219,17 +222,21 @@
 									<label style="font-weight:700; ">PAN NO </label>
 									@Html.EditorFor(model => model.PAN_No, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
 								</div>
+								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
+									<label style="font-weight:700; ">BANK NAME </label>
+									@Html.EditorFor(model => model.Bank_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
 
 							</div>
 							<div class="row form-group">
 
 								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
-									<label style="font-weight:700; ">BANK NAME </label>
-									@Html.EditorFor(model => model.Bank_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									<label style="font-weight:700; ">ACCOUNT# </label>
+									@Html.EditorFor(model => model.Bank_Account_No, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
 								</div>
 								<div class="col-sm-3 col-md-3 col-sm-offset-0 col-md-offset-0">
 									<label style="font-weight:700; ">ACCOUNT NAME </label>
-									@Html.EditorFor(model => model.Bank_Account_No, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									@Html.EditorFor(model => model.Name_on_Acount, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
 								</div>
 								<div class="col-sm-2 col-md-2 col-sm-offset-0 col-md-offset-0">
 									<label style="font-weight:700; ">BRANCH </label>
@@ -377,10 +384,16 @@
 							<hr />
 							@*<div class="row form-group">
 								</div>*@
-								<div class="row form-group">
+							<div class="row col-sm-offset-9 col-md-offset-9 col-sm-3 col-md-3 form-group">
+
+								<input type="button" id="btncancel" class="btn btn-primary bg-green-400  col-md-1 col-sm-1 " value="CANCEL" style="width:30%; margin-right:1%;  " />
+								<input type="button" id="btnSaveAndContinue" class="btn btn-primary bg-green-400 col-md-2 col-sm-2" value="SAVE & CONTINUE" style="width:60%; " />
+
+							</div>
+								@*<div class="row form-group">
 									<input type="button" id="btnCancel" value="CANCEL" class="col-sm-1 col-md-1 col-sm-offset-9 col-sm-offset-9 btn btn-primary bg-warning-400"  />
-									<input type="button" id="btnSaveAndContinue" value="SAVE" class="col-sm-1 col-md-1  btn btn-primary bg-green-400" style="margin-left:10px;" />
-								</div>
+									<input type="button" id="btnSaveAndContinue" value="SAVE AND CONTINUE TO LIST" class="col-sm-1 col-md-1  btn btn-primary bg-green-400" style="margin-left:10px;" />
+								</div>*@
 </fieldset>
 </div>
 				</div>

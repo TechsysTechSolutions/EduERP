@@ -16,11 +16,17 @@
 
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<style type="text/css">
+		.bold {
+			font-weight: 700;
+		}
+
+	</style>
 	<script type="text/javascript">
 		$(document).ready(function () {
 			
 			$("#Is_Allergic").change(function () {
-				debugger
+				//debugger
 			$('#Allergy_Details').attr("readonly", false)
 			})
 
@@ -109,13 +115,17 @@
 						Father_Annual_Income: $("#Father_Annual_Income").val(),
 						Mother_Office_Address: $("#Mother_Office_Address").val(),
 						Father_Office_Address: $("#Father_Office_Address").val(),
-						//Mother_Occupation_Id: $("#Mother_Occupation_Id").find(":selected").val(),
+						Father_Company_Name: $("#Father_Company_Name").val(),
+						Mother_Company_Name: $("#Mother_Company_Name").val(),
 						Mother_Annual_Income: $("#Mother_Annual_Income").val(),
-						//Category_Id: $("#Category_Id").find(":selected").val(),
+						Mother_Designation: $("#Mother_Designation").val(),
+						Father_Designation: $("#Father_Designation").val(),
 						Category_Id: $("#CategoryList").find(":selected").val(),
 						Caste: $("#Caste").val(),
 						Religion: $("#Religion").val(),
-						Mother_tongue: $("#Mother_tongue").val()
+						Mother_tongue: $("#Mother_tongue").val(),
+						Second_Language_Opted_Id: $("#secondLanguageList").find(":selected").val(),
+						Medical_History_Details: $("#txtMedicalHistoryDetails").val()
 						//Birth_Certificate: $("#CountriesList").find(":selected").val(),
 						//ID_Card: $("#Phone_No1").val(),
 						//Upload_Document1: $("#Phone_No2").val(),
@@ -130,7 +140,7 @@
 					contentType: "application/json; charset=utf-8",
 					dataType: "json",
 					success: function (response) {
-						debugger
+						//debugger
 						if (response == "SuccesFully Added") {
 							var data = new FormData();
 							data.append('file', ($("#Photo").get(0).files)[0]);
@@ -194,7 +204,7 @@
 					<div class="panel-body">
 						<fieldset>
 							<legend class="text-semibold">
-								<i class="icon-reading position-left" style="color:green;font-size:larger; "></i>
+								<i class="icon-reading position-left" style="color:green;font-size:larger;font-weight:800; "></i>
 								Add personal details
 							</legend>
 
@@ -224,7 +234,7 @@
 								</div>
 							</div>
 							<div class="row form-group">
-								<div class="col-sm-3 col-md-3 ">
+								<div class="col-sm-2 col-md-2 ">
 									@Html.LabelFor(model => model.Category_Id, new { htmlAttributes = new { @class = "form-control" } })
 
 									<select id="CategoryList" required name="CategoryName" class="form-control">
@@ -250,22 +260,46 @@
 
 
 								</div>
-								<div class="col-sm-3 col-md-3">
+								<div class="col-sm-2 col-md-2 ">
 									@Html.LabelFor(model => model.Caste, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
 									@Html.EditorFor(model => model.Caste, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
 									@Html.ValidationMessageFor(model => model.Father_Annual_Income)
 								</div>
-								<div class="col-sm-3 col-md-3 ">
+								<div class="col-sm-3 col-md-3">
 									@Html.LabelFor(model => model.Religion, new { htmlAttributes = new { @class = "form-control" } })
 
 									@Html.EditorFor(model => model.Religion, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
 
 
 								</div>
-								<div class="col-sm-3 col-md-3">
+								<div class="col-sm-2 col-md-2 ">
 									@Html.LabelFor(model => model.Mother_tongue, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
 									@Html.EditorFor(model => model.Mother_tongue, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
 									@Html.ValidationMessageFor(model => model.Father_Annual_Income)
+								</div>
+								<div class="col-sm-3 col-md-3 ">
+									@Html.LabelFor(model => model.Second_Language_Opted_Id, new { htmlAttributes = new { @class = "form-control" } })
+
+									@Html.HiddenFor(model => model.Second_Language_Opted_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									<select id="secondLanguageList" required name="secondLanguageName" class="form-control">
+										@if (ViewBag.secondLanguageList != null)
+										{
+											<option value='0'>-- Select Select Language --</option>		foreach (var item in ViewBag.secondLanguageList)
+											{
+												if (item.Text != null)
+												{
+
+													<option value="@item.Value">
+														@item.Text
+													</option>
+
+												}
+
+											}
+										}
+									</select>
+
+
 								</div>
 							</div>
 
@@ -273,14 +307,14 @@
 						</fieldset>
 
 						<fieldset>
-							<legend class="text-semibold">
+							@*<legend class="text-semibold">
 								<i class="icon-reading position-left" style="color:green;font-size:larger; "></i>
 								Occupation details
-							</legend>
+							</legend>*@
 
 
 							<div class="row form-group">
-								<div class="col-sm-3 col-md-3 ">
+								<div class="col-sm-2 col-md-2 ">
 									@Html.LabelFor(model => model.Father_Occupation_Id, new { htmlAttributes = new { @class = "form-control" } })
 
 									<select id="FatherOccupationList" required name="CategoryName" class="form-control">
@@ -303,22 +337,32 @@
 
 
 								</div>
-								<div class="col-sm-3 col-md-3">
-									@Html.LabelFor(model => model.Father_Annual_Income, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									@Html.EditorFor(model => model.Father_Annual_Income, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-									@Html.ValidationMessageFor(model => model.Father_Annual_Income)
+								<div class="col-sm-2 col-md-2 ">
+									@Html.LabelFor(model => model.Father_Company_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									@Html.EditorFor(model => model.Father_Company_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									@Html.ValidationMessageFor(model => model.Father_Company_Name)
+									</div>
+								<div class="col-sm-2 col-md-2 ">
+									@Html.LabelFor(model => model.Father_Designation, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									@Html.EditorFor(model => model.Father_Designation, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									@Html.ValidationMessageFor(model => model.Father_Designation)
 								</div>
-								<div class="col-sm-6 col-md-6 ">
-									@Html.LabelFor(model => model.Father_Office_Address, new { htmlAttributes = new { @class = "form-control" } })
+									<div class="col-sm-2 col-md-2">
+										@Html.LabelFor(model => model.Father_Annual_Income, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+										@Html.EditorFor(model => model.Father_Annual_Income, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+										@Html.ValidationMessageFor(model => model.Father_Annual_Income)
+									</div>
+									<div class="col-sm-4 col-md-4 ">
+										@Html.LabelFor(model => model.Father_Office_Address, new { htmlAttributes = new { @class = "form-control" } })
 
-									@Html.EditorFor(model => model.Father_Office_Address, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+										@Html.EditorFor(model => model.Father_Office_Address, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
 
+
+									</div>
 
 								</div>
-							
-							</div>
 							<div class="row form-group">
-								<div class="col-sm-3 col-md-3 ">
+								<div class="col-sm-2 col-md-2">
 									@Html.LabelFor(model => model.Mother_Occupation_Id, new { htmlAttributes = new { @class = "form-control" } })
 
 									<select id="MotherOccupationList" required name="OccupationName" class="form-control">
@@ -341,12 +385,23 @@
 
 
 								</div>
-								<div class="col-sm-3 col-md-3">
+								<div class="col-sm-2 col-md-2 ">
+									@Html.LabelFor(model => model.Mother_Company_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									@Html.EditorFor(model => model.Mother_Company_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									@Html.ValidationMessageFor(model => model.Mother_Company_Name)
+								</div>
+								<div class="col-sm-2 col-md-2 ">
+									@Html.LabelFor(model => model.Mother_Designation, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									@Html.EditorFor(model => model.Mother_Designation, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									@Html.ValidationMessageFor(model => model.Mother_Designation
+							   )
+								</div>
+								<div class="col-sm-2 col-md-2">
 									@Html.LabelFor(model => model.Mother_Annual_Income, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
 									@Html.EditorFor(model => model.Mother_Annual_Income, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
 									@Html.ValidationMessageFor(model => model.Father_Annual_Income)
 								</div>
-								<div class="col-sm-6 col-md-6 ">
+								<div class="col-sm-4 col-md-4 ">
 									@Html.LabelFor(model => model.Mother_Office_Address, new { htmlAttributes = new { @class = "form-control" } })
 
 									@Html.EditorFor(model => model.Mother_Office_Address, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
@@ -362,7 +417,7 @@
 
 							<div class="row form-group">
 								
-									<div class="col-sm-3 col-md-3">
+									@*<div class="col-sm-3 col-md-3">
 										@Html.LabelFor(model => model.Birth_Certificate, new { htmlAttributes = new { @class = "form-control" } })
 									<img id="birthCertificateImg" src="~/Content/images/imageupload_-_Copy.png" alt="your image" style="height:100px;width:110px;margin-top:0%;margin-left:0%;background-size:auto; align-content:flex-start; " class="img-responsive">
 									<input type="file" name="Photo" style="display:none;  " id="Photo" />
@@ -381,20 +436,31 @@
 									@Html.LabelFor(model => model.ID_Card, new { htmlAttributes = new { @class = "form-control" } })
 									<img id="IDcardImg" src="~/Content/images/imageupload_-_Copy.png" alt="your image" style="height:100px;width:110px;margin-top:0%;margin-left:0%;background-size:auto; align-content:flex-start; " class="img-responsive">
 									<input type="file" name="Photo" style="display:none;  " id="IDCard" />
-									</div>
+									</div>*@
 
-
+								<div class="col-sm-12 col-md-12 ">
+									<label style="font-weight:700; ">MEDICAL HISTORY DETAILS(IF ANY)</label>
+									<textarea rows="7" cols="12" class="form-control elastic" placeholder="Textarea" id="txtMedicalHistoryDetails"></textarea>
+									@*@Html.TextAreaFor(model => model.Medical_History_Details, new { htmlAttributes = new { @class = "form-control elastic",@rows = "7", @cols = "12" } })*@
+									
+								</div>
 
 
 								</div>
 						</fieldset>
+						<div class="row  vert-margin-top col-sm-offset-9 col-md-offset-9 col-sm-3 col-md-3 form-group">
+
+							<input type="button" id="btncancel" class="btn btn-primary bg-green-400  col-md-1 col-sm-1 " value="CANCEL" style="width:30%; margin-right:1%;  " />
+							<input type="button" id="btnSaveAndContinue" class="btn btn-primary bg-green-400 col-md-2 col-sm-2" value="SAVE & CONTINUE" style="width:60%; " />
+
 						</div>
-						<div class="row  vert-margin-top col-sm-offset-9 col-md-offset-9">
+						</div>
+						@*<div class="row  vert-margin-top col-sm-offset-9 col-md-offset-9">
 						
 							<input type="button" id="btncancel" class="btn btn-primary bg-green-400" value="CANCEL" style="margin-left:17%;" />
 							<input type="button" id="btnSaveAndContinue" class="btn btn-primary bg-green-400" value="SAVE & CONTINUE" />
 
-						</div>
+						</div>*@
 					</div>
 
 			</div>

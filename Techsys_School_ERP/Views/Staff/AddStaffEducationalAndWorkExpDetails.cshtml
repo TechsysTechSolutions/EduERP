@@ -270,7 +270,8 @@
 			});
 
 			$("#btnSaveAndContinue").click(function () {
-				window.location.href = "/Staff/AddStaffSalaryDetail";
+				//window.location.href = "/Staff/AddStaffSalaryDetail";
+				window.location.href = "/Staff/AddOrEditStaffSalaryDetail";
 			});
 
 			$("#btnStaffWorkExpAdd").click(function () {
@@ -508,15 +509,22 @@
 
 									</div>
 									<div id="noRecords" style="display:none"> There are no records </div>
-									<div class="row">
-										<input type="button" id="btnSaveAndContinue" value="SAVE AND CONTINUE" class="col-sm-2 col-md-2 col-sm-offset-10 col-sm-offset-10 btn btn-success" />
-									</div>
+									
 								</div>
 							</div>
 						</div>
 
 
 					</fieldset>
+					<div class="row col-sm-offset-9 col-md-offset-9 form-group">
+
+						<input type="button" id="btncancel" class="btn btn-primary bg-green-400" value="" style="margin-left:32%;display:none; " />
+						<input type="button" id="btnSaveAndContinue" class="btn btn-primary bg-green-400" value="SAVE & CONTINUE" style="margin-left:42% ;"/>
+
+					</div>
+					@*<div class="row form-group">
+						<input type="button" id="btnSaveAndContinue" value="SAVE AND CONTINUE" class="col-sm-offset-9 col-md-offset-9 col-sm-2 col-md-2  btn btn-success"  />
+					</div>*@
 				</div>
 
 				@*</div>*@

@@ -36,7 +36,7 @@ namespace Techsys_School_ERP.Model
 		public string Last_Name { get; set; }
 
 		[Display(Name = "GENDER")]
-		public int? Gender_Id { get; set; }
+		public int Gender_Id { get; set; }
 
 		[Display(Name = "DOB")]
 		[Required(ErrorMessage = "Date Of birth is Required.")]
@@ -65,7 +65,7 @@ namespace Techsys_School_ERP.Model
 		public string Email_Id { get; set; }
 
 		[Display(Name = "BLOOD GROUP")]
-		public int? Blood_Group_Id { get; set; }
+		public int Blood_Group_Id { get; set; }
 
 		[StringLength(500)]
 		[Display(Name = "ADDRESS LINE1")]
