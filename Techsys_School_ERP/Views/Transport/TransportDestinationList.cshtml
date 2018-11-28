@@ -1,0 +1,225 @@
+﻿@model IEnumerable<Techsys_School_ERP.Model.ViewModel.TransportDestinationList_ViewModel>
+
+@{
+	Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+
+}
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script type="text/javascript" src="~/Content/js/plugins/loaders/pace.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/core/libraries/jquery.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/core/libraries/bootstrap.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/loaders/blockui.min.js"></script>
+	<!-- /core JS files -->
+	<!-- Theme JS files -->
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/datatables.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/forms/selects/select2.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/jszip/jszip.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/buttons.min.js"></script>
+	<!-- <script type="text/javascript" src="~/Content/js/core/app.js"></script>-->
+	<script type="text/javascript" src="~/Content/js/pages/datatables_extension_buttons_html5.js"></script>
+	@*<script type="text/javascript" src="~/Scripts/jquery-3.3.1.min.js"></script>*@
+	<script type="text/javascript" src="~/Scripts/jquery-ui.js"></script>
+
+	<!-- /core JS files -->
+	<!-- Theme JS files -->
+	@*<script type="text/javascript" src="~/Content/assets/js/core/libraries/jquery_ui/interactions.min.js"></script>
+		<script type="text/javascript" src="~/Content/assets/js/plugins/forms/selects/select2.min.js"></script>
+		<script type="text/javascript" src="~/Content/assets/js/pages/form_select2.js"></script>*@
+
+
+	<script type="text/javascript">
+
+				$(document).ready(function () {
+
+			var today = new Date();
+
+			var d = new Date();
+			for (var i = 2; i >= 0; i--) {
+				var option = "<option value=" + parseInt(d.getFullYear() - i) + ">" + parseInt(d.getFullYear() - i) + "</option>"
+				$('[id*=DropDownList1]').append(option);
+			}
+			for (var i = 1; i <= 2; i++) {
+				var option = "<option value=" + parseInt(d.getFullYear() + i) + ">" + parseInt(d.getFullYear() + i) + "</option>"
+				$('[id*=DropDownList1]').append(option);
+			}
+
+
+			if (today.getMonth() < 4) {
+
+				$("#DropDownList1").val(today.getFullYear());
+				//$("#lblYear").text(today.getFullYear())
+			}
+			else {
+				$("#DropDownList1").val(parseInt(today.getFullYear()) + parseInt(1));
+				//$("#lblYear").text(parseInt(today.getFullYear()) + parseInt(1))
+			}
+
+			$("#fromDateDatePicker").datepicker({
+				dateFormat: 'dd/mm/yy',
+				changeMonth: true,
+				changeYear: true
+			});
+
+			$("#ToDateDatePicker").datepicker({
+				dateFormat: 'dd/mm/yy',
+				changeMonth: true,
+				changeYear: true
+			});
+
+
+			$('#btnAddHoliday').click(function () { //On click of your button
+
+
+
+				var transport_Destination =
+				{
+					Name: $("#Name").val(),
+					Academic_Year: $("#DropDownList1").find(":selected").val(),
+					Amount: $("#Amount").val(),
+				};
+
+
+				$.ajax({
+					url: '/Transport/AddTransportDestination/',
+					data: JSON.stringify(transport_Destination),
+					//data: "{'Class_Name':'" + $("#txtAddClass").val() + "'}",
+					dataType: "json",
+					type: "POST",
+					//dataType: "html",
+					contentType: "application/json; charset=utf-8",
+					success: function (response) {
+						debugger
+						if (response == "Holiday Already Exists.") {
+							alert("Holiday Name Already Exists!!");
+						}
+						else if (response == "OK")
+							debugger
+							alert("Destination Successfully Added");
+							window.location.href = "/Transport/TransportDestinationList";
+						
+
+
+					}
+					,
+					error: function (response) {
+
+					},
+					failure: function (response) {
+
+					}
+				});
+
+		})
+		})
+
+
+	</script>
+</head>
+<body>
+
+	<div class="page-container" style="height:100%;">
+
+		<div class="page-content">
+
+			<div class="container">
+
+				<div class="panel panel-primary panel-bordered">
+					<div class="panel-heading bg-indigo-400">
+						<h6 class="panel-title ">TRANSPORT LIST</h6>
+						<div class="heading-elements">
+							<ul class="icons-list">
+								<li><a data-action="collapse"></a></li>
+								<li><a data-action="reload"></a></li>
+								<li><a data-action="close"></a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="panel-body">
+
+					
+
+					<div class="row form-group">
+						@*<div class="col-sm-1 col-md-1 col-sm-offset-1 col-md-offset-1">
+							<label class="lbl-bold">NAME</label>
+						</div>*@
+						<div class="col-sm-3 col-md-3 col-md-offset-0 col-sm-offset-0" >
+							<label class="lbl-bold">NAME</label>
+							<input class="form-control" id="Name" type="text" />
+
+						</div>
+						@*<div class="col-sm-1 col-md-1 col-sm-offset-1 col-md-offset-1">
+							<label class="lbl-bold">YEAR</label>
+						</div>*@
+						<div class="col-sm-2 col-md-2">
+							<label class="lbl-bold">YEAR</label>
+							<select id="DropDownList1" name="DropDownList1" class="form-control"></select>
+
+						</div>
+						<div class="col-sm-2 col-md-2">
+							<label class="lbl-bold">AMOUNT</label>
+							<input class="form-control" id="Amount" type="text" />
+
+						</div>
+
+						<div class="col-sm-3 col-md-3">
+							<input type="button" class="btn btn-success" id="btnAddHoliday" value="ADD DESTINATION"  style="margin-top: 25px ;"/>
+
+						</div>
+
+					</div>
+				
+					<br />
+					@*<br />*@
+
+					<table class="table datatable-button-html5-basic table-striped table-bordered" id="tblHolidayList">
+						<thead class="bg-primary-400">
+							<tr>
+								<th>Name</th>
+								<th>Amount</th>
+								<th>Academic Year</th>
+								@*<th>Academic Year</th>*@
+								<th>Created On</th>
+								<th>Created By</th>
+
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+
+							@if (Model != null)
+							{
+								foreach (var item in Model)
+								{
+									<tr>
+										<td>@item.Name</td>
+
+										<td>@item.Amount</td>
+										<td>@item.Academic_Year</td>
+										<td>@item.Created_On.ToString("dd/MM/yyyy")</td>
+										<td>@item.Created_By</td>
+										<td>
+											@Html.ActionLink("Delete", "Delete", new { id = item.Id })
+										</td>
+									</tr>
+								}
+
+							}
+						</tbody>
+					</table>
+
+						</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</body>
+</html>

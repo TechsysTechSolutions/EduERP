@@ -23,6 +23,10 @@ namespace Techsys_School_ERP.Model
 
 		public decimal Total { get; set; }
 
+		public decimal? Total_Excluding_HostelFees { get; set; }
+
+		public decimal? Total_Excluding_Bus_Fees { get; set; }
+
 		public int Frequency { get; set; }
 
 		public bool Is_Active { get; set; }

@@ -153,6 +153,14 @@ namespace Techsys_School_ERP.Model
 
 
 
+		[StringLength(20)]
+		[Display(Name = "PAN NO")]
+		public string PAN_No { get; set; }
+
+		
+
+
+
 
 
 		//[ForeignKey("Section_Id")]

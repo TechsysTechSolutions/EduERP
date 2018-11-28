@@ -1,0 +1,238 @@
+﻿@model IEnumerable<Techsys_School_ERP.Model.ViewModel.StaffSubjectList_ViewModel>
+
+@{
+       Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="~/Content/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css">
+	@*<link href="~/Content/css/bootstrap.min.css" rel="stylesheet" type="text/css" />*@
+
+	<script type="text/javascript" src="~/Content/js/plugins/loaders/pace.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/core/libraries/jquery.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/core/libraries/bootstrap.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/loaders/blockui.min.js"></script>
+	<!-- /core JS files -->
+	<!-- Theme JS files -->
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/datatables.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/forms/selects/select2.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/jszip/jszip.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/buttons.min.js"></script>
+	<!-- <script type="text/javascript" src="~/Content/js/core/app.js"></script>-->
+	<script type="text/javascript" src="~/Content/js/pages/datatables_extension_buttons_html5.js"></script>
+	<!-- /theme JS files -->
+
+	<script src="~/Scripts/bootstrap.min.js"></script>
+	<script src="~/Scripts/bootstrap-multiselect.js"></script>
+
+
+	<script type="text/javascript">
+		$(document).ready(function () {
+
+			$('#classSectionList').multiselect();
+			$('#subjectList').multiselect();
+
+			$('#staffSelect').select2({
+
+				minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
+				placeholder: "Select staff from List",
+				ajax: {
+					url: '/TimeTable/GetStaffList',
+					//width: 'resolve',
+					data: function (params) {
+						return {
+							q: params.term// search term
+						};
+					},
+					processResults: function (data) {
+						debugger
+						return {
+							results: data.Data
+						};
+					},
+					initSelection: function (element, callback) {
+					}
+				},
+			});
+
+			//var $ = jQuery.noConflict();
+			
+
+			$('#btnAddSection').click(function () { //On click of your button
+
+				debugger
+				$.ajax({
+					url: '/TimeTable/AddStaff_Subject_Detail/',
+					data: "{'Class_Ids':'" + $("#classSectionList").val() + "','Subject_Ids':'" + $("#subjectList").val() + "','Staff_Id':'" + $("#staffSelect").val() + "'  }",
+					dataType: "json",
+					type: "POST",
+					//dataType: "html",
+					contentType: "application/json; charset=utf-8",
+					success: function (response) {
+
+						if (response == "OK") {
+							alert("Subjects Configured for Classes Successfully");
+							window.location.href = "/Mark/AddStaff_Subject_Detail";
+
+						}
+						else if (response == "Already Exists") {
+							alert("Subjects already configured for the Classes");
+						}
+						else {
+							alert("Error in configuring details");
+						}
+										}
+					,
+					error: function (response) {
+
+					},
+					failure: function (response) {
+
+					}
+				});
+
+			})
+		})
+
+
+	</script>
+
+	<style type="text/css">
+		.lbl-margin-left {
+			margin-left: 57px;
+		}
+	</style>
+
+</head>
+<body>
+
+
+	<div class="page-container" style="height:100%;">
+		<!-- Page content -->
+		<div class="page-content">
+			@*<div class="content-wrapper">*@
+			<!-- Page header -->
+			<!-- /page header -->
+			<!-- Content area -->
+			<div class="content">
+				<!-- Basic initialization -->
+				@*<div class="panel panel-tab-content">*@
+
+				<div class="panel panel-primary panel-bordered">
+					<div class="panel-heading ">
+						<h6 class="panel-title ">CONFIGURE MARKS</h6>
+						<div class="heading-elements">
+							<ul class="icons-list">
+								<li><a data-action="collapse"></a></li>
+								<li><a data-action="reload"></a></li>
+								<li><a data-action="close"></a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="panel-body">
+
+					</div>
+
+					<div class="row form-group">
+						<div class="content-group-lg col-md-4 col-sm-4 col-md-offset-0 col-md-offset-0">
+							<label style="font-weight:700; ">STAFF NAME</label>
+							<select data-placeholder="Select Staff " class="select-search col-sm-3 col-md-3" id="staffSelect"></select>
+						</div>
+						<div class="content-group-lg col-md-4 col-sm-4 col-md-offset-0 col-md-offset-0">
+							<label style="font-weight:700; ">CLASS & SECTION </label>
+							<select id="classSectionList" multiple="multiple" required name="classSectionListName" class="form-control">
+								@if (ViewBag.classSectionList != null)
+								{
+									foreach (var item in ViewBag.classSectionList)
+									{
+										if (item.Text != null)
+										{
+
+											<option value="@item.Value">
+												&nbsp;&nbsp; @item.Text
+											</option>
+										}
+									}
+								}
+							</select>
+						</div>
+						<div class="col-md-2 col-sm-2 col-md-offset-0 col-md-offset-0">
+							<label style="font-weight:700; ">SUBJECT</label>
+							<select id="subjectList" multiple="multiple" required name="subjectListName" class="form-control">
+								@if (ViewBag.subjectList != null)
+								{
+									foreach (var item in ViewBag.subjectList)
+									{
+										if (item.Text != null)
+										{
+
+											<option value="@item.Value">
+												&nbsp;&nbsp; @item.Text
+											</option>
+										}
+									}
+								}
+							</select>
+						</div>
+					</div>
+					
+					<div class="row form-group">
+						<div class="col-sm-2  col-md-2 col-sm-offset-5 col-md-offset-5">
+
+							<input type="button" class="btn btn-success" id="btnAddSection" value="CONFIGURE MARKS" />
+						</div>
+					</div>
+					@*<table class="table datatable-button-html5-basic table-striped table-bordered" id="SubjectClassConfigtable">
+						<thead class="bg-primary-400">
+							<tr>
+								<th>Name</th>
+								<th>Academic Year</th>
+								<th>Created On</th>
+
+							</tr>
+						</thead>
+						<tbody></tbody>
+						</table>*@
+
+					<table class="table datatable-button-html5-basic table-striped table-bordered">
+						<thead class="bg-primary-400">
+							<tr>
+								<th>Name</th>
+								<th>Academic Year</th>
+								<th>Created On</th>
+								<th>Created By</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+
+							@foreach (var item in Model)
+							{
+								<tr>
+									<td>@item.Staff_Name</td>
+									<td>@item.Class_Name</td>
+									<td>@item.Subject_Name</td>
+									<td>"jhgy"</td>
+									<td>
+										@Html.ActionLink("Edit", "Edit", new { id = item.Id }) &nbsp;|&nbsp;
+										@Html.ActionLink("Delete", "Delete", new { id = item.Id })
+									</td>
+								</tr>
+
+							}
+						</tbody>
+					</table>
+				</div>
+
+			</div>
+			<!-- /content area -->
+			@*</div>*@
+		</div>
+	</div>
+</body>
+</html>

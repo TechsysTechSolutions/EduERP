@@ -1,0 +1,411 @@
+﻿
+@{
+    ViewBag.Title = "AddSyllabus";
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+}
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="~/Content/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css">
+	@*<link href="~/Content/css/bootstrap.min.css" rel="stylesheet" type="text/css" />*@
+
+	<script type="text/javascript" src="~/Content/js/plugins/loaders/pace.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/core/libraries/jquery.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/core/libraries/bootstrap.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/loaders/blockui.min.js"></script>
+	<!-- /core JS files -->
+	<!-- Theme JS files -->
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/datatables.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/forms/selects/select2.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/jszip/jszip.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/buttons.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/core/app.js"></script>
+	<script type="text/javascript" src="~/Content/js/pages/datatables_extension_buttons_html5.js"></script>
+	<script type="text/javascript" src="~/Content/assets/js/core/libraries/jquery_ui/interactions.min.js"></script>
+	<script type="text/javascript" src="~/Scripts/jquery-ui.js"></script>
+	<!-- /theme JS files -->
+
+	<script src="~/Scripts/bootstrap.min.js"></script>
+	<script src="~/Scripts/bootstrap-multiselect.js"></script>
+
+
+	<script type="text/javascript">
+		$(document).ready(function () {
+
+			$('#classSectionList').multiselect();
+			$('#subjectList').multiselect();
+			var existingData;
+
+
+			var today = new Date();
+			var d = new Date();
+			for (var i = 2; i >= 0; i--) {
+				var option = "<option value=" + parseInt(d.getFullYear() - i) + ">" + parseInt(d.getFullYear() - i) + "</option>"
+				$('[id*=DropDownList1]').append(option);
+			}
+			for (var i = 1; i <= 2; i++) {
+				var option = "<option value=" + parseInt(d.getFullYear() + i) + ">" + parseInt(d.getFullYear() + i) + "</option>"
+				$('[id*=DropDownList1]').append(option);
+			}
+
+
+			if (today.getMonth() < 4) {
+
+				$("#DropDownList1").val(today.getFullYear());
+				//$("#lblYear").text(today.getFullYear())
+			}
+			else {
+				$("#DropDownList1").val(parseInt(today.getFullYear()) + parseInt(1));
+				//$("#lblYear").text(parseInt(today.getFullYear()) + parseInt(1))
+			}
+
+
+			$("#btnSaveExamTimeTable").click(function () {
+				debugger
+				var isExamDateEnteredForAllSubjects = true;
+				var exam_timetable = [];
+
+				var exam_date, subject_id, section_id, class_id, exam_id, academic_Year, exam_Session;
+
+				for (iRowCount = 0 ; iRowCount < existingData.length ; iRowCount++) {
+
+					exam_date = $("#" + "Exam_Date" + iRowCount).val();
+					if (exam_date == " ") {
+						isExamDateEnteredForAllSubjects = false;
+						alert("Please Enter the Exam Date");
+						break;
+					}
+					subject_id = $("#" + "Subject_Id" + iRowCount).val();
+					class_id = $("#" + "Class_Id" + iRowCount).val();
+					section_id = $("#" + "Section_Id" + iRowCount).val();
+					exam_id = $("#" + "Exam_Id" + iRowCount).val();
+					if ($("#" + "Exam_Session" + iRowCount)[0].checked == true) {
+						exam_Session = 1;
+					}
+					else {
+						exam_Session = 0;
+					}
+					//period5 = $("#" + iRowCount + 6).val();
+					//period6 = $("#" + iRowCount + 7).val();
+					//period7 = $("#" + iRowCount + 8).val();
+					//period8 = $("#" + iRowCount + 9).val();
+					//staff_Id = $("#staffSelect").val();
+					academic_Year = $("#DropDownList1").val();
+
+
+					exam_timetable.push([exam_date, subject_id, section_id, class_id, exam_id, academic_Year, exam_Session]);
+
+				}
+				if (isExamDateEnteredForAllSubjects) {
+					$.ajax({
+						url: '/Exam/SaveExamTimeTable_ForClass/',
+						type: "POST",
+						dataType: "json",
+						contentType: 'application/json; charset=utf-8',
+						//data: "{'exam_timetable':'" + exam_timetable + "' }",
+						//"{'Exam_Id':'" + $("#ExamList").val() + "','Section_Ids':'" + $("#classSectionList").val() + "','Year':'" + $("#DropDownList1").val() + "'  }"
+						data: JSON.stringify(exam_timetable),
+						async: true,
+						processData: false,
+						cache: false,
+						success: function (response) {
+							if (response == "OK") {
+								alert("TimeTable Sucessfully Saved For Staff!");
+							}
+							else if (response == "Updated") {
+								alert("Fees Configuartion Sucessfully Updated");
+							}
+							else if (response == "Fees Already Configured") {
+
+							}
+						},
+						error: function (xhr) {
+							alert('error');
+						}
+					});
+				}
+				});
+
+
+			function getFormattedDate(date) {
+				var year = date.getFullYear();
+				var month = (1 + date.getMonth()).toString();
+				month = month.length > 1 ? month : '0' + month;
+				var day = date.getDate().toString();
+				day = day.length > 1 ? day : '0' + day;
+				return day + '-' + month + '-' + year;
+			}
+
+			var rows = "<tr>" +
+								"<td class='' colspan=7 style=\"text-align:center;\" >" + "No Record to Display" + "</td>" +
+									"</tr>";
+
+			$('#tblExamTimeTable tbody').append(rows);
+
+			$('#btnAddSection').click(function () { //On click of your button
+
+			//	debugger
+				$.ajax({
+					url: '/Exam/AddExam_TimeTable/',
+					data: "{'Exam_Id':'" + $("#ExamList").val() + "','Section_Ids':'" + $("#classSectionList").val() + "','Year':'" + $("#DropDownList1").val() + "'  }",
+					dataType: "json",
+					type: "POST",
+					//dataType: "html",
+					contentType: "application/json; charset=utf-8",
+					success: function (data) {
+						//debugger
+
+						$("#tblExamTimeTable").find("tr:gt(0)").remove();
+						if (data.length == 0) {
+
+							var rows = "<tr>" +
+								"<td class='' colspan=7 style=\"text-align:center;\" >" + "No Record to Display" + "</td>" +
+									"</tr>";
+
+							$('#tblExamTimeTable tbody').append(rows);
+						}
+						else {
+							debugger
+							existingData = data;
+							for (i = 0 ; i < data.length ; i++) {
+
+								var exam_date = null;
+
+								if (data[i].Exam_Date == null) {
+
+									data[i].Exam_Date = "";
+								}
+								else {
+
+									dates = new Date(data[i].Exam_Date);
+									data[i].Exam_Date = getFormattedDate(dates);
+								}
+
+
+
+
+
+
+								nDays = data.length + 1;
+								var rows = "<tr>" +
+
+									"<td class='Id' ><input type=\"text\" class='form-control' style=\"border:none;\"  value=' " + data[i].Subject_Id + "'  id='" + ( "Subject_Id" + i ) + "'>" + "</td>" +
+									"<td class='Id' ><input type=\"text\" class='form-control'  value=' " + data[i].Class_Id + "'  id='" + ("Class_Id" + i) + "'>" + "</td>" +
+									"<td class='Id' ><input type=\"text\" class='form-control'  value=' " + data[i].Section_Id + "'  id='" + ("Section_Id" + i) + "'>" + "</td>" +
+									"<td class='Id' ><input type=\"text\" class='form-control'  value=' " + data[i].Exam_Id + "'  id='" + ("Exam_Id" + i) + "'>" + "</td>" +
+									"<td class='' ><input type=\"text\" class='form-control' style=\"border:none;\"  value=' " + data[i].Class_Name + "'  id='" + ("ClassName" + i + 1) + "'>" + "</td>" +
+									"<td class='' ><input type=\"text\" class='form-control' style=\"border:none;\"  value=' " + data[i].Subject_Name + "'  id='" + ("SubjectName" + i + 1) + "'>" + "</td>" +
+									"<td class='' ><input type=\"text\" class='form-control' style=\"border:none;\"  value=' " + data[i].Exam_Name + "'  id='" + ("Day" + i + 1) + "'>" + "</td>" +
+									"<td class='dates' ><input type=\"text\" class='form-control'  value=' " + data[i].Exam_Date  + "'  id='" + ("Exam_Date" + i) + "'>" + "</td>" +
+									"<td class='' ><input type=\"checkbox\" class='form-control' style=\"height:17px; \" value=' " + data[i].Exam_Session + "'  id='" + ("Exam_Session" + i) + "'>" + "</td>" +
+									"<td class='' ><input type=\"text\" class='form-control' style=\"border:none;\"   value=' " + data[i].Academic_Year + "'  id='" + ("Day" + i + 1) + "'>" + "</td>" +
+									//"<td class='Period'><select id='" + (i + 1) + "2" + "' required name=\"SectionName\" class=\"form-control Period\" ></select>" + "</td>" +
+									//"<td class='Period'><select id='" + (i + 1) + "3" + "' required name=\"SectionName\" class=\"form-control Period\"></select>" + "</td>" +
+									//"<td class='Period'><select id='" + (i + 1) + "4" + "' required name=\"SectionName\" class=\"form-control Period\"></select>" + "</td>" +
+									//"<td class='Period'><select id='" + (i + 1) + "5" + "' required name=\"SectionName\" class=\"form-control Period\"></select>" + "</td>" +
+									//"<td class='Period'><select id='" + (i + 1) + "6" + "' required name=\"SectionName\" class=\"form-control Period\"></select>" + "</td>" +
+									//"<td class='Period'><select id='" + (i + 1) + "7" + "' required name=\"SectionName\" class=\"form-control Period\"></select>" + "</td>" +
+									//"<td class='Period'><select id='" + (i + 1) + "8" + "' required name=\"SectionName\" class=\"form-control Period\"></select>" + "</td>" +
+									//"<td class='Period'><select id='" + (i + 1) + "9" + "' required name=\"SectionName\" class=\"form-control Period\"></select>" + "</td>" +
+									"</tr>";
+
+
+
+
+
+								$('#tblExamTimeTable tbody').append(rows);
+								//$('#searchselect').val(null).trigger("change");
+								$(".Id").hide();
+
+								$(".dates").each(function () {
+									//debugger
+									var rowIndex = $(this).closest('tr')[0].rowIndex - 1 ;
+
+									$("#Exam_Date" + (rowIndex ) ).datepicker({
+											required: true,
+											message: "This is a required field",
+											dateFormat: 'dd-mm-yy'
+										});
+
+
+								})
+
+								if (data[i].Exam_Session == 1) {
+
+									//debugger
+									//alert($("#Exam_Session" + i))
+
+										$("#" + "Exam_Session" + i)[0].checked = true;
+
+								}
+								//$(".dates").datepicker({
+								//	required: true,
+								//	message: "This is a required field",
+								//	dateFormat: 'dd-mm-yy'
+								//});
+							}
+						}
+					}
+
+				});
+
+			})
+		})
+
+
+	</script>
+
+	<style type="text/css">
+		.lbl-margin-left {
+			margin-left: 57px;
+		}
+	</style>
+
+</head>
+<body>
+	<div class="page-container" style="height:100%;">
+		<div class="page-content">
+
+			<div class="container">
+
+				<div class="panel panel-primary panel-bordered" style="min-height:150px;">
+					<div class="panel-heading bg-blue-800">
+						<h6 class="panel-title ">CLASS TIMETABLE</h6>
+						<div class="heading-elements">
+							<ul class="icons-list">
+								<li><a data-action="collapse"></a></li>
+								<li><a data-action="reload"></a></li>
+								<li><a data-action="close"></a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="panel-body">
+
+						<div class="row form-group">
+							</div>
+
+							<div class="row form-group">
+								@*<div class="content-group-lg col-md-4 col-sm-4 col-md-offset-0 col-md-offset-0">
+					<label style="font-weight:700; ">STAFF NAME</label>
+					<select data-placeholder="Select Staff " class="select-search col-sm-3 col-md-3" id="staffSelect"></select>
+				</div>*@
+								<div class="col-md-2 col-sm-2 col-md-offset-1 col-md-offset-1">
+									<label style="font-weight:700;margin-top:8px;  ">TERM</label>
+								</div>
+								<div class="col-md-2 col-sm-2 col-md-offset-0 col-md-offset-0">
+
+									<select id="TermList" required name="ExamName" class="form-control">
+										@if (ViewBag.termList != null)
+										{
+											<option value='0'>-- Select Term --</option>
+											foreach (var item in ViewBag.termList)
+											{
+												if (item.Text != null)
+												{
+
+													<option value="@item.Value">
+														@item.Text
+													</option>
+
+												}
+
+											}
+										}
+									</select>
+								</div>
+
+								<div class="content-group-lg col-md-1 col-sm-1 col-md-offset-1 col-md-offset-1">
+									<label style="font-weight:700; ">CLASS </label>
+								</div>
+								<div class="content-group-lg col-md-4 col-sm-4 col-md-offset-0 col-md-offset-0">
+									<select id="classSectionList" multiple="multiple" required name="classSectionListName" class="form-control col-md-4 col-sm-4" style="width:100%; ">
+										@if (ViewBag.classSectionList != null)
+										{
+											foreach (var item in ViewBag.classSectionList)
+											{
+												if (item.Text != null)
+												{
+
+													<option value="@item.Value">
+														&nbsp;&nbsp; @item.Text
+													</option>
+												}
+											}
+										}
+									</select>
+								</div>
+
+
+							</div>
+							<div class="row form-group">
+								<div class="col-md-2 col-sm-2 col-md-offset-1 col-md-offset-1">
+									<label style="font-weight:700;margin-top:8px;  ">ACADEMIC YEAR</label>
+								</div>
+								<div class="col-md-2 col-sm-2 col-md-offset-0 col-md-offset-0">
+									<select id="DropDownList1" name="DropDownList1" class="form-control" style="margin-top:0px;"></select>
+								</div>
+								<div class="col-md-1 col-sm-1 col-md-offset-1 col-md-offset-1">
+									<label style="font-weight:700;margin-top:8px; ">SUBJECT</label>
+
+								</div>
+								<div class="col-md-3 col-sm-3 col-md-offset-0 col-md-offset-0">
+
+
+									@*<br />*@
+									<select id="subjectList" multiple="multiple" required name="subjectListName" class="form-control">
+										@if (ViewBag.subjectList != null)
+										{
+											foreach (var item in ViewBag.subjectList)
+											{
+												if (item.Text != null)
+												{
+
+													<option value="@item.Value">
+														&nbsp;&nbsp; @item.Text
+													</option>
+												}
+											}
+										}
+									</select>
+								</div>
+							</div>
+						</div>
+					<div class="row form-group">
+						<div class="col-sm-10 col-md-10 col-sm-offset-1 col-md-offset-1 ">
+							<label style="font-weight:700; ">ASSIGNMENT TEXT</label>
+							<textarea rows="15" cols="10" class="form-control elastic" placeholder="Textarea" id="txtAssignmentText"></textarea>
+							@*<input type="text"  id="txtAssignmentText" class="form-control"/>*@
+						</div>
+						</div>
+
+							<div class="row form-group">
+								<div class="col-sm-4  col-md-4 col-sm-offset-8 col-md-offset-8">
+									<input type="button" class="btn btn-success" id="btnCancel" value="CANCEL"  style="margin-left:65px; "/>
+									<input type="button" class="btn btn-success" id="btnAddSection" value="SAVE SYLLABUS" />
+								</div>
+
+							</div>
+						
+
+
+						</div>
+					<div class="row form-group">
+						@*<div class="col-sm-2  col-md-2 col-sm-offset-9 col-md-offset-9">
+
+							<input type="button" class="btn btn-success" id="btnSaveExamTimeTable" value="SAVE EXAM TIMETABLE" style="margin-left:60px; " />
+						</div>*@
+					</div>
+				</div>
+				<!-- /content area -->
+				@*</div>*@
+			</div>
+		</div>
+	@*</div>*@
+</body>
+</html>

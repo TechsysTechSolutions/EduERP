@@ -72,6 +72,8 @@ namespace Techsys_School_ERP.DBAccess
 		public DbSet<Syllabus> Syllabus { get; set; }
 		public DbSet<Hostel_Room> Hostel_Room { get; set; }
 		public DbSet<Transport> Transport { get; set; }
+		public DbSet<TransportDestination> TransportDestination { get; set; }
+		public DbSet<Transport_Destination_Detail> Transport_Destination_Detail { get; set; }
 
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -125,6 +127,8 @@ namespace Techsys_School_ERP.DBAccess
 			modelBuilder.Entity<Syllabus>().HasKey(s => s.Id);
 			modelBuilder.Entity<Hostel_Room>().HasKey(s => s.Id);
 			modelBuilder.Entity<Transport>().HasKey(s => s.Id);
+			modelBuilder.Entity<TransportDestination>().HasKey(s => s.Id);
+			modelBuilder.Entity<Transport_Destination_Detail>().HasKey(s => s.Id);
 			//	modelBuilder.Entity<StaffSalarySlip_ViewModel>().Property(a => a.salary_deduction).HasPrecision(18, 2);
 
 

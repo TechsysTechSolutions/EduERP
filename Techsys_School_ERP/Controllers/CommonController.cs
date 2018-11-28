@@ -707,6 +707,144 @@ namespace Techsys_School_ERP.Controllers
 			
 		}
 
+
+		public List<AutoComplete_ViewModel> SearchandGetHostelRoomList(string q)
+		{
+			var list = new List<AutoComplete_ViewModel>();
+
+			List<AutoComplete_ViewModel> hostelRoomList = new List<AutoComplete_ViewModel>();
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+
+				if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+				{
+
+					hostelRoomList = (from hostelRoom in dbcontext.Hostel_Room
+								   where hostelRoom.Room_No.Contains(q.ToLower())
+								   select new
+								   {
+									   Text = hostelRoom.Room_No,
+									   Id = hostelRoom.Id
+								   }).ToList().
+								   Select(x => new AutoComplete_ViewModel
+
+								   {
+
+									   text = x.Text,
+									   id = x.Id.ToString()
+
+								   }).ToList();
+
+				}
+			}
+
+			if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+			{
+				hostelRoomList = hostelRoomList.Where(x => x.text.ToLower().Contains(q.ToLower())).ToList();
+			}
+
+			return hostelRoomList;
+
+		}
+
+
+		public List<AutoComplete_ViewModel> SearchAndGetRouteNameList(string q)
+		{
+			var list = new List<AutoComplete_ViewModel>();
+
+			List<AutoComplete_ViewModel> routeNameList = new List<AutoComplete_ViewModel>();
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+
+				if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+				{
+
+					routeNameList = (from routeName in dbcontext.TransportDestination
+									  where routeName.Name.Contains(q.ToLower())
+									  select new
+									  {
+										  Text = routeName.Name,
+										  Id = routeName.Id
+									  }).ToList().
+								   Select(x => new AutoComplete_ViewModel
+
+								   {
+
+									   text = x.Text,
+									   id = x.Id.ToString()
+
+								   }).ToList();
+
+				}
+			}
+
+			if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+			{
+				routeNameList = routeNameList.Where(x => x.text.ToLower().Contains(q.ToLower())).ToList();
+			}
+
+
+			//return Json(list, JsonRequestBehavior.AllowGet);
+			return routeNameList;
+
+		}
+
+		public static string CreateRandomPassword(int PasswordLength)
+		{
+			string _allowedChars = "0123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ";
+			Random randNum = new Random();
+			char[] chars = new char[PasswordLength];
+			int allowedCharCount = _allowedChars.Length;
+			for (int i = 0; i < PasswordLength; i++)
+			{
+				chars[i] = _allowedChars[(int)((_allowedChars.Length) * randNum.NextDouble())];
+			}
+			return new string(chars);
+		}
+
+
+		public List<AutoComplete_ViewModel> SearchandGetVehicleList(string q)
+		{
+			var list = new List<AutoComplete_ViewModel>();
+
+			List<AutoComplete_ViewModel> vehicleList = new List<AutoComplete_ViewModel>();
+
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+
+				if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+				{
+
+					vehicleList = (from vehicle in dbcontext.Transport
+									  where vehicle.Name.Contains(q.ToLower())
+									  select new
+									  {
+										  Text = vehicle.Name,
+										  Id = vehicle.Id
+									  }).ToList().
+								   Select(x => new AutoComplete_ViewModel
+
+								   {
+
+									   text = x.Text,
+									   id = x.Id.ToString()
+
+								   }).ToList();
+
+				}
+			}
+
+			if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+			{
+				vehicleList = vehicleList.Where(x => x.text.ToLower().Contains(q.ToLower())).ToList();
+			}
+
+			return vehicleList;
+
+		}
+
 		public long GetAcademicYear()
 		{
 			long nAcademicYear = (DateTime.Now.Month <= 4) ? DateTime.Now.Year : DateTime.Now.Year + 1;
@@ -860,13 +998,13 @@ namespace Techsys_School_ERP.Controllers
 			{
 
 				var city = (from st in dbcontext.State
-							 join cty in dbcontext.City on st.Id equals cty.State_Id
-							 where (cty.State_Id == nState_Id)
-							 select new
-							 {
-								 Id = cty.Id,
-								 Name = cty.Name
-							 }).ToList()
+							join cty in dbcontext.City on st.Id equals cty.State_Id
+							where (cty.State_Id == nState_Id)
+							select new
+							{
+								Id = cty.Id,
+								Name = cty.Name
+							}).ToList()
 							   .Select(x => new City()
 							   {
 								   Id = x.Id,
@@ -879,7 +1017,71 @@ namespace Techsys_School_ERP.Controllers
 
 
 			}
+		}
 
+
+
+
+
+
+		public List<Hostel_Room> GetHostelRoomBasedOnId(int nHostelRoomId)
+		{
+			List<Hostel_Room> hostelRoomList = new List<Hostel_Room>();
+			//int nState_Id = Convert.ToInt16(sState_Id);
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+
+				var hostel = (from hostelRoom in dbcontext.Hostel_Room
+							//join cty in dbcontext.City on st.Id equals cty.State_Id
+							where (hostelRoom.Id == nHostelRoomId)
+							select new
+							{
+								Id = hostelRoom.Id,
+								Name = hostelRoom.Room_No
+							}).ToList()
+							   .Select(x => new Hostel_Room()
+							   {
+								   Id = x.Id,
+								   Room_No = x.Name,
+							   });
+
+				hostelRoomList = hostel.ToList();
+				ViewBag.hostelRoomList = hostelRoomList;
+				return hostelRoomList;
+
+
+			}
+
+		}
+
+
+		public List<Transport> GetTransportBasedOnId(int nTransportId)
+		{
+			List<Transport> transportList = new List<Transport>();
+			//int nState_Id = Convert.ToInt16(sState_Id);
+			using (var dbcontext = new SchoolERPDBContext())
+			{
+
+				var transport = (from trspt in dbcontext.Transport
+								  //join cty in dbcontext.City on st.Id equals cty.State_Id
+							  where (trspt.Id == nTransportId)
+							  select new
+							  {
+								  Id = trspt.Id,
+								  Name = trspt.Vehicle_No
+							  }).ToList()
+							   .Select(x => new Transport()
+							   {
+								   Id = x.Id,
+								   Vehicle_No = x.Name,
+							   });
+
+				transportList = transport.ToList();
+				ViewBag.transportList = transportList;
+				return transportList;
+
+
+			}
 
 		}
 
@@ -1000,15 +1202,27 @@ namespace Techsys_School_ERP.Controllers
 			long nStudent_Id = Convert.ToInt64(Student_Id);
 			int nFrequency = Convert.ToInt32(Frequency);
 			long nAcademicYear = GetAcademicYear();
+			bool? IsHostelStudent, Is_School_Bus_Availed; 
 			using (var dbcontext = new SchoolERPDBContext())
 			{
+				if (dbcontext.Student.Where(x => x.Student_Id == nStudent_Id && x.Academic_Year == nAcademicYear && (x.Is_Deleted == false || x.Is_Deleted == null)).Count() == 1)
+				{
+
+					IsHostelStudent = dbcontext.Student.Where(x => x.Student_Id == nStudent_Id && x.Academic_Year == nAcademicYear && (x.Is_Deleted == false || x.Is_Deleted == null)).FirstOrDefault().Is_HostelStudent;
+				}
+				if (dbcontext.Student.Where(x => x.Student_Id == nStudent_Id && x.Academic_Year == nAcademicYear && (x.Is_Deleted == false || x.Is_Deleted == null)).Count() == 1)
+				{
+					Is_School_Bus_Availed = dbcontext.Student.Where(x => x.Student_Id == nStudent_Id && x.Academic_Year == nAcademicYear && (x.Is_Deleted == false || x.Is_Deleted == null)).FirstOrDefault().School_Bus_Availed;
+				}
+
 				feeConfigList = (from stu in dbcontext.Student
 								 join feeConfig in dbcontext.Fee_Configuration on stu.Class_Id equals feeConfig.Class_Id
 								 join fee in dbcontext.Fee on feeConfig.Fee_Id equals fee.Id
 								 where (feeConfig.Is_Deleted == null || feeConfig.Is_Deleted == false) && stu.Student_Id == nStudent_Id && feeConfig.Academic_Year == nAcademicYear
-								 && feeConfig.Frequency == nFrequency
+								 && feeConfig.Frequency == nFrequency 
 								 select new
 								 {
+									 Id = feeConfig.Fee_Id,
 									 Name = fee.Name,
 									 Amount = feeConfig.Amount,
 									 Total = feeConfig.Total
@@ -1017,12 +1231,14 @@ namespace Techsys_School_ERP.Controllers
 									 // Total = fc.Total
 								 }).ToList().Select(x => new FeeConfiguration_ViewModel()
 								 {
+									 Id = x.Id,
 									 Name = x.Name,
 									 Amount = x.Amount,
-									 Total = x.Total
-									
+									 Total = x.Total							
 									 
 								 }).ToList();
+
+
 
 				if (feeConfigList.Count() > 0)
 				{

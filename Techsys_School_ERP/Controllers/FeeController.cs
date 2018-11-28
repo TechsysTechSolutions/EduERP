@@ -35,6 +35,7 @@ using Techsys_School_ERP.Model.ViewModel;
 
 namespace Techsys_School_ERP.Controllers
 {
+	[Authorize(Roles = "Admin, SuperAdmin")]
 	public class FeeController : CommonController
 	{
 		int[] nFeeIdArr;
@@ -68,7 +69,7 @@ namespace Techsys_School_ERP.Controllers
 		}
 		#region FeeList
 		// GET: Exam/FeeNameList
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin , SuperAdmin ")]
 		public ActionResult FeeNameList()
 		{
 			List<FeeList_ViewModel> feeListViewModel = new List<FeeList_ViewModel>();
@@ -189,7 +190,7 @@ namespace Techsys_School_ERP.Controllers
 				{
 					feeConfiguration_ViewModel = (from usr in dbcontext.Users
 												  join fee in dbcontext.Fee on usr.Id equals fee.Created_By
-												  where fee.Is_Deleted == null || fee.Is_Deleted == false
+												  where (fee.Is_Deleted == null || fee.Is_Deleted == false) 
 												  select new FeeConfiguration_ViewModel
 												  {
 													  Id = fee.Id,
@@ -220,7 +221,7 @@ namespace Techsys_School_ERP.Controllers
 					feeConfiguration_ViewModel = (from usr in dbcontext.Users
 												  join fee in dbcontext.Fee on usr.Id equals fee.Created_By
 												  join fc in dbcontext.Fee_Configuration on fee.Id equals fc.Fee_Id
-												  where (fc.Is_Deleted == null || fee.Is_Deleted == false) && fc.Class_Id == nClass_Id && fc.Academic_Year == nAcademicYear
+												  where (fc.Is_Deleted == null || fc.Is_Deleted == false) && fc.Class_Id == nClass_Id && fc.Academic_Year == nAcademicYear
 												  select new FeeConfiguration_ViewModel
 												  {
 													  Id = fee.Id,
@@ -233,10 +234,11 @@ namespace Techsys_School_ERP.Controllers
 												  }).ToList();
 
 					//If new fee is added in "Fee" table but fees structure is already configured for the section
-					var newFeeComponent = (from fc in dbcontext.Fee_Configuration where fc.Class_Id == nClass_Id && fc.Academic_Year == nAcademicYear select fc.Fee_Id).Distinct().ToList();
+					var newFeeComponent = (from fc in dbcontext.Fee_Configuration where fc.Class_Id == nClass_Id && fc.Academic_Year == nAcademicYear && (fc.Is_Deleted == null || fc.Is_Deleted == false) select fc.Fee_Id).Distinct().ToList();
 
 
 					List<int> lstOtherFeeComponent = (from e in dbcontext.Fee
+													  join fc in dbcontext.Fee_Configuration on e.Id equals fc.Fee_Id
 													  select e.Id).Except(newFeeComponent).ToList();
 
 
@@ -341,6 +343,16 @@ namespace Techsys_School_ERP.Controllers
 
 			int nLoopCount = 0;
 
+			//var matchingvalues = myData.Where(stringToCheck => stringToCheck.Contains("Hostel Fees"));
+		
+				string hostelFeesIindex = Convert.ToString(myData.FindIndex(s => s.Contains("Hostel Fees")));
+
+
+			//var hostelFeesIndex = myData.FindIndex(matchingvalues);
+
+			string schoolBusIndex = Convert.ToString(myData.FindIndex(s => s.Contains("School Bus")));
+
+
 			using (var dbcontext = new SchoolERPDBContext())
 			{
 				using (var transaction = dbcontext.Database.BeginTransaction())
@@ -351,6 +363,8 @@ namespace Techsys_School_ERP.Controllers
 						{
 							if (myData[i][0] != string.Empty && myData[i][0] != null)
 							{
+
+							
 								for (int j = 0; j < 4; j++)
 								{
 									newFeeConfig.Class_Id = Convert.ToInt16(TempData.Peek("Class_Id"));
@@ -361,25 +375,83 @@ namespace Techsys_School_ERP.Controllers
 									{
 										newFeeConfig.Frequency = 1;
 										newFeeConfig.Amount = (myData[i][2] == "") ? 0 : Convert.ToDecimal(myData[i][2]);
+										
 										newFeeConfig.Total = Convert.ToDecimal(myData[nCount - 1][2]);
+
+										if (hostelFeesIindex != string.Empty)
+										{
+											int nhostelFeesIindex = Convert.ToInt16(hostelFeesIindex);
+
+											newFeeConfig.Total_Excluding_HostelFees = Convert.ToDecimal(myData[nCount - 1][2]) - Convert.ToDecimal(myData[nhostelFeesIindex][2]);
+										}
+
+
+										if (schoolBusIndex != string.Empty)
+										{
+											int nschoolBusIndex = Convert.ToInt16(schoolBusIndex);
+
+											newFeeConfig.Total_Excluding_Bus_Fees = Convert.ToDecimal(myData[nCount - 1][2]) - Convert.ToDecimal(myData[nschoolBusIndex][2]);
+										}
 									}
 									else if (j == 1)
 									{
 										newFeeConfig.Frequency = 2;
 										newFeeConfig.Amount = (myData[i][3] == "") ? 0 : Convert.ToDecimal(myData[i][3]);
 										newFeeConfig.Total = Convert.ToDecimal(myData[nCount - 1][3]);
+										if (hostelFeesIindex != string.Empty)
+										{
+											int nhostelFeesIindex = Convert.ToInt16(hostelFeesIindex);
+
+											newFeeConfig.Total_Excluding_HostelFees = Convert.ToDecimal(myData[nCount - 1][3]) - Convert.ToDecimal(myData[nhostelFeesIindex][3]);
+										}
+
+
+										if (schoolBusIndex != string.Empty)
+										{
+											int nschoolBusIndex = Convert.ToInt16(schoolBusIndex);
+
+											newFeeConfig.Total_Excluding_Bus_Fees = Convert.ToDecimal(myData[nCount - 1][3]) - Convert.ToDecimal(myData[nschoolBusIndex][3]);
+										}
 									}
 									else if (j == 2)
 									{
 										newFeeConfig.Frequency = 3;
 										newFeeConfig.Amount = (myData[i][4] == "") ? 0 : Convert.ToDecimal(myData[i][4]);
 										newFeeConfig.Total = Convert.ToDecimal(myData[nCount - 1][4]);
+										if (hostelFeesIindex != string.Empty)
+										{
+											int nhostelFeesIindex = Convert.ToInt16(hostelFeesIindex);
+
+											newFeeConfig.Total_Excluding_HostelFees = Convert.ToDecimal(myData[nCount - 1][4]) - Convert.ToDecimal(myData[nhostelFeesIindex][4]);
+										}
+
+
+										if (schoolBusIndex != string.Empty)
+										{
+											int nschoolBusIndex = Convert.ToInt16(schoolBusIndex);
+
+											newFeeConfig.Total_Excluding_Bus_Fees = Convert.ToDecimal(myData[nCount - 1][4]) - Convert.ToDecimal(myData[nschoolBusIndex][4]);
+										}
 									}
 									else
 									{
 										newFeeConfig.Frequency = 4;
 										newFeeConfig.Amount = (myData[i][5] == "") ? 0 : Convert.ToDecimal(myData[i][5]);
 										newFeeConfig.Total = Convert.ToDecimal(myData[nCount - 1][5]);
+										if (hostelFeesIindex != string.Empty)
+										{
+											int nhostelFeesIindex = Convert.ToInt16(hostelFeesIindex);
+
+											newFeeConfig.Total_Excluding_HostelFees = Convert.ToDecimal(myData[nCount - 1][5]) - Convert.ToDecimal(myData[nhostelFeesIindex][5]);
+										}
+
+
+										if (schoolBusIndex != string.Empty)
+										{
+											int nschoolBusIndex = Convert.ToInt16(schoolBusIndex);
+
+											newFeeConfig.Total_Excluding_Bus_Fees = Convert.ToDecimal(myData[nCount - 1][5]) - Convert.ToDecimal(myData[nschoolBusIndex][5]);
+										}
 									}
 									newFeeConfig.Created_By = nUser_Id;
 									newFeeConfig.Created_On = DateTime.Now;
@@ -408,6 +480,8 @@ namespace Techsys_School_ERP.Controllers
 										feeConfigToBeUpdated.Academic_Year = newFeeConfig.Academic_Year;
 										feeConfigToBeUpdated.Total = newFeeConfig.Total;
 										feeConfigToBeUpdated.Is_Active = true;
+										feeConfigToBeUpdated.Total_Excluding_Bus_Fees = newFeeConfig.Total_Excluding_Bus_Fees;
+										feeConfigToBeUpdated.Total_Excluding_HostelFees = newFeeConfig.Total_Excluding_HostelFees;
 
 										dbcontext.Entry(feeConfigToBeUpdated).State = EntityState.Modified;
 										dbcontext.SaveChanges();
@@ -629,5 +703,8 @@ namespace Techsys_School_ERP.Controllers
 			 return Json(freqList, JsonRequestBehavior.AllowGet); ;
 		}
 		#endregion
+
+
+		
 	}
 }

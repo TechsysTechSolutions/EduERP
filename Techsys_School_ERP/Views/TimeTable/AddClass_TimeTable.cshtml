@@ -1,0 +1,569 @@
+﻿
+@{
+    ViewBag.Title = "AddClass_TimeTable";
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+}
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+	<link href="~/Content/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css">
+	<link href="~/Content/Style.css" rel="stylesheet" type="text/css" />
+
+	<script type="text/javascript" src="~/Content/js/plugins/loaders/pace.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/core/libraries/jquery.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/core/libraries/bootstrap.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/loaders/blockui.min.js"></script>
+	<!-- /core JS files -->
+
+	<script src="~/Scripts/bootstrap.min.js"></script>
+	<script src="~/Scripts/bootstrap-multiselect.js"></script>
+	<script type="text/javascript" src="~/Content/assets/js/plugins/tables/handsontable/handsontable.min.js"></script>
+	<link href="~/Content/assets/css/handsontable.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="~/Scripts/handsontable/handsontable.full.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/forms/selects/select2.min.js"></script>
+	<link href="~/Content/handsontable/handsontable.full.min.css" rel="stylesheet" type="text/css" />
+	@*<script src="https://docs.handsontable.com/pro/2.0.0/bower_components/handsontable-pro/dist/handsontable.full.min.js"></script>
+		<link type="text/css" rel="stylesheet" href="https://docs.handsontable.com/pro/2.0.0/bower_components/handsontable-pro/dist/handsontable.full.min.css">*@
+
+	<style type="text/css">
+		span.headerBold {
+			font-weight: bold;
+			text-align: left;
+		}
+
+		.hot .ht_master tr:nth-of-type(even) > td {
+			background-color: #e8f4f8;
+			;
+			//hsl(199, 100%, 95%);
+		}
+
+		.hot .ht_master tr.foo > td {
+			background-color: #A9FEAA;
+			color: white;
+		}
+
+		.hot .ht_master tr > td.foo {
+			background-color: #A9FEAA;
+			color: white;
+		}
+
+		.lbl-margin-top {
+			margin-top: 10px;
+		}
+
+		.lbl-bold {
+			font-weight: 700;
+		}
+	</style>
+
+	<script type="text/javascript">
+
+		$(document).ready(function () {
+
+			var $ = jQuery.noConflict();
+			var hot5;
+			var today = new Date();
+			var nDays;
+			var existingData;
+
+			//$('#classSectionList').multiselect();
+
+			var d = new Date();
+			for (var i = 2; i >= 0; i--) {
+				var option = "<option value=" + parseInt(d.getFullYear() - i) + ">" + parseInt(d.getFullYear() - i) + "</option>"
+				$('[id*=DropDownList1]').append(option);
+			}
+			for (var i = 1; i <= 2; i++) {
+				var option = "<option value=" + parseInt(d.getFullYear() + i) + ">" + parseInt(d.getFullYear() + i) + "</option>"
+				$('[id*=DropDownList1]').append(option);
+			}
+
+			$('#classSectionList').select();
+			if (today.getMonth() < 4) {
+
+			$("#DropDownList1").val(today.getFullYear());
+				
+			}
+			else {
+				$("#DropDownList1").val(parseInt(today.getFullYear()) + parseInt(1));
+				
+			}
+
+		//getTimeTableDetailsForClass("2");
+
+			function getTimeTableDetailsForClass(Class_Id)
+			{
+				var container = document.getElementById('myHandsonTable');
+				//debugger
+
+				$.ajax({
+					url: '/TimeTable/AddClass_TimeTable/',
+					//data: "{'Class_Id':'" + $("#classList").val() + "'}",
+					data: "{'Section_Id':'" + $("#classSectionList").val() + "','Academic_Year':'" + $("#DropDownList1").val() + "'}",
+					dataType: "json",
+					type: "POST",
+					contentType: "application/json; charset=utf-8",
+					async: true,
+					processData: false,
+					cache: false,
+					success: function (data) {
+					//	debugger
+						// on Success send the Json data
+						// to the table by using loaddata function""
+						$("#tblClassTimeTableSchool").find("tr:gt(0)").remove();
+						if (data.length == 0) {
+
+							var rows = "<tr>" +
+								"<td class='' colspan=7 style=\"text-align:center;\" >" + "No Record to Display" + "</td>" +
+									"</tr>";
+
+							$('#tblClassTimeTableSchool tbody').append(rows);
+						}
+						else {
+							debugger
+							existingData = data;
+							for (i = 0 ; i < data.length ; i++) {
+
+								nDays = data.length + 1;
+								var rows = "<tr>" + 
+									
+									"<td class='Id' ><input type=\"text\" class='form-control'  value=' " + data[i].Section_Id + "'  id='" + (i + 1) + "'>" + "</td>" +
+									"<td class='' ><input type=\"text\" class='form-control'  value=' " + data[i].Week + "'  id='" + ("Day" + i + 1) + "'>" + "</td>" +
+									"<td class='Period'><select id='" + (i + 1) + "2" + "' required name=\"SectionName\" class=\"form-control Period\" ></select>" + "</td>" +
+									"<td class='date'><select id='" + (i + 1) + "3" + "' required name=\"SectionName\" class=\"form-control Period\"></select>" + "</td>" +
+									"<td class='Period'><select id='" + (i + 1) + "4" + "' required name=\"SectionName\" class=\"form-control Period\"></select>" + "</td>" +
+									"<td class='Period'><select id='" + (i + 1) + "5" + "' required name=\"SectionName\" class=\"form-control Period\"></select>" + "</td>" +
+									"<td class='Period'><select id='" + (i + 1) + "6" + "' required name=\"SectionName\" class=\"form-control Period\"></select>" + "</td>" +
+									"<td class='Period'><select id='" + (i + 1) + "7" + "' required name=\"SectionName\" class=\"form-control Period\"></select>" + "</td>" +
+									"<td class='Period'><select id='" + (i + 1) + "8" + "' required name=\"SectionName\" class=\"form-control Period\"></select>" + "</td>" +
+									"<td class='Period'><select id='" + (i + 1) + "9" + "' required name=\"SectionName\" class=\"form-control Period\"></select>" + "</td>" +
+									"</tr>";
+
+
+								$('#tblClassTimeTableSchool tbody').append(rows);
+								//$('#searchselect').val(null).trigger("change");
+								$(".Id").hide();
+
+								$("#Day01").val("MON");
+								$("#Day11").val("TUE");
+								$("#Day21").val("WED");
+								$("#Day31").val("THU");
+								$("#Day41").val("FRI");
+								$("#Day51").val("SAT");
+
+
+								if (existingData[0].Subject_Id_Period_1 == 0) {
+									$(".Period").each(function () {
+
+										var rowIndex = $(this).closest('tr')[0].rowIndex;
+										var columnIndex = $(this).closest('td')[0].cellIndex;
+
+										
+										//if (columnIndex == 1) {
+
+										//	if (rowIndex == 1) {
+
+										//		$("#Day01").val("MON");
+										//	}
+										//	else if (rowIndex == 2) {
+
+										//		$("#Day02").val("TUE");
+										//	}
+										//	else if (rowIndex == 3) {
+
+										//		$("#Day03").val("WED");
+										//	}
+										//	else if (rowIndex == 4) {
+
+										//		$("#Day04").val("THU");
+										//	}
+										//	else if (rowIndex == 5) {
+
+										//		$("#Day05").val("FRI");
+										//	}
+										//	else if (rowIndex == 6) {
+
+										//		$("#Day06").val("SAT");
+										//	}
+										//}
+
+
+										$("#" + (rowIndex) + (columnIndex)).select2({
+
+											minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
+											placeholder: "SUB",
+											ajax: {
+												url: '/TimeTable/GetSubjectList',
+
+												width: 'resolve',
+												data: function (params) {
+													return {
+														q: params.term// search term
+													};
+												},
+												processResults: function (data) {
+													return {
+														results: data.Data
+													};
+												},
+												initSelection: function (element, callback) {
+												}
+											},
+										});
+
+									});
+								}
+								else {
+
+									$(".Period").each(function () {
+										//debugger
+
+										var rowIndex = $(this).closest('tr')[0].rowIndex;
+										var columnIndex = $(this).closest('td')[0].cellIndex;
+
+										//if (columnIndex == 1) {
+
+										//	if (rowIndex == 1) {
+
+										//		$("#Day01").val("MON");
+										//	}
+										//	else if (rowIndex == 2) {
+
+										//		$("#Day02").val("TUE");
+										//	}
+										//	else if (rowIndex == 3) {
+
+										//		$("#Day03").val("WED");
+										//	}
+										//	else if (rowIndex == 4) {
+
+										//		$("#Day04").val("THU");
+										//	}
+										//	else if (rowIndex == 5) {
+
+										//		$("#Day05").val("FRI");
+										//	}
+										//	else if (rowIndex == 6) {
+
+										//		$("#Day06").val("SAT");
+										//	}
+										//}
+
+										$("#" + (rowIndex) + (columnIndex)).select2({
+
+											minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
+											placeholder: "SUB",
+											ajax: {
+												url: '/TimeTable/GetSubjectList',
+
+												width: 'resolve',
+												data: function (params) {
+													return {
+														q: params.term// search term
+													};
+												},
+												processResults: function (data) {
+													return {
+														results: data.Data
+													};
+												},
+												initSelection: function (element, callback) {
+												}
+											},
+										});
+
+
+										//var countryId = $("#" + rowIndex + columnIndex).val();
+										var subjectId;
+										if (columnIndex == 2) {
+											//debugger
+											subjectId = existingData[rowIndex - 1].Subject_Id_Period_1;
+										}
+										else if (columnIndex == 3) {
+
+											subjectId = existingData[rowIndex - 1].Subject_Id_Period_2;
+										}
+										else if (columnIndex == 4) {
+
+											subjectId = existingData[rowIndex - 1].Subject_Id_Period_3;
+										}
+										else if (columnIndex == 5) {
+
+											subjectId = existingData[rowIndex - 1].Subject_Id_Period_4;
+										}
+										else if (columnIndex == 6) {
+
+											subjectId = existingData[rowIndex - 1].Subject_Id_Period_5;
+										}
+										else if (columnIndex == 7) {
+
+											subjectId = existingData[rowIndex - 1].Subject_Id_Period_6;
+										}
+										else if (columnIndex == 8) {
+
+											subjectId = existingData[rowIndex - 1].Subject_Id_Period_7;
+										}
+										else if (columnIndex == 9) {
+
+											subjectId = existingData[rowIndex - 1].Subject_Id_Period_8;
+										}
+
+										if (columnIndex == 1) {
+
+											//var Day;
+											//if (rowIndex == 1) {
+											//	Day = "MON"
+											//}
+
+										}
+
+										$.ajax({
+											type: 'GET',
+											//url: '/TimeTable/FetchSubjectNameBasedOnId?subjectId=' + subjectId
+											url: '/TimeTable/FetchSubjectNameBasedOnId?subjectId=' + subjectId
+										}).then(function (data) {
+											//debugger
+											// create the option and append to Select2
+											var option = new Option(data.items[0].text, data.items[0].id, true, true);
+											//$('#CountriesList').val(countryId).trigger('change');
+											//$('#CountriesList').val(data.id);
+											//$('#CountriesList').append(option).trigger('change');
+											//countrySelect.append(option).trigger('change');
+											//$('#CountriesList').append(option);
+											$("#" + (rowIndex) + (columnIndex)).append(option);
+											//$('#CountriesList').append(option).trigger('change');
+
+											//// manually trigger the `select2:select` event
+											//countrySelect.trigger({
+											//	type: 'select2:select',
+											//	params: {
+											//		data: data
+											//	}
+											//});
+										});
+									});
+								}
+								
+							}							
+						}		
+
+					},
+					error: function (xhr) {
+						alert('error');
+					}
+				});
+
+			}
+
+
+			$("#classSectionList").change(function () {
+				if ($("#classSectionList").val() == 0) {
+						alert("Please Select the Class")
+						$("#myHandsonTable").html("");
+						$("#hot-display-license-info").val("");
+						$("#hot-display-license-info").text("");
+					}
+					else {
+					getTimeTableDetailsForClass($("#classSectionList").val())
+					}
+			});
+
+			$("#DropDownList1").change(function () {
+				if ($("#classList").val() == 0) {
+					alert("Please Select the Class")
+					$("#myHandsonTable").html("");
+					$("#hot-display-license-info").val("");
+					$("#hot-display-license-info").text("");
+				}
+				else
+					{
+					getTimeTableDetailsForClass($("#classList").val())
+				}
+			});
+
+			$('#btnFeeConfigure').click(function () {
+
+				debugger
+				var class_timetable = [];
+
+				var period1, period2, period3, period4, period5, period6, period7, period8, class_Id, section_Id; 
+
+				for (iRowCount = 1 ; iRowCount < nDays ; iRowCount++) {
+
+					period1 = $("#" + iRowCount + 2).val();
+					period2 = $("#" + iRowCount + 3).val();
+					period3 = $("#" + iRowCount + 4).val();
+					period4 = $("#" + iRowCount + 5).val();
+					period5 = $("#" + iRowCount + 6).val();
+					period6 = $("#" + iRowCount + 7).val();
+					period7 = $("#" + iRowCount + 8).val();
+					period8 = $("#" + iRowCount + 9).val();
+					section_Id = $("#classSectionList").val();
+					academic_Year = $("#DropDownList1").val();
+
+
+					class_timetable.push([period1, period2, period3, period4, period5, period6, period7, period8, section_Id, academic_Year] );
+					
+				}
+
+				$.ajax({
+						url: '/TimeTable/SaveTimeTable_For_Class/',
+						type: "POST",
+						dataType: "json",
+						contentType: 'application/json; charset=utf-8',
+						//data: "{'myData':'" + myData + "','Academic_Year':'" + $("#DropDownList1").val() + "'}",
+						data: JSON.stringify(class_timetable),
+						async: true,
+						processData: false,
+						cache: false,
+						success: function (response) {
+								if (response == "OK") {
+									alert("TimeTable Sucessfully Saved For Class!");
+								}
+								else if (response == "Updated") {
+									alert("Fees Configuartion Sucessfully Updated");
+								}
+								else if (response == "Fees Already Configured") {
+
+								}
+						},
+						error: function (xhr) {
+								alert('error');
+						}
+					});
+			})
+		})
+
+
+	</script>
+</head>
+<body>
+
+	<div class="page-container" style="height:100%;">
+		<div class="page-content">
+
+			<div class="container">
+
+				<div class="panel panel-primary panel-bordered" style="min-height:150px;">
+					<div class="panel-heading bg-blue-800">
+						<h6 class="panel-title ">CLASS TIMETABLE</h6>
+						<div class="heading-elements">
+							<ul class="icons-list">
+								<li><a data-action="collapse"></a></li>
+								<li><a data-action="reload"></a></li>
+								<li><a data-action="close"></a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="panel-body">
+
+
+						<div class="row form-group">
+							<div class="col-sm-1 col-md-1 col-sm-offset-1 col-md-offset-1">
+								<label class="lbl-bold lbl-margin-top">CLASS</label>
+							</div>
+
+							<div class="col-sm-2 col-md-2">
+
+								<select id="classSectionList" required name="classSectionListName" class="form-control">
+									@if (ViewBag.classSectionList != null)
+								{
+										<option value='0'>-- Select Class & Section --</option>
+									foreach (var item in ViewBag.classSectionList)
+									{
+										if (item.Text != null)
+										{
+
+												<option value="@item.Value">
+													&nbsp;&nbsp; @item.Text
+												</option>
+										}
+									}
+								}
+								</select>
+							</div>
+							<div class="col-sm-2 col-md-2 col-sm-offset-2 col-md-offset-2">
+								<label class="lbl-bold lbl-margin-top">ACADEMIC YEAR</label>
+							</div>
+							<div class="col-sm-2 col-md-2">
+
+								<select id="DropDownList1" name="DropDownList1" class="form-control" style="margin-top:0px;"></select>
+
+							</div>
+						</div>
+						@*<div class="content" style="margin-top:40px;">
+				<div id="myHandsonTable" class="col-xs-offset-0 handsontable hot row " style="overflow-x:auto;min-height:400px; "></div>
+				<div class="row control-group"></div>
+
+			</div>*@
+						<div class="row form-group">
+							</div>
+
+							<div class="row form-group">
+								@*<div style="overflow-y:auto;height:150px;min-height:100px;" class="row">*@
+								<table class="table  table-striped table-bordered table-responsive col-md-11 col-sm-11" id="tblClassTimeTableSchool" style="margin-left:3%; width:90%; ">
+									<thead class="bg-primary-400">
+										<tr>
+											<th>Day</th>
+											<th>Period#1</th>
+											<th>Period#2</th>
+											<th>Period#3</th>
+											<th>Period#4</th>
+											<th>Period#5</th>
+											<th>Period#6</th>
+											<th>Period#7</th>
+											<th>Period#8</th>
+											@*<th>Action</th>*@
+										</tr>
+									</thead>
+									<tbody>
+										@*<tr>
+							<td>
+								<input type="text" class="form-control"  value="wdnf;neofrogho"/>
+							</td>
+							<td>
+								<input type="text" class="form-control" />
+							</td>
+							<td>
+								<input type="text" class="form-control" />
+							</td>
+							<td>
+								<input type="text" class="form-control" />
+							</td>
+							<td>
+								<input type="text" class="form-control" />
+							</td>
+							<td>
+								<input type="text" class="form-control" />
+							</td>
+							<td>
+								<input type="text" class="form-control" />
+							</td>
+							<td>
+								<input type="text" class="form-control" />
+							</td>
+							<td>
+								<input type="text" class="form-control" />
+							</td>
+
+						</tr>*@
+									</tbody>
+								</table>
+								<div id="noRecords" style="display:none"> There are no records </div>
+								@*</div>*@
+							</div>
+
+
+							<div class="row col-xs-2 col-xs-offset-10 vert-spacer">
+								<input type="button" id="btnFeeConfigure" value="SAVE TIMETABLE" class="btn btn-success" />
+							</div>
+						</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

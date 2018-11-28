@@ -135,7 +135,12 @@ font-weight: 500;
 						Aadhar_No: $("#Aadhar_No").val(),
 						Class_Id: $("#ClassList").find(":selected").val(),
 						Section_Id: $('#Section_Id').find(":selected").val(),
-						Roll_No: $("#Roll_No").val()
+						Roll_No: $("#Roll_No").val(),
+						Is_HostelStudent: $("#chkIsHostelStudent").val(),
+						School_Bus_Availed: $("#chkIfSchoolBusAvailed").val(),
+						Hostel_Room_Id: $("#Hostel_Room_Id").val(),
+						Vehicle_Id: $("#VehicleList").val(),
+						PAN_No : $("#PAN_No").val()
 					};
 
 
@@ -178,6 +183,8 @@ font-weight: 500;
 							if (response == "SuccessFully Added") {
 								var data = new FormData();
 								data.append('file', ($("#Photo").get(0).files)[0]);
+								data.append('student_Id', ($("#Student_Id").val()));
+
 								$.ajax({
 
 									url: "/Student/Upload",
@@ -218,6 +225,89 @@ font-weight: 500;
 			
 			
 				
+			});
+
+
+			function PopulateHostelRoomList() {
+
+
+				$('#Hostel_Room_Id').select2({
+					minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
+					placeholder: "Select Hostel Room from List",
+					ajax: {
+						url: '/Student/populateHostelRoomList',
+						data: function (params) {
+							return {
+								sSearchTerm: params.term// search term
+							};
+						},
+						processResults: function (data) {
+							debugger
+							return {
+								//results: data.items
+								results: data
+							};
+						},
+						initSelection: function (element, callback) {
+						}
+					},
+				});
+			}
+			$("#chkIsHostelStudent").change(function () {
+				if ($(this).prop('checked') == true) {
+					//do something
+					$('#Hostel_Room_Id').attr('disabled', false)
+					PopulateHostelRoomList();
+				
+					
+				}
+				else {
+
+					$('#Hostel_Room_Id').val('').trigger('change');
+					$('#Hostel_Room_Id').attr('disabled', true);
+					//PopulateHostelRoomList();
+				}
+			});
+
+			function PopulateVehicleList() {
+
+				$('#VehicleList').select2({
+					minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
+					placeholder: "Select Bus from List",
+					ajax: {
+						url: '/Student/populateVehicleList',
+						data: function (params) {
+							return {
+								sSearchTerm: params.term// search term
+							};
+						},
+						processResults: function (data) {
+							debugger
+							return {
+								//results: data.items
+								results: data
+							};
+						},
+						initSelection: function (element, callback) {
+						}
+					},
+				});
+			}
+
+			$("#chkIfSchoolBusAvailed").change(function () {
+				if ($(this).prop('checked') == true) {
+					//do something
+					$('#VehicleList').attr('disabled', false)
+					PopulateVehicleList();
+
+
+				}
+				else {
+
+					$('#VehicleList').val('').trigger('change');
+					$('#VehicleList').attr('disabled', true);
+					//PopulateVehicleList();
+				}
 			});
 
 			//var isValid = true;
@@ -482,6 +572,8 @@ font-weight: 500;
 
 												@Html.EditorFor(model => model.Roll_No, new { htmlAttributes = new { @class = "form-control", @placeholder = "", @readonly = "readonly" } })
 
+												@Html.HiddenFor(model => model.Student_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "", @readonly = "readonly" } })
+
 												@Html.ValidationMessageFor(model => model.Roll_No)
 											</div>
 											<div class="col-sm-2 col-md-2">
@@ -694,30 +786,30 @@ font-weight: 500;
 										
 											<br />
 											@*<select id="State_Id" required name="StateName" class="form-control"></select>*@
-										@Html.CheckBox("chkIsHostelStudent")
+										    @Html.CheckBox("chkIsHostelStudent", new { @class = "form-control" , @style = "margin-left:7px; height:15px; margin-top: 10px;  "})
 											@*@Html.EditorFor(model => model.State_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })*@
 										</div>
 
 										<div class="col-sm-2 col-md-2">
 											@Html.LabelFor(model => model.Hostel_Room_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
-											<select id="Hostel_Room_Id" required name="HostelRoomName" class="form-control"></select>
+											<select id="Hostel_Room_Id" required name="HostelRoomName" class="form-control" disabled="disabled"></select>
 											@*@Html.EditorFor(model => model.City_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })*@
 										</div>
-										<div class="col-sm-3 col-md-3">
+										<div class="col-sm-2 col-md-2">
 											@Html.LabelFor(model => model.School_Bus_Availed, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
 										
 											<br />
-											@Html.CheckBox("chkIfSchoolBusAvailed")
+											@Html.CheckBox("chkIfSchoolBusAvailed" , new { @class = "form-control", @style = "margin-left:7px; height:15px; margin-top: 10px;  " })
 											@*@Html.CheckBoxFor(model => model.School_Bus_Availed, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })*@
 										</div>
 										<div class="col-sm-3 col-md-3">
 											@Html.LabelFor(model => model.Vehicle_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
-											<select id="VehicleList" required name="VehicleName" class="form-control"></select>
+											<select id="VehicleList" required name="VehicleName" class="form-control"  disabled="disabled"></select>
 										</div>
-										@*<div class="col-sm-3 col-md-3">
-											@Html.LabelFor(model => model.Email_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
-											@Html.EditorFor(model => model.Email_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
-										</div>*@
+										<div class="col-sm-3 col-md-3">
+											@Html.LabelFor(model => model.PAN_No, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+											@Html.EditorFor(model => model.PAN_No, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+										</div>
 									</div>
 
 								</fieldset>

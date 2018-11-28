@@ -54,6 +54,99 @@
 		//	debugger
 
 
+			function PopulateHostelRoomList() {
+
+
+				$('#HostelRoomList').select2({
+					minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
+					placeholder: "Select Hostel Room from List",
+					ajax: {
+						url: '/Student/populateHostelRoomList',
+						data: function (params) {
+							return {
+								sSearchTerm: params.term// search term
+							};
+						},
+						processResults: function (data) {
+						//	debugger
+							return {
+								//results: data.items
+								results: data
+							};
+						},
+						initSelection: function (element, callback) {
+						}
+					},
+				});
+			}
+			$("#chkIsHostelStudent").change(function () {
+			//	debugger
+				//if ($(this).prop('checked') == true) {
+				if ($("#chkIsHostelStudent")[0].checked == true) {
+					//do something
+					$('#HostelRoomList').val('').trigger('change');
+					$('#HostelRoomList').attr('disabled', false)
+			
+				//	PopulateHostelRoomList();
+
+
+				}
+				else {
+
+					$('#HostelRoomList').val('').trigger('change');
+					$('#HostelRoomList').attr('disabled', true);
+					//PopulateHostelRoomList();
+				}
+			});
+
+			function PopulateVehicleList() {
+
+				$('#VehicleList').select2({
+					minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
+					placeholder: "Select Bus from List",
+					ajax: {
+						url: '/Student/populateVehicleList',
+						data: function (params) {
+							return {
+								sSearchTerm: params.term// search term
+							};
+						},
+						processResults: function (data) {
+							//debugger
+							return {
+								//results: data.items
+								results: data
+							};
+						},
+						initSelection: function (element, callback) {
+						}
+					},
+				});
+			}
+
+			$("#chkIfSchoolBusAvailed").change(function () {
+				//debugger
+				if ($("#chkIfSchoolBusAvailed")[0].checked == true) {
+					//do something
+					$('#VehicleList').attr('disabled', false)
+					$('#VehicleList').val('').trigger('change');
+					//PopulateVehicleList();
+
+
+				}
+				else {
+
+					$('#VehicleList').val('').trigger('change');
+					$('#VehicleList').attr('disabled', true);
+					//PopulateVehicleList();
+				}
+			});
+
+
+
+			PopulateVehicleList();
+			PopulateHostelRoomList();
+
 			$('#CountriesList').select2({
 				minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
 				placeholder: "Select Country from List",
@@ -74,13 +167,6 @@
 				},
 			});
 
-
-			//$(function () {
-
-				//debugger
-
-			//	$("#BloodGroupList").find(":selected").val(model.Blood_Group_Id);
-
 				$("#datepicker").datepicker({
 					required: true,
 					message: "This is a required field",
@@ -99,6 +185,9 @@
 			    $("#SectionList option[value=" + $("#Section_Id").val() + "]").attr("selected", "selected")
 			    $("#StateList option[value=" + $("#State_Id").val() + "]").attr("selected", "selected");
 			    $("#CityList option[value=" + $("#City_Id").val() + "]").attr("selected", "selected");
+
+			//    $("#VehicleList option[value=" + $("#Vehicle_Id").val() + "]").attr("selected", "selected");
+			//    $("#Hostel_Room_Id option[value=" + $("#Hostel_Room_Id").val() + "]").attr("selected", "selected");
 			  //  debugger
 
 
@@ -111,25 +200,62 @@
 			    }).then(function (data) {
 			    //	debugger
 			    	// create the option and append to Select2
-			    	var option = new Option(data.items[0].text, data.items[0].id, true, true);
-			    	//$('#CountriesList').val(countryId).trigger('change');
-			    	//$('#CountriesList').val(data.id);
-			    	//$('#CountriesList').append(option).trigger('change');
-			    	//countrySelect.append(option).trigger('change');
+			    	var option = new Option(data.items[0].text, data.items[0].id, true, true);			    	
 			    	$('#CountriesList').append(option);
-			    	//$('#CountriesList').append(option).trigger('change');
-
-			    	//// manually trigger the `select2:select` event
-			    	//countrySelect.trigger({
-			    	//	type: 'select2:select',
-			    	//	params: {
-			    	//		data: data
-			    	//	}
-			    	//});
+			    	
 			    });
 
-			//debugger
-			    $('#blah1').attr("src", '@ViewBag.ImageData');
+
+
+			// Fetch the preselected item, and add to the control
+			    var vehicleSelect = $('#VehicleList');
+			    var vehicleId = $("#Vehicle_Id").val();
+			    if (vehicleId != null) {
+
+			    	$("#chkIfSchoolBusAvailed").attr("checked", true);
+
+			    }
+			    else {
+			    	$("#chkIfSchoolBusAvailed").attr("checked", false);
+			    }
+			    $.ajax({
+			    	type: 'GET',
+			    	url: '/Student/FetchVehicleNoBasedOnId?nVehicleNo=' + vehicleId
+			    }).then(function (data) {
+			    	//	debugger
+			    	// create the option and append to Select2
+			    		var option = new Option(data[0].Vehicle_No, data[0].Id, true, true);
+			    	$('#VehicleList').append(option);
+
+			    });
+
+
+			// Fetch the preselected item, and add to the control
+			    var hostelRoomSelect = $('#HostelRoomList');
+			    var hostelRoomId = $("#Hostel_Room_Id").val();
+			    if (hostelRoomId != null) {
+
+			    	$("#chkIsHostelStudent").attr("checked", true);
+			    }
+			    else {
+
+			    	$("#chkIsHostelStudent").attr("checked", false);
+			    }
+			//	debugger
+			    $.ajax({
+			    	type: 'GET',
+			    	url: '/Student/FetchHostelRoomBasedOnId?nHostelRoomId=' + hostelRoomId
+			    }).then(function (data) {
+			    	//debugger
+			    	// create the option and append to Select2
+			    	//var option = new Option(data.items[0].text, data.items[0].id, true, true);
+			    	var option = new Option(data[0].Room_No, data[0].Id, true, true);
+			    	$('#HostelRoomList').append(option);
+
+			    });
+
+
+			   $('#blah1').attr("src", '@ViewBag.ImageData');
 
 			$("#blah1").click(function () {
 				$("#file1").attr("visibility", "visible");
@@ -175,7 +301,12 @@
 						Section_Id: $('#SectionList').find(":selected").val(),
 						//Section_Id:14,
 						Roll_No: $("#Roll_No").val(),
-						Student_Id : $("#Student_Id").val()
+						Student_Id : $("#Student_Id").val(),
+						Is_HostelStudent: $("#chkIsHostelStudent").val(),
+						School_Bus_Availed: $("#chkIfSchoolBusAvailed").val(),
+						Hostel_Room_Id: $("#HostelRoomList").find(":selected").val(),
+						Vehicle_Id: $("#VehicleList").find(":selected").val(),
+						PAN_No: $("#PAN_No").val()
 
 					};
 
@@ -247,41 +378,6 @@
 							else {
 								alert("Error in Updating Student Details.Please retry with correct input");
 							}
-					//		if (response == "SuccessFully Added") {
-					//			var data = new FormData();
-					//			data.append('file', ($("#Photo").get(0).files)[0]);
-					//			$.ajax({
-
-					//				url: "/Student/Upload",
-					//				type: "POST",
-					//				data: data,
-					//				cache: false,
-					//				processData: false,
-					//				contentType: false,
-					//				success: function (data) {
-					//					alert('Student Successfully Added');
-					//					//window.location.href = "/Student/CreateStudentOtherDetails";
-					//					window.location.href = "/Student/EditStudentOtherDetails?sStudent_Id=" + $('#Student_Id').val();
-					//												EditStudentOtherDetails
-					//				},
-					//				error: function (ex) {
-					//					alert('Failed to retrieve records.' + ex);
-					//				}
-					//			});
-					//		}
-					//		else if (response == "Email Already Exists") {
-					//			alert("Email Already Exists.Please try another email Id");
-					//		}
-					//		else if (response == "Error"){
-					//			alert("Error in Saving Details.Please try again.");
-					//	}
-					//else
-					//		{
-					//			alert(response);
-
-					//}
-
-
 						}
 
 					});
@@ -816,6 +912,48 @@
 									@Html.EditorFor(model => model.Email_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
 								</div>
 							</div>
+
+							<div class="row form-group">
+
+								<div class="col-sm-2 col-md-2">
+
+									@Html.LabelFor(model => model.Is_HostelStudent, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+
+									<br />
+									@*<select id="State_Id" required name="StateName" class="form-control"></select>*@
+									@Html.CheckBox("chkIsHostelStudent", new { @class = "form-control", @style = "margin-left:7px; height:15px; margin-top: 10px;  " })
+									@*@Html.EditorFor(model => model.State_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })*@
+								</div>
+
+								<div class="col-sm-2 col-md-2">
+									@Html.LabelFor(model => model.Hostel_Room_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+									<select id="HostelRoomList" required name="HostelRoomName" class="form-control" "></select>
+									@Html.HiddenFor(model => model.Hostel_Room_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									@*@Html.EditorFor(model => model.City_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })*@
+								</div>
+								<div class="col-sm-2 col-md-2">
+									@Html.LabelFor(model => model.School_Bus_Availed, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+
+									<br />
+									@Html.CheckBox("chkIfSchoolBusAvailed", new { @class = "form-control", @style = "margin-left:7px; height:15px; margin-top: 10px;  " })
+									@*@Html.CheckBoxFor(model => model.School_Bus_Availed, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })*@
+								</div>
+								<div class="col-sm-3 col-md-3">
+									@Html.LabelFor(model => model.Vehicle_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+									@Html.HiddenFor(model => model.Vehicle_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+									<select id="VehicleList" required name="VehicleName" class="form-control"></select>
+								</div>
+								<div class="col-sm-3 col-md-3">
+									@Html.LabelFor(model => model.PAN_No, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+									@Html.EditorFor(model => model.PAN_No, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+							
+								@*<div class="col-sm-3 col-md-3">
+				@Html.LabelFor(model => model.Email_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+				@Html.EditorFor(model => model.Email_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+			</div>*@
+							</div>
+
 
 						</fieldset>
 					</div>

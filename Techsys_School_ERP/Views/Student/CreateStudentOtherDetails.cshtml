@@ -27,7 +27,7 @@
 			
 			$("#Is_Allergic").change(function () {
 				//debugger
-			$('#Allergy_Details').attr("readonly", false)
+			$('#Allergy_Details').attr("disabled", false)
 			})
 
 
@@ -99,6 +99,90 @@
 
 					reader.readAsDataURL($(this)[0].files[0]);
 
+				}
+			});
+
+
+
+			function PopulateHostelRoomList() {
+
+
+				$('#Hostel_Room_Id').select2({
+					minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
+					placeholder: "Select Hostel Room from List",
+					ajax: {
+						url: '/Student/populateHostelRoomList',
+						data: function (params) {
+							return {
+								sSearchTerm: params.term// search term
+							};
+						},
+						processResults: function (data) {
+							debugger
+							return {
+								//results: data.items
+								results: data
+							};
+						},
+						initSelection: function (element, callback) {
+						}
+					},
+				});
+			}
+			$("#chkIsHostelStudent").change(function () {
+				if ($(this).prop('checked') == true) {
+					//do something
+					$('#Hostel_Room_Id').attr('disabled', false)
+					PopulateHostelRoomList();
+
+
+				}
+				else {
+
+					$('#Hostel_Room_Id').val('').trigger('change');
+					$('#Hostel_Room_Id').attr('disabled', true);
+					//PopulateHostelRoomList();
+				}
+			});
+
+			function PopulateVehicleList() {
+
+				$('#VehicleList').select2({
+					minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
+					placeholder: "Select Bus from List",
+					ajax: {
+						url: '/Student/populateVehicleList',
+						data: function (params) {
+							return {
+								sSearchTerm: params.term// search term
+							};
+						},
+						processResults: function (data) {
+							debugger
+							return {
+								//results: data.items
+								results: data
+							};
+						},
+						initSelection: function (element, callback) {
+						}
+					},
+				});
+			}
+
+			$("#chkIfSchoolBusAvailed").change(function () {
+				if ($(this).prop('checked') == true) {
+					//do something
+					$('#VehicleList').attr('disabled', false)
+					PopulateVehicleList();
+
+
+				}
+				else {
+
+					$('#VehicleList').val('').trigger('change');
+					$('#VehicleList').attr('disabled', true);
+					//PopulateVehicleList();
 				}
 			});
 
@@ -203,10 +287,10 @@
 					</div>
 					<div class="panel-body">
 						<fieldset>
-							<legend class="text-semibold">
+							@*<legend class="text-semibold">
 								<i class="icon-reading position-left" style="color:green;font-size:larger;font-weight:800; "></i>
 								Add personal details
-							</legend>
+							</legend>*@
 
 
 							<div class="row form-group">

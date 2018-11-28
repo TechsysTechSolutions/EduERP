@@ -1,0 +1,201 @@
+﻿@{
+	ViewBag.Title = "AddInventoryDetail";
+	Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+
+
+#line default
+#line hidden
+
+#line 2 "G:\ERP2\Techsys_School_ERP\Views\Inventory\AddInventoryDetail.cshtml"
+	foreach (var item in Model)
+	{
+
+
+#line default
+#line hidden
+
+#line 3 "G:\ERP2\Techsys_School_ERP\Views\Inventory\AddInventoryDetail.cshtml"
+		__o = item.Name;
+
+
+#line default
+#line hidden
+
+#line 4 "G:\ERP2\Techsys_School_ERP\Views\Inventory\AddInventoryDetail.cshtml"
+		__o = item.Academic_Year;
+
+
+#line default
+#line hidden
+
+#line 5 "G:\ERP2\Techsys_School_ERP\Views\Inventory\AddInventoryDetail.cshtml"
+		__o = item.Is_Active;
+
+
+#line default
+#line hidden
+
+#line 6 "G:\ERP2\Techsys_School_ERP\Views\Inventory\AddInventoryDetail.cshtml"
+		if (item.Created_On != null)
+		{
+
+
+#line default
+#line hidden
+
+#line 7 "G:\ERP2\Techsys_School_ERP\Views\Inventory\AddInventoryDetail.cshtml"
+			__o = item.Created_On;
+
+
+#line default
+#line hidden
+
+#line 8 "G:\ERP2\Techsys_School_ERP\Views\Inventory\AddInventoryDetail.cshtml"
+
+		}
+		else
+		{
+
+
+#line default
+#line hidden
+
+#line 9 "G:\ERP2\Techsys_School_ERP\Views\Inventory\AddInventoryDetail.cshtml"
+
+		}
+
+#line default
+#line hidden
+
+#line 10 "G:\ERP2\Techsys_School_ERP\Views\Inventory\AddInventoryDetail.cshtml"
+		__o = User.Identity.Name;
+
+
+#line default
+#line hidden
+
+#line 11 "G:\ERP2\Techsys_School_ERP\Views\Inventory\AddInventoryDetail.cshtml"
+		__o = Html.ActionLink("Delete", "Delete", new { id = item.Id });
+
+
+#line default
+#line hidden
+
+#line 12 "G:\ERP2\Techsys_School_ERP\Views\Inventory\AddInventoryDetail.cshtml"
+
+
+	}}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+	<!-- /theme JS files -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>*@
+
+	<script type="text/javascript" src="~/Scripts/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="~/Scripts/jquery-ui.js"></script>
+
+	<!-- /core JS files -->
+	<!-- Theme JS files -->
+	<script type="text/javascript" src="~/Content/assets/js/core/libraries/jquery_ui/interactions.min.js"></script>
+	<script type="text/javascript" src="~/Content/assets/js/plugins/forms/selects/select2.min.js"></script>
+	<script type="text/javascript" src="~/Content/assets/js/pages/form_select2.js"></script>
+
+
+	<!-- /theme JS files -->
+
+	<script type="text/javascript">
+
+		$(document).ready(function () {
+
+			debugger
+
+			$('#inventoryselect').select2({
+				minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
+				placeholder: "Select items from List",
+				ajax: {
+					url: '/Inventory/GetInventoryItemList',
+					//width: 'resolve',
+					data: function (params) {
+						return {
+							q: params.term// search term
+						};
+					},
+					processResults: function (data) {
+						debugger
+						return {
+							results: data.Data
+						};
+					},
+					initSelection: function (element, callback) {
+					}
+				},
+			});
+
+	})
+	</script>
+</head>
+<body>
+	<div class="page-container" style="height:100%;">
+		<div class="page-content">
+			<div class="container">
+
+
+				<div class="panel panel-primary panel-bordered" style="width:100%;">
+					<div class="panel-heading bg-indigo-400">
+						<h6 class="panel-title ">INVENTORY DETAIL LIST</h6>
+						<div class="heading-elements ">
+							<ul class="icons-list">
+								<li><a data-action="collapse"></a></li>
+								<li><a data-action="reload"></a></li>
+								<li><a data-action="close"></a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="panel-body">
+						<fieldset>
+							@*<legend class="text-semibold">
+									<i class="icon-reading position-left" style="color:green;font-size:larger; "></i>
+									Add personal details
+								</legend>*@
+
+							<div class="row form-group">
+								<div class="content-group-lg col-md-3 col-sm-3">
+									<label style="font-weight:700; ">INVENTORY ITEM</label>
+									<select data-placeholder="Select Inventory Name" class="select-search col-sm-3 col-md-3" id="inventoryselect"></select>
+								</div>
+								<div class="col-md-2 col-sm-2">
+									<label style="font-weight:700; ">FROM YEAR</label>
+									<input type="text" id="txtFromYear" class="form-control" style="width:75%;" />
+								</div>
+								<div class="col-md-2 col-sm-2">
+									<label style="font-weight:700; ">TO YEAR</label>
+									<input type="text" id="txtToYear" class="form-control" style="width:75%;" />
+								</div>
+
+								<div class="col-md-2 col-sm-2">
+									<label style="font-weight:700; ">LEAVING REASON</label>
+									<input type="text" id="txtLeavingReason" class="form-control" />
+								</div>
+
+								<div class="col-md-2 col-sm-2">
+									<label style="font-weight:700; ">COMMENTS</label>
+									<input type="text" id="txtComments" class="form-control" />
+								</div>
+
+								<div class="col-md-1 col-sm-1">
+									<input type="button" id="btnAdd" value="ADD" class="btn btn-primary btn-success" style="margin-top:35%;" />
+								</div>
+
+								
+								</div>
+							</fieldset>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+</body>
+</html>

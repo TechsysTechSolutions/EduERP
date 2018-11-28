@@ -1,0 +1,297 @@
+﻿@model Techsys_School_ERP.Model.Student_Document
+
+@{  
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>*@
+
+	<script type="text/javascript" src="~/Scripts/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="~/Scripts/jquery-ui.js"></script>
+
+	<!-- /core JS files -->
+	<!-- Theme JS files -->
+	<script type="text/javascript" src="~/Content/assets/js/core/libraries/jquery_ui/interactions.min.js"></script>
+	<script type="text/javascript" src="~/Content/assets/js/plugins/forms/selects/select2.min.js"></script>
+	<script type="text/javascript" src="~/Content/assets/js/pages/form_select2.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function () {
+
+			$("#UploadDocument1").change(function () {
+
+				if ($(this)[0].files && $(this)[0].files[0]) {
+					var reader = new FileReader();
+
+					reader.onload = function (e) {
+						$('#UploadDocument1Img')
+							.attr('src', e.target.result)
+							.width(250)
+							.height(260);
+					};
+
+					reader.readAsDataURL($(this)[0].files[0]);
+
+				}
+			});
+
+			@*if ('@ViewBag.Document1' != null) {
+				$('#UploadDocument1Img').attr("src", '@ViewBag.Document1');
+			}
+			$('#UploadDocument2Img').attr("src", '@ViewBag.Document2');
+			$('#UploadDocument3Img').attr("src", '@ViewBag.Document3');
+			$('#UploadDocument4Img').attr("src", '@ViewBag.Document4');
+			if ('@ViewBag.Document5' != null) {
+				$('#UploadDocument5Img').attr("src", '@ViewBag.Document5');
+			}
+			else {
+				$('#UploadDocument5Img').attr("src", "~/Content/images/imageupload_-_Copy.png");
+			}*@
+
+			@*$('#UploadDocument6Img').attr("src", '@ViewBag.Document6');*@
+
+			$("#UploadDocument1Img").click(function () {
+				$("#UploadDocument1").attr("visibility", "visible");
+				$("#UploadDocument1").trigger('click');
+				$("#UploadDocument1").trigger("change");
+			});
+
+			$("#UploadDocument2Img").click(function () {
+				$("#UploadDocument2").attr("visibility", "visible");
+				$("#UploadDocument2").trigger('click');
+				$("#UploadDocument2").trigger("change");
+			});
+
+			$("#UploadDocument3Img").click(function () {
+				$("#UploadDocument3").attr("visibility", "visible");
+				$("#UploadDocument3").trigger('click');
+				$("#UploadDocument3").trigger("change");
+			});
+
+			$("#UploadDocument4Img").click(function () {
+				$("#UploadDocument4").attr("visibility", "visible");
+				$("#UploadDocument4").trigger('click');
+				$("#UploadDocument4").trigger("change");
+			});
+
+			$("#UploadDocument5Img").click(function () {
+				$("#UploadDocument5").attr("visibility", "visible");
+				$("#UploadDocument5").trigger('click');
+				$("#UploadDocument5").trigger("change");
+			});
+
+			$("#UploadDocument6Img").click(function () {
+				$("#UploadDocument6").attr("visibility", "visible");
+				$("#UploadDocument6").trigger('click');
+				$("#UploadDocument6").trigger("change");
+			});
+
+			$("#UploadDocument2").change(function () {
+
+				if ($(this)[0].files && $(this)[0].files[0]) {
+					var reader = new FileReader();
+
+					reader.onload = function (e) {
+						$('#UploadDocument2Img')
+							.attr('src', e.target.result)
+							.width(250)
+							.height(260);
+					};
+
+					reader.readAsDataURL($(this)[0].files[0]);
+
+				}
+			});
+
+			$("#UploadDocument3").change(function () {
+
+				if ($(this)[0].files && $(this)[0].files[0]) {
+					var reader = new FileReader();
+
+					reader.onload = function (e) {
+						$('#UploadDocument3Img')
+							.attr('src', e.target.result)
+							.width(250)
+							.height(260);
+					};
+
+					reader.readAsDataURL($(this)[0].files[0]);
+
+				}
+			});
+
+			$("#UploadDocument4").change(function () {
+
+				if ($(this)[0].files && $(this)[0].files[0]) {
+					var reader = new FileReader();
+
+					reader.onload = function (e) {
+						$('#UploadDocument4Img')
+							.attr('src', e.target.result)
+							.width(250)
+							.height(260);
+					};
+
+					reader.readAsDataURL($(this)[0].files[0]);
+
+				}
+			});
+
+			$("#UploadDocument5").change(function () {
+
+				if ($(this)[0].files && $(this)[0].files[0]) {
+					var reader = new FileReader();
+
+					reader.onload = function (e) {
+						$('#UploadDocument5Img')
+							.attr('src', e.target.result)
+							.width(250)
+							.height(260);
+					};
+
+					reader.readAsDataURL($(this)[0].files[0]);
+
+				}
+			});
+
+			$("#UploadDocument6").change(function () {
+
+				if ($(this)[0].files && $(this)[0].files[0]) {
+					var reader = new FileReader();
+
+					reader.onload = function (e) {
+						$('#UploadDocument6Img')
+							.attr('src', e.target.result)
+							.width(250)
+							.height(260);
+					};
+
+					reader.readAsDataURL($(this)[0].files[0]);
+
+				}
+			});
+
+			$("#btnSaveAndContinue").click(function () {
+
+				debugger
+
+				var data = new FormData();
+				data.append('file1', ($("#UploadDocument1").get(0).files)[0]);
+				data.append('file2', ($("#UploadDocument2").get(0).files)[0]);
+				data.append('file3', ($("#UploadDocument3").get(0).files)[0]);
+				data.append('file4', ($("#UploadDocument4").get(0).files)[0]);
+				data.append('file5', ($("#UploadDocument5").get(0).files)[0]);
+				data.append('file6', ($("#UploadDocument6").get(0).files)[0]);
+
+				//var file2 = new FormData();
+				//file.append('file', ($("#UploadDocument2").get(0).files)[0]);
+
+				//var data = [];
+				//debugger
+				//data.append('file', ($("#UploadDocument1").get(0).files)[0]);
+				//data.append('file', ($("#UploadDocument2").get(0).files)[0]);
+				//data.append('file', ($("#UploadDocument3").get(0).files)[0]);
+				//data.append('file', ($("#UploadDocument4").get(0).files)[0]);
+				//data.append('file', ($("#UploadDocument5").get(0).files)[0]);
+				//data.append('file', ($("#UploadDocument6").get(0).files)[0]);
+
+
+				$.ajax({
+
+					url: "/Student/UploadStudentDocuments",
+					type: "POST",
+					data: data,
+					//data: "{'file1':'" + file1 + "','file2':'" + file2 + "','file3':'" + $("#txtAddSection").val() + "','file4':'" + $("#txtAddSection").val() + "','file5':'" + $("#txtAddSection").val() + "','file6':'" + $("#txtAddSection").val() + "'}",
+					cache: false,
+					processData: false,
+					contentType: false,
+					success: function (data) {
+						alert('Student Successfully Added');
+						window.location.href = "/Student/studentList";
+					},
+					error: function (ex) {
+						alert('Failed to retrieve records.' + ex);
+					}
+				});
+			});
+
+
+
+		});
+	</script>
+</head>
+<body>
+	<div class="page-container" style="height:100%;">
+		<div class="page-content">
+			<div class="container">
+
+
+				<div class="panel panel-primary panel-bordered" style="width:100%;">
+					<div class="panel-heading bg-indigo-400">
+						<h6 class="panel-title ">STUDENT UPLOAD DOCUMENTS</h6>
+						<div class="heading-elements ">
+							<ul class="icons-list">
+								<li><a data-action="collapse"></a></li>
+								<li><a data-action="reload"></a></li>
+								<li><a data-action="close"></a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="panel-body">
+						<fieldset>
+							@*<legend class="text-semibold">
+									<i class="icon-reading position-left" style="color:green;font-size:larger; "></i>
+									Add personal details
+								</legend>*@
+
+							<div class="row form-group">
+
+								<div class="col-sm-4 col-md-4">
+									@Html.LabelFor(model => model.document1, new { htmlAttributes = new { @class = "form-control" } })
+									<img id="UploadDocument1Img" src="~/Content/images/imageupload_-_Copy.png" alt="~/Content/images/logo_dark.png" style="height:260px;width:250px;margin-top:0%;margin-left:0%;background-size:auto; align-content:flex-start; " class="img-responsive">
+									<input type="file" name="Photo" style="display:none;  " id="UploadDocument1" />
+								</div>
+								<div class="col-sm-4 col-md-4">
+									@Html.LabelFor(model => model.document2, new { htmlAttributes = new { @class = "form-control" } })
+									<img id="UploadDocument2Img" src="~/Content/images/imageupload_-_Copy.png" alt="your image" style="height:260px;width:250px;margin-top:0%;margin-left:0%;background-size:auto; align-content:flex-start; " class="img-responsive">
+									<input type="file" name="Photo" style="display:none;  " id="UploadDocument2" />
+								</div>
+								<div class="col-sm-4 col-md-4">
+									@Html.LabelFor(model => model.document3, new { htmlAttributes = new { @class = "form-control" } })
+									<img id="UploadDocument3Img" src="~/Content/images/imageupload_-_Copy.png" alt="your image" style="height:260px;width:250px;margin-top:0%;margin-left:0%;background-size:auto; align-content:flex-start; " class="img-responsive">
+									<input type="file" name="Photo" style="display:none;  " id="UploadDocument3" />
+								</div>
+								<div class="col-sm-4 col-md-4">
+									@Html.LabelFor(model => model.document4, new { htmlAttributes = new { @class = "form-control" } })
+									<img id="UploadDocument4Img" src="~/Content/images/imageupload_-_Copy.png" alt="your image" style="height:260px;width:250px;margin-top:0%;margin-left:0%;background-size:auto; align-content:flex-start; " class="img-responsive">
+									<input type="file" name="Photo" style="display:none;  " id="UploadDocument4" />
+								</div>
+								<div class="col-sm-4 col-md-4">
+									@Html.LabelFor(model => model.document5, new { htmlAttributes = new { @class = "form-control" } })
+									<img id="UploadDocument5Img" src="~/Content/images/imageupload_-_Copy.png" alt="~/Content/images/logo_dark.png" style="height:260px;width:250px;margin-top:0%;margin-left:0%;background-size:auto; align-content:flex-start; " class="img-responsive">
+									<input type="file" name="Photo" style="display:none;  " id="UploadDocument5" />
+								</div>
+								<div class="col-sm-4 col-md-4">
+									@Html.LabelFor(model => model.document6, new { htmlAttributes = new { @class = "form-control" } })
+									<img id="UploadDocument6Img" src="~/Content/images/imageupload_-_Copy.png" alt="your image" style="height:260px;width:250px;margin-top:0%;margin-left:0%;background-size:auto; align-content:flex-start; " class="img-responsive">
+									<input type="file" name="Photo" style="display:none;  " id="UploadDocument6" />
+								</div>
+							</div>
+						</fieldset>
+
+						<div class="row  vert-margin-top col-sm-offset-7 col-md-offset-7">
+
+							<input type="button" id="btncancel" class="btn btn-primary bg-green-400" value="CANCEL" style="margin-left:3%;" />
+							<input type="button" id="btnSaveAndContinue" class="btn btn-primary bg-green-400" value="SAVE & CONTINUE TO STUDENT LIST" />
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

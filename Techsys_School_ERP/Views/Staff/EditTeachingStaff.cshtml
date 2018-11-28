@@ -1,0 +1,760 @@
+﻿@model Techsys_School_ERP.Model.Staff
+
+@{
+   
+    Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+}
+
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+
+	<!-- /theme JS files -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>*@
+
+	<script type="text/javascript" src="~/Scripts/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="~/Scripts/jquery-ui.js"></script>
+
+	<!-- /core JS files -->
+	<!-- Theme JS files -->
+	<script type="text/javascript" src="~/Content/assets/js/core/libraries/jquery_ui/interactions.min.js"></script>
+	<script type="text/javascript" src="~/Content/assets/js/plugins/forms/selects/select2.min.js"></script>
+	<script type="text/javascript" src="~/Content/assets/js/pages/form_select2.js"></script>
+
+	<style>
+		article, aside, figure, footer, header, hgroup,
+		menu, nav, section {
+			display: block;
+		}
+
+
+		.bold {
+			font-weight: 700;
+		}
+
+		label {
+			font-weight: 500;
+		}
+
+		.bootstrap-margin-top {
+			margin-top: -5%;
+		}
+
+		.vert-margin-top {
+			margin-top: 1%;
+		}
+	</style>
+	<script type="text/javascript">
+		$(document).ready(function () {
+			var isdropdownValidvalid = true;
+
+			$('#CountriesList').select2({
+				minimumInputLength: 2,  // minimumInputLength for sending ajax request to server
+				placeholder: "Select Country from List",
+				ajax: {
+					url: '/Staff/populateCountriesList',
+					data: function (params) {
+						return {
+							sSearchTerm: params.term// search term
+						};
+					},
+					processResults: function (data) {
+						return {
+							results: data.items
+						};
+					},
+					initSelection: function (element, callback) {
+					}
+				},
+			});
+
+			$(function () {
+
+
+
+				$("#DOB").datepicker({
+					required: true,
+					message: "This is a required field",
+					dateFormat: 'dd-mm-yy'
+				});
+
+				$("#Date_Of_Joining").datepicker({
+					required: true,
+					message: "This is a required field",
+					dateFormat: 'dd-mm-yy'
+				});
+			});
+
+
+			$("#blah1").click(function () {
+				$("#file1").attr("visibility", "visible");
+				$("input[type=file]").trigger('click');
+				$("input[type=file]").trigger("change");
+			});
+
+			$("#btncancel").click(function () {
+			});
+
+			//$("#ClassList option[value=" + $("#Class_Id").val() + "]").attr("selected", "selected");
+			$("#BloodGroupList option[value=" + $("#Blood_Group_Id").val() + "]").attr("selected", "selected");
+			$("#GenderList option[value=" + $("#Gender_Id").val() + "]").attr("selected", "selected");
+			//$("#SectionList option[value=" + $("#Section_Id").val() + "]").attr("selected", "selected")
+			$("#StateList option[value=" + $("#State_Id").val() + "]").attr("selected", "selected");
+			$("#CityList option[value=" + $("#City_Id").val() + "]").attr("selected", "selected");
+			$('#blah1').attr("src", '@ViewBag.ImageData');
+
+
+			// Fetch the preselected item, and add to the control
+			var countrySelect = $('#CountriesList');
+			var countryId = $("#Country_Id").val();
+			$.ajax({
+				type: 'GET',
+				url: '/Staff/FetchCountryNameBasedOnId?countryId=' + countryId
+			}).then(function (data) {
+				// create the option and append to Select2
+				var option = new Option(data.items[0].text, data.items[0].id, true, true);
+				$('#CountriesList').append(option);
+				
+			});
+
+
+			$("#btnSaveAndContinue").click(function () {
+				debugger
+				var isValid = true;
+
+				isValid = dropdownSelectValidation(isValid);
+				var Staff =
+					{
+						First_Name: $("#First_Name").val(),
+						Last_Name: $("#Last_Name").val(),
+						Middle_Name: $("#Middle_Name").val(),
+						Gender_Id: $("#GenderList").find(":selected").val(),
+						DOB: $("#DOB").val(),
+						Date_Of_Joining : $("#Date_Of_Joining").val(),
+						Enrollment_Date: $("#datepicker").val(),
+						Father_Name: $("#Father_Name").val(),
+						Is_Married: $("#Is_Married").val(),
+						Blood_Group_Id: $("#BloodGroupList").find(":selected").val(),
+						Address_Line1: $("#Address_Line1").val(),
+						Address_Line2: $("#Address_Line2").val(),
+						City_Id: $("#CityList").find(":selected").val(),
+						State_Id: $("#StateList").find(":selected").val(),
+						Country_Id: $("#CountriesList").find(":selected").val(),
+						Mobile_No: $("#Mobile_No").val(),
+						Alt_Mobile_No: $("#Alt_Mobile_No").val(),
+						LandLine: $("#LandLine").val(),
+						Email_Id: $("#Email_Id").val(),
+						Academic_Year: $("#Academic_Year").val(),
+						PinCode: $("#PinCode").val(),
+						Photo: ($("#Photo").get(0).files)[0],
+						Aadhar_Number: $("#Aadhar_Number").val(),
+						Handling_Subjects: $("#Handling_Subjects").val(),
+						Employee_Id: $("#Employee_Id").val(),
+						Staff_Id : $("#Staff_Id").val(),
+						Experience_in_Years : $("#Experience_in_Years").val()
+					};
+
+
+
+				$('input[type="text" ]').each(function () {
+				//$('input').each(function () {
+						if ($.trim($(this).val()) == '') {
+							//debugger
+							isValid = false;
+							$(this).css({
+								"border": "1px solid red",
+								"background": "#FFCECE"
+							});
+						}
+						else {
+							$(this).css({
+								"border": "",
+								"background": ""
+							});
+						}
+
+
+					});
+
+				if (isValid == false ) {
+					//debugger
+					e.preventDefault();
+				}
+
+				else {
+
+					$.ajax({
+						type: "POST",
+						url: "/Staff/EditTeachingStaff/",
+						data: JSON.stringify(Staff),
+						contentType: "application/json; charset=utf-8",
+						dataType: "json",
+						success: function (response) {
+							debugger
+							if (response == "OK") {
+							//	alert("Staff SuccessFully Added");
+								var data = new FormData();
+								data.append('file', ($("#Photo").get(0).files)[0]);
+								$.ajax({
+
+									url: "/Staff/Upload",
+									type: "POST",
+									data: data,
+									cache: false,
+									processData: false,
+									contentType: false,
+									success: function (data) {
+										alert('Staff Successfully Added');
+										window.location.href = "/Staff/AddStaffEducationalAndWorkExpDetails";
+									},
+									error: function (ex) {
+										alert('Failed to retrieve records.' + ex);
+									}
+								});
+							}
+							else if (response == "Email Already Exists") {
+								alert("Email Already Exists.Please try another email Id");
+							}
+							else if (response == "Error"){
+								alert("Error in Saving Details.Please try again.");
+						}
+					else
+							{
+								alert(response);
+
+					}
+
+
+						}
+
+					});
+				}
+
+
+
+
+
+
+			});
+
+			//var isValid = true;
+			$('input[type="text"]').on('input', function () {
+
+				if ($.trim($(this).val()) == '') {
+					isValid = false;
+					$(this).css({
+						"border": "1px #ddd ",
+						"background": "white"
+					});
+				}
+				else {
+					$(this).css({
+						"border": "",
+						"background": ""
+					});
+				}
+			});
+
+			$("input[type=file]").change(function () {
+
+				if ($(this)[0].files && $(this)[0].files[0]) {
+					var reader = new FileReader();
+
+					reader.onload = function (e) {
+						$('#blah1')
+							.attr('src', e.target.result)
+							.width(100)
+							.height(80);
+					};
+
+					reader.readAsDataURL($(this)[0].files[0]);
+
+				}
+			});
+
+
+			function dropdownSelectValidation(valid) {
+
+				debugger;
+
+				var isValid = valid;
+
+				if ($("#ClassList").val() == 0) {
+				   isValid = false;
+					alert("Please Select the Class");
+				}
+
+				else if ($('#Section_Id').val() == 0) {
+					isValid = false;
+					alert("Please Select the Section");
+				}
+
+				else if ($("#GenderList").val() == 0) {
+					isValid = false;
+					alert("Please Select the Gender");
+				}
+
+				else if ($("#BloodGroupList").val() == 0) {
+					isValid = false;
+					alert("Please Select the Blood Group");
+				}
+
+				else if ($("#CityList").val() == 0) {
+					isValid = false;
+					alert("Please Select the City");
+				}
+				else if ($("#CountriesList").val() == 0) {
+					isValid = false;
+					alert("Please Select the Country");
+				}
+
+				else if  ($("#StateList").val() == 0) {
+					isValid = false;
+					alert("Please Select the Country");
+
+				}
+
+				return isValid;
+			}
+
+
+		$("#ClassList").change(function () {
+				if ($("#ClassList").val() == 0) {
+					alert("Please Select the Class")
+
+				}
+				else {
+					getSectionForClass($("#ClassList").val())
+				}
+			});
+
+			function getSectionForClass(Class_Id) {
+
+				$.ajax({
+					url: '/Student/FetchSectionIDForClass/',
+					data: "{'Class_Id':'" + $("#ClassList").val() + "'}",
+					dataType: "json",
+					type: "POST",
+					contentType: "application/json; charset=utf-8",
+					async: true,
+					processData: false,
+					cache: false,
+					success: function (data) {
+						//debugger
+						// first remove the current options if any
+						$('#Section_Id').find('option').remove();
+
+						$('#Section_Id').append($('<option></option>').val(0).html("-- Select Section --"));
+						for (var i = 0; i < data.length; i++) {
+							//debugger
+							//$('#SectionList').append($('<option></option>').val(data[i].Id).html(data[i].Name))
+
+							var opt = new Option(data[i].Name, data[i].Id);
+							$('#Section_Id').append(opt);
+
+						}
+
+				}
+
+				});
+			}
+
+			$("#CountriesList").change(function () {
+				if ($("#CountriesList").val() == 0) {
+					alert("Please Select the Country")
+
+				}
+				else {
+					getStatesForCountry($("#CountriesList").val())
+				}
+			});
+
+			function getStatesForCountry(Country_Id) {
+
+				$.ajax({
+					url: '/Staff/FetchStateForCountry/',
+					data: "{'Country_Id':'" + $("#CountriesList").val() + "'}",
+					dataType: "json",
+					type: "POST",
+					contentType: "application/json; charset=utf-8",
+					async: true,
+					processData: false,
+					cache: false,
+					success: function (data) {
+
+						// first remove the current options if any
+						$('#State_Id').find('option').remove();
+
+						$('#State_Id').append($('<option></option>').val(0).html("-- Select State --"));
+						for (var i = 0; i < data.length; i++) {
+
+							//$('#SectionList').append($('<option></option>').val(data[i].Id).html(data[i].Name))
+
+							var opt = new Option(data[i].Name, data[i].Id);
+							$('#StateList').append(opt);
+							$('#StateList').append("<div style=\"margin-top:4px;display:none;\"></div>");
+
+
+						}
+
+					}
+
+				});
+			}
+
+			$("#State_Id").change(function () {
+				if ($("#StateList").val() == 0) {
+					alert("Please Select the State")
+
+				}
+				else {
+					getCitiesForState($("#State_Id").val())
+				}
+			});
+
+
+			function getCitiesForState(State_Id) {
+
+				$.ajax({
+					url: '/Staff/FetchCitiesForState/',
+					data: "{'State_Id':'" + $("#State_Id").val() + "'}",
+					dataType: "json",
+					type: "POST",
+					contentType: "application/json; charset=utf-8",
+					async: true,
+					processData: false,
+					cache: false,
+					success: function (data) {
+
+						// first remove the current options if any
+						$('#CityList').find('option').remove();
+
+						$('#CityList').append($('<option></option>').val(0).html("-- Select City --"));
+						for (var i = 0; i < data.length; i++) {
+
+							//$('#SectionList').append($('<option></option>').val(data[i].Id).html(data[i].Name))
+
+							var opt = new Option(data[i].Name, data[i].Id);
+							$('#CityList').append(opt);
+
+						}
+
+					}
+
+				});
+			}
+		});
+
+	</script>
+
+</head>
+<body>
+	@*<section class="content">*@
+	@*<div class="content">*@
+	<div class="page-container" style="height:100%;">
+		<div class="page-content">
+			<div class="container">
+				@*<div class="row">*@
+
+				<div class="panel panel-primary panel-bordered" style="width:100%;">
+					<div class="panel-heading bg-indigo-400">
+						<h6 class="panel-title ">STAFF DETAIL</h6>
+						<div class="heading-elements ">
+							<ul class="icons-list">
+								<li><a data-action="collapse"></a></li>
+								<li><a data-action="reload"></a></li>
+								<li><a data-action="close"></a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="panel-body">
+						<fieldset>
+							<legend class="text-semibold">
+								<i class="icon-reading position-left" style="color:green;font-size:larger; "></i>
+								Add personal details
+							</legend>
+							<div class="row">
+
+								<div class="row form-group">
+
+									<div class="col-sm-2 col-md-2 ">
+										@Html.LabelFor(model => model.Employee_Id, new { htmlAttributes = new { @class = "form-control bold" } })
+
+										@Html.EditorFor(model => model.Employee_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "", @readonly = "readonly" } })
+
+										@Html.ValidationMessageFor(model => model.Employee_Id)
+
+										@Html.HiddenFor(model => model.Staff_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									</div>
+									<div class="col-sm-2 col-md-2">
+										@Html.LabelFor(model => model.First_Name, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+										@Html.EditorFor(model => model.First_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+										@Html.ValidationMessageFor(model => model.First_Name)
+									</div>
+									<div class="col-sm-2 col-md-2">
+										@Html.LabelFor(model => model.Last_Name, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+										@Html.EditorFor(model => model.Last_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+										@Html.ValidationMessageFor(model => model.Last_Name)
+									</div>
+									<div class="col-sm-2 col-md-2">
+										@Html.LabelFor(model => model.Middle_Name, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+										@Html.EditorFor(model => model.Middle_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+										@Html.ValidationMessageFor(model => model.Middle_Name)
+									</div>
+									<div class="col-sm-2 col-md-2">
+										@Html.LabelFor(model => model.Date_Of_Joining, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+										@*<p>Date: <input type="text" id="datepicker"></p>*@
+										@Html.EditorFor(model => model.Date_Of_Joining, new { htmlAttributes = new { @class = "form-control", @placeholder = "", @type = "text" } })
+										@Html.ValidationMessageFor(model => model.Date_Of_Joining)
+										@*@Html.EditorFor(model => model.Enrollment_Date, new { htmlAttributes = new { @class = "form-control date", @placeholder = "" } })*@
+									</div>
+									<div class="col-sm-2 col-md-2">
+										@Html.LabelFor(model => model.DOB, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+										@Html.EditorFor(model => model.DOB, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+										@Html.ValidationMessageFor(model => model.DOB)
+										@*@Html.LabelFor(model => model.Academic_Year, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+											@Html.EditorFor(model => model.Academic_Year, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })*@
+									</div>
+
+								</div>
+
+								<div class="row form-group">
+									<div class="col-sm-2 col-md-2 ">
+										@Html.LabelFor(model => model.Aadhar_Number, new { htmlAttributes = new { @class = "form-control bold" } })
+										@Html.EditorFor(model => model.Aadhar_Number, new { htmlAttributes = new { @class = "form-control", @placeholder = "", @type = "text" } })
+										@Html.ValidationMessageFor(model => model.Aadhar_Number)
+
+									</div>
+									<div class="col-sm-2 col-md-2">
+										@Html.LabelFor(model => model.Mobile_No, new { htmlAttributes = new { @class = "form-control bold" } })
+										@Html.EditorFor(model => model.Mobile_No, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									</div>
+									<div class="col-sm-2 col-md-2">
+										@Html.LabelFor(model => model.Alt_Mobile_No, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+										@Html.EditorFor(model => model.Alt_Mobile_No, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									</div>
+									<div class="col-sm-2 col-md-2">
+										@Html.LabelFor(model => model.Gender_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+										@Html.HiddenFor(model => model.Gender_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+										<select id="GenderList" required name="GenderListName" class="form-control">
+											@if (ViewBag.genderList != null)
+											{
+												<option value='0'>-- Select Gender --</option>
+												foreach (var item in ViewBag.genderList)
+												{
+													if (item.Text != null)
+													{
+
+														<option value="@item.Value">
+															@item.Text
+														</option>
+
+													}
+
+												}
+											}
+										</select>
+									</div>
+									<div class="col-sm-1 col-md-1">
+										@Html.LabelFor(model => model.Experience_in_Years, new { htmlAttributes = new { @class = "form-control bold" } })
+										@Html.EditorFor(model => model.Experience_in_Years, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									</div>
+									<div class="col-sm-1 col-md-1">
+										@Html.LabelFor(model => model.Is_Married, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+										@Html.CheckBoxFor(model => model.Is_Married, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									</div>
+									<div class="col-sm-2 col-md-2">
+
+										<img id="blah1" src="~/Content/images/imageupload_-_Copy.png" alt="your image" style="height:80px;width:100px;margin-top:0%;margin-left:18%;background-size:auto; align-content:center; " class="img-responsive">
+										<input type="file" name="Photo" style="display:none;  " id="Photo" />
+									</div>
+
+								</div>
+
+								<div class="row form-group" style="margin-top:-10px;">
+									<div class="col-sm-3 col-md-3">
+										@Html.LabelFor(model => model.Father_Name, new { htmlAttributes = new { @class = "form-control bold" } })
+										@Html.EditorFor(model => model.Father_Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									</div>
+									<div class="col-sm-3 col-md-3">
+										@Html.LabelFor(model => model.Email_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+										@Html.EditorFor(model => model.Email_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									</div>
+
+									@*<div class="col-sm-1 col-md-1">
+											@Html.LabelFor(model => model.Experience_in_Years, new { htmlAttributes = new { @class = "form-control bold" } })
+											@Html.EditorFor(model => model.Experience_in_Years, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+										</div>
+										<div class="col-sm-1 col-md-1" >
+											@Html.LabelFor(model => model.Is_Married, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+											@Html.CheckBoxFor(model => model.Is_Married, new { htmlAttributes = new { @class = "form-control", @placeholder = "" ,@style= "margin-top:10px;margin-left:10px; "} })
+											</div>*@
+									<div class="col-sm-2 col-md-2">
+										@Html.LabelFor(model => model.Blood_Group_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+										@Html.HiddenFor(model => model.Blood_Group_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+										<select id="BloodGroupList" required name="BloodGroupName" class="form-control">
+											@if (ViewBag.bloodGroupList != null)
+											{
+												<option value='0'>-- Select Blood Group --</option>     foreach (var item in ViewBag.bloodGroupList)
+												{
+													if (item.Text != null)
+													{
+
+														<option value="@item.Value">
+															@item.Text
+														</option>
+
+													}
+
+												}
+											}
+										</select>
+									</div>
+									<div class="col-sm-4 col-md-4">
+										@Html.LabelFor(model => model.Handling_Subjects, new { htmlAttributes = new { @class = "form-control bold" } })
+										@Html.EditorFor(model => model.Handling_Subjects, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+									</div>
+
+									@*<div class="col-sm-2 col-md-2">
+											@Html.LabelFor(model => model.DOB, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+											@Html.EditorFor(model => model.DOB, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+										@Html.ValidationMessageFor(model => model.DOB)
+										</div>*@
+
+									@*<div class="col-sm-2 col-md-2">
+											@Html.LabelFor(model => model.Academic_Year, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+											@Html.EditorFor(model => model.Academic_Year, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+										</div>*@
+
+								</div>
+
+
+							</div>
+						</fieldset>
+
+
+						<fieldset>
+							<legend class="text-semibold">
+								<i class="icon-reading position-left" style="color:green;"></i>
+								Add CONTACT details
+							</legend>
+
+
+
+
+							<div class="row form-group">
+								<div class="col-sm-5 col-md-5">
+									@Html.LabelFor(model => model.Address_Line1, new { htmlAttributes = new { @class = "form-control bold", @style = "font-weight:600; " } })
+									@Html.EditorFor(model => model.Address_Line1, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-5 col-md-5">
+									@Html.LabelFor(model => model.Address_Line2, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+									@Html.EditorFor(model => model.Address_Line2, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-2 col-md-2">
+									@Html.LabelFor(model => model.Country_Id, new { htmlAttributes = new { @class = "form-control bold" } })
+									@Html.HiddenFor(model => model.Country_Id, new { htmlAttributes = new { @class = "form-control bold" } })
+									<select data-placeholder="Select Country" class="select-search col-sm-3 col-md-3" id="CountriesList"></select>
+								</div>
+
+							</div>
+							<div class="row form-group">
+
+								<div class="col-sm-3 col-md-3">
+									@Html.LabelFor(model => model.State_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+									@*<select id="State_Id" required name="StateName" class="form-control"></select>*@
+									@Html.HiddenFor(model => model.State_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+									<select id="StateList" required name="StateName" class="form-control">
+
+										@if (ViewBag.stateList != null)
+										{
+											<option value='0'>-- Select State --</option>
+											foreach (var item in ViewBag.stateList)
+											{
+												if (item.Name != null)
+												{
+
+													<option value="@item.Id">
+														@item.Name
+													</option>
+
+												}
+
+											}
+										}
+									</select>
+
+									@*@Html.EditorFor(model => model.State_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })*@
+								</div>
+
+								<div class="col-sm-3 col-md-3">
+									@Html.LabelFor(model => model.City_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+									@Html.HiddenFor(model => model.City_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+									<select id="CityList" required name="CityName" class="form-control">
+										@if (ViewBag.cityList != null)
+										{
+											<option value='0'>-- Select City --</option>
+											foreach (var item in ViewBag.cityList)
+											{
+												if (item.Name != null)
+												{
+
+													<option value="@item.Id">
+														@item.Name
+													</option>
+
+												}
+
+											}
+										}
+
+									</select>
+								</div>
+								<div class="col-sm-3 col-md-3">
+									@Html.LabelFor(model => model.PinCode, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+									@Html.EditorFor(model => model.PinCode, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+								<div class="col-sm-3 col-md-3">
+									@*@Html.LabelFor(model => model.LandLine, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+										@Html.EditorFor(model => model.LandLine, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })*@
+								</div>
+								<div class="col-sm-3 col-md-3">
+									@Html.LabelFor(model => model.Email_Id, new { htmlAttributes = new { @class = "form-control bold", @placeholder = "" } })
+									@Html.EditorFor(model => model.Email_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+								</div>
+							</div>
+
+						</fieldset>
+					</div>
+
+					<fieldset>
+
+
+
+						<div class="row col-sm-offset-9 col-md-offset-9 form-group">
+
+							<input type="button" id="btncancel" class="btn btn-primary bg-green-400" value="CANCEL" style="margin-left:22%;" />
+							<input type="button" id="btnSaveAndContinue" class="btn btn-primary bg-green-400" value="SAVE & CONTINUE" />
+
+						</div>
+
+
+					</fieldset>
+				</div>
+
+				@*</div>*@
+			</div>
+		</div>
+	</div>
+
+
+	@*</section>*@
+
+</body>
+</html>

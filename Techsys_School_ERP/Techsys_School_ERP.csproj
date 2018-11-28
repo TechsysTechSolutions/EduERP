@@ -252,6 +252,7 @@
     <Content Include="Content\css\core.css" />
     <Content Include="Content\css\core.min.css" />
     <Content Include="Content\css\extras\animate.min.css" />
+    <Content Include="Content\css\font-awesome.min.css" />
     <Content Include="Content\css\icons\fontawesome\fonts\fontawesome-webfont.svg" />
     <Content Include="Content\css\icons\fontawesome\styles.min.css" />
     <Content Include="Content\css\icons\glyphicons\glyphicons-halflings-regular.svg" />
@@ -3141,6 +3142,8 @@
     <Compile Include="Models\Model\Syllabus.cs" />
     <Compile Include="Models\Model\Term.cs" />
     <Compile Include="Models\Model\Term_Fee_Date.cs" />
+    <Compile Include="Models\Model\TransportDestination.cs" />
+    <Compile Include="Models\Model\Transport_Destination_Detail.cs" />
     <Compile Include="Models\Model\User.cs" />
     <Compile Include="Models\Model\User_Role.cs" />
     <Compile Include="Models\Model\Transport.cs" />
@@ -3174,6 +3177,7 @@
     <Compile Include="Models\Model\ViewModel\Student_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\Subject_ClassList_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\SyllabusList_ViewModel.cs" />
+    <Compile Include="Models\Model\ViewModel\TransportDestinationList_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\TransportList_ViewModel.cs" />
     <Compile Include="Models\Model\ViewModel\UserList_ViewModel.cs" />
     <Compile Include="Models\Model\Student.cs" />
@@ -3531,6 +3535,8 @@
     <Content Include="Views\Account\AddUser.cshtml" />
     <Content Include="Views\Hostel\HostelRoomList.cshtml" />
     <Content Include="Views\Transport\TransportList.cshtml" />
+    <Content Include="Views\Transport\AddTransport.cshtml" />
+    <Content Include="Views\Transport\TransportDestinationList.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

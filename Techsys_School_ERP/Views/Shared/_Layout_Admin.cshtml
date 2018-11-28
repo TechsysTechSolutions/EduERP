@@ -15,9 +15,11 @@
 	<link href="~/Content/css/components.css" rel="stylesheet" type="text/css">
 	<link href="~/Content/css/colors.css" rel="stylesheet" type="text/css">
 	<link href="~/Content/Style.css" rel="stylesheet" type="text/css" />
+	@*<link href="~/Content/css/font-awesome.min.css" rel="stylesheet" type="text/css"*@
 
 	<!-- /global stylesheets -->
 	<!-- Core JS files -->
+
 	<script type="text/javascript" src="~/Scripts/jquery-1.10.2.js"></script>
 	<script type="text/javascript" src="~/Content/js/plugins/loaders/pace.min.js"></script>
 	<script type="text/javascript" src="~/Content/js/core/libraries/jquery.min.js"></script>
@@ -47,6 +49,8 @@
 	<script type="text/javascript" src="~/Content/assets/js/core/libraries/jquery_ui/interactions.min.js"></script>
 	<script type="text/javascript" src="~/Content/assets/js/plugins/forms/selects/select2.min.js"></script>
 	@*<script type="text/javascript" src="~/Content/assets/js/core/app.js"></script>*@
+	<script type="text/javascript" src="~/Content/assets/js/plugins/forms/selects/select2.min.js"></script>
+	@*<script type="text/javascript" src="~/Content/assets/js/pages/form_select2.js"></script>*@
 	<script type="text/javascript" src="~/Content/assets/js/pages/form_select2.js"></script>
 
 	<!-- Theme JS files -->
@@ -195,8 +199,8 @@
 {
 								<li><a href="index.html"><i class="icon-home4"></i> <span>USER MANAGEMENT</span></a>
 									<ul>
-										<li><a href="/Account/RoleList" id="layout1">Manage Role</a></li>
-										<li><a href="/Account/UserList" id="layout2">Manage User<span class="label bg-warning-400"></span></a></li>
+										<li><a href="/Account/RoleList/" id="layout1">Manage Role</a></li>
+										<li><a href="/Account/UserList/" id="layout2">Manage User<span class="label bg-warning-400"></span></a></li>
 
 									</ul>
 								</li>
@@ -287,13 +291,15 @@
 								<li>
 									<a href="#"><i class="icon-stack"></i> <span>ATTENDANCE</span></a>
 									<ul>
-										<li><a href="colors_primary.html">Configure Fee Component</a></li>
-										<li><a href="colors_danger.html">Fee Payment</a></li>
+										<li><a href="colors_primary.html">Holiday List</a></li>
+										<li><a href="colors_danger.html">Add Staff Attendance</a></li>
+										<li><a href="colors_danger.html">Class Attendance</a></li>
 									</ul>
 								</li>
 								<li><a href="../../RTL/index.html"><i class="icon-width"></i> <span>REPORTS MANAGEMENT</span></a></li>
 								<li><a href="changelog.html"><i class="icon-list-unordered"></i> <span>PROMOTION MANAGEMENT <span class="label bg-blue-400">1.4</span></span></a></li>
 								}
+								
 								<!-- /main -->
 								<!-- Forms -->
 								
@@ -302,7 +308,7 @@
 									<li style="margin-top:15%; ">
 										<a href="index.html"><i class="icon-home4"></i> <span>TIMETABLE</span></a>
 										<ul>
-											<li><a href="/Account/RoleList" id="layout1">Manage Role</a></li>
+											<li><a href="/Account/RoleList" id="layout1">CLASS TIMETABLE</a></li>
 											<li><a href="/Account/UserList" id="layout2">Manage User<span class="label bg-warning-400"></span></a></li>
 
 										</ul>
@@ -368,7 +374,7 @@
 					<!-- /dashboard content -->
 					<!-- Footer -->
 					<div class="footer text-muted">
-						&copy; 2015. <a href="#">Techsys</a> by <a href="http://themeforest.net/user/Kopyov" target="_blank">Eugene Kopyov</a>
+						&copy; 2018. <a href="www.techsystechsolutions.com">Techsys</a>  <a href="www.techsystechsolutions.com" target="_blank"></a>
 					</div>
 					<!-- /footer -->
 				</div>

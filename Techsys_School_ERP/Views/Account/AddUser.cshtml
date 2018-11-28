@@ -1,0 +1,320 @@
+﻿@model Techsys_School_ERP.Model.User
+
+@{
+
+	Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+
+	<!-- /theme JS files -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>*@
+
+	<script type="text/javascript" src="~/Scripts/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="~/Scripts/jquery-ui.js"></script>
+
+	<!-- /core JS files -->
+	<!-- Theme JS files -->
+	<script type="text/javascript" src="~/Content/assets/js/core/libraries/jquery_ui/interactions.min.js"></script>
+	<script type="text/javascript" src="~/Content/assets/js/plugins/forms/selects/select2.min.js"></script>
+	<script type="text/javascript" src="~/Content/assets/js/pages/form_select2.js"></script>
+
+	<script type="text/javascript">
+		$(document).ready(function () {
+
+
+
+			var today = new Date();
+
+			var d = new Date();
+			for (var i = 2; i >= 0; i--) {
+				var option = "<option value=" + parseInt(d.getFullYear() - i) + ">" + parseInt(d.getFullYear() - i) + "</option>"
+				$('[id*=dpAcademicYear]').append(option);
+			}
+			for (var i = 1; i <= 2; i++) {
+				var option = "<option value=" + parseInt(d.getFullYear() + i) + ">" + parseInt(d.getFullYear() + i) + "</option>"
+				$('[id*=dpAcademicYear]').append(option);
+			}
+
+			if (today.getMonth() < 4) {
+
+				$("#dpAcademicYear").val(today.getFullYear());
+				//$("#lblYear").text(today.getFullYear())
+			}
+			else {
+				$("#dpAcademicYear").val(parseInt(today.getFullYear()) + parseInt(1));
+				//$("#lblYear").text(parseInt(today.getFullYear()) + parseInt(1))
+			}
+
+			$("#classList").change(function () {
+				if ($("#classList").val() == 0) {
+					alert("Please Select the Class")
+					//$("#myHandsonTable").html("");
+					//$("#hot-display-license-info").val("");
+					//$("#hot-display-license-info").text("");
+				}
+				else {
+					getSectionForClass($("#classList").val())
+				}
+			});
+
+			$("#blah1").click(function () {
+				$("#file1").attr("visibility", "visible");
+				$("input[type=file]").trigger('click');
+				$("input[type=file]").trigger("change");
+			});
+
+
+			$("input[type=file]").change(function () {
+
+				if ($(this)[0].files && $(this)[0].files[0]) {
+					var reader = new FileReader();
+
+					reader.onload = function (e) {
+						$('#blah1')
+							.attr('src', e.target.result)
+							.width(550)
+							.height(265);
+					};
+
+					reader.readAsDataURL($(this)[0].files[0]);
+
+				}
+			});
+
+			$("#assignedDate").datepicker({
+				required: true,
+				message: "This is a required field",
+				dateFormat: 'dd-mm-yy'
+			});
+
+			$("#completionDate").datepicker({
+				required: true,
+				message: "This is a required field",
+				dateFormat: 'dd-mm-yy'
+			});
+
+
+			function getSectionForClass(Class_Id) {
+				debugger
+				$.ajax({
+					url: '/Assignment/FetchSectionIDForClass/',
+					data: "{'Class_Id':'" + $("#classList").val() + "'}",
+					dataType: "json",
+					type: "POST",
+					contentType: "application/json; charset=utf-8",
+					async: true,
+					processData: false,
+					cache: false,
+					success: function (data) {
+						debugger
+						// first remove the current options if any
+						$('#SectionList').find('option').remove();
+
+						$('#SectionList').append($('<option></option>').val(0).html("-- Select Section --"));
+						for (var i = 0; i < data.length; i++) {
+
+							var opt = new Option(data[i].Name, data[i].Id);
+							$('#SectionList').append(opt);
+
+						}
+
+					}
+
+				});
+			}
+
+			$("#btnSave").click(function () {
+
+				debugger
+
+				var user = {
+
+					Name: $("#Name").val(),
+					User_Id: $("#User_Id").val(),
+					Role_Id: $("#roleList").find(":selected").val(),
+					Password: $("#Password").val(),
+					Academic_Year: $("#Academic_Year").val(),
+					//Assignment_Title : $("#Assignment_Title").val(),
+					//Assignment_Text: $("#txtAssignmentText").val(),
+					//comments :$("#comments").val()
+
+				};
+
+				$.ajax({
+					type: "POST",
+					url: "/Account/AddUser/",
+					data: JSON.stringify(user),
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
+					success: function (response) {
+						debugger
+						if (response == "OK") {
+							alert("User Successfully Added");
+							window.location.href = "/Account/UserList";
+						}
+						else if (response == "Email Already Exists") {
+							alert("Email Already Exists");
+						}
+						else {
+							alert(response);
+						}
+					}
+
+				});
+
+
+				//alert($("#txtAssignmentText").val());
+
+
+			});
+	});
+	</script>
+
+</head>
+<body>
+	<div class="page-container" style="height:100%;">
+		<div class="page-content">
+			<div class="container">
+				@*<div class="row">*@
+
+				<div class="panel panel-primary panel-bordered" style="width:100%;">
+					<div class="panel-heading bg-indigo-400">
+						<h6 class="panel-title ">ADD USER</h6>
+						<div class="heading-elements ">
+							<ul class="icons-list">
+								<li><a data-action="collapse"></a></li>
+								<li><a data-action="reload"></a></li>
+								<li><a data-action="close"></a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="panel-body">
+						<fieldset>
+							<legend class="text-semibold" style="font-weight:900;">
+								<i class="icon-reading position-left" style="color:green;font-size:larger;font-weight:bolder; "></i>
+								Add User
+							</legend>
+
+
+							<div class="row form-group">
+
+								<div class="col-sm-2 col-md-2 col-sm-offset-2 col-md-offset-2 ">
+									<label style="font-weight:700; ">USER NAME</label>
+								</div>
+								<div class="col-sm-3 col-md-3 col-sm-offset-1 col-md-offset-1 ">
+
+									@Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+
+								</div>
+							</div>
+
+							<div class="row form-group">
+							</div>
+							<div class="row form-group">
+
+								<div class="col-sm-2 col-md-2 col-sm-offset-2 col-md-offset-2 ">
+									<label style="font-weight:700; ">USER ID</label>
+								</div>
+								<div class="col-sm-3 col-md-3 col-sm-offset-1 col-md-offset-1">
+
+									@Html.EditorFor(model => model.User_Id, new { htmlAttributes = new { @class = "form-control", @placeholder = "" } })
+
+								</div>
+							</div>
+							<div class="row form-group">
+							</div>
+
+							<div class="row form-group">
+
+								<div class="col-sm-2 col-md-2 col-sm-offset-2 col-md-offset-2 ">
+									<label style="font-weight:700; ">PASSWORD</label>
+								</div>
+								<div class="col-sm-3 col-md-3 col-sm-offset-1 col-md-offset-1 ">
+
+									@Html.PasswordFor(model => model.Password, new { @class = "form-control", @placeholder = "" })
+
+								</div>
+							</div>
+							<div class="row form-group">
+							</div>
+
+							<div class="row form-group">
+
+								<div class="col-sm-2 col-md-2 col-sm-offset-2 col-md-offset-2 ">
+									<label style="font-weight:700; ">CONFIRM PASSWORD</label>
+								</div>
+								<div class="col-sm-3 col-md-3 col-sm-offset-1 col-md-offset-1 ">
+
+								@Html.PasswordFor(model => model.Password, new { @class = "form-control", @placeholder = "" })
+
+								</div>
+							</div>
+							<div class="row form-group">
+							</div>
+							<div class="row form-group">
+
+								<div class="col-sm-2 col-md-2 col-sm-offset-2 col-md-offset-2 ">
+									<label style="font-weight:700; ">ACADEMIC YEAR</label>
+								</div>
+								<div class="col-sm-3 col-md-3 col-sm-offset-1 col-md-offset-1 ">
+
+									<select id="dpAcademicYear" name="dpAcademicYear" class="form-control" style="margin-top:0px;"></select>
+
+								</div>
+							</div>
+							<div class="row form-group">
+								</div>
+								<div class="row form-group">
+
+									<div class="col-sm-2 col-md-2 col-sm-offset-2 col-md-offset-2 ">
+										<label style="font-weight:700; ">ROLES</label>
+									</div>
+									<div class="col-sm-3 col-md-3 col-sm-offset-1 col-md-offset-1 ">
+										<select id="roleList" required name="ClassListName" class="form-control">
+											@if (ViewBag.roleList != null)
+											{
+												<option value='0'>-- Select Class --</option>
+												foreach (var item in ViewBag.roleList)
+												{
+													if (item.Text != null)
+													{
+
+														<option value="@item.Value">
+															@item.Text
+														</option>
+
+													}
+
+												}
+											}
+										</select>
+
+
+									</div>
+								</div>
+
+
+
+								<div class="row form-group">
+
+								</div>
+
+								<div class="row col-sm-offset-7 col-md-offset-7 form-group">
+									<input type="button" id="btncancel" class="btn btn-primary bg-green-400" value="CANCEL" style="margin-left:27%;" />
+									<input type="button" id="btnSave" class="btn btn-primary bg-green-400" value="SAVE" />
+								</div>
+
+</fieldset>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

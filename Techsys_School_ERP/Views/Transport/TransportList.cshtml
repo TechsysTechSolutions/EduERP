@@ -1,0 +1,244 @@
+﻿@model IEnumerable<Techsys_School_ERP.Model.ViewModel.TransportList_ViewModel>
+
+@{
+	Layout = "~/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+
+	<script type="text/javascript" src="~/Content/js/plugins/loaders/pace.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/core/libraries/jquery.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/core/libraries/bootstrap.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/loaders/blockui.min.js"></script>
+	<!-- /core JS files -->
+	<!-- Theme JS files -->
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/datatables.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/forms/selects/select2.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/jszip/jszip.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/pdfmake/pdfmake.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/pdfmake/vfs_fonts.min.js"></script>
+	<script type="text/javascript" src="~/Content/js/plugins/tables/datatables/extensions/buttons.min.js"></script>
+	<!-- <script type="text/javascript" src="~/Content/js/core/app.js"></script>-->
+	<script type="text/javascript" src="~/Content/js/pages/datatables_extension_buttons_html5.js"></script>
+	<!-- /theme JS files -->
+
+	<script type="text/javascript">
+		$(document).ready(function () {
+
+
+			var today = new Date();
+
+			var d = new Date();
+			for (var i = 2; i >= 0; i--) {
+				var option = "<option value=" + parseInt(d.getFullYear() - i) + ">" + parseInt(d.getFullYear() - i) + "</option>"
+				$('[id*=dpAcademicYear]').append(option);
+			}
+			for (var i = 1; i <= 2; i++) {
+				var option = "<option value=" + parseInt(d.getFullYear() + i) + ">" + parseInt(d.getFullYear() + i) + "</option>"
+				$('[id*=dpAcademicYear]').append(option);
+			}
+
+			if (today.getMonth() < 4) {
+
+				$("#dpAcademicYear").val(today.getFullYear());
+				//$("#lblYear").text(today.getFullYear())
+			}
+			else {
+				$("#dpAcademicYear").val(parseInt(today.getFullYear()) + parseInt(1));
+				//$("#lblYear").text(parseInt(today.getFullYear()) + parseInt(1))
+			}
+
+			$('#btnAddVehicle').click(function () { //On click of your button
+
+				window.location.href = "/Transport/AddTransport";
+
+				//var transport =
+				//		{
+				//			Name: $("#Name").val(),
+				//			Vehicle_No: $("#Vehicle_No").val(),
+				//			No_Of_Seats: $("#No_Of_Seats").val(),
+				//			Academic_Year: $("#dpAcademicYear").find(":selected").val()
+
+				//		};
+
+				//debugger
+				//$.ajax({
+				//	url: '/Transport/TransportList/',
+				//	data: JSON.stringify(transport),
+				//	dataType: "json",
+				//	type: "POST",
+				//	//dataType: "html",
+				//	contentType: "application/json; charset=utf-8",
+				//	success: function (response) {
+				//		debugger
+
+				//		if (response == "Exam Already Exists.") {
+				//			//debugger
+				//			alert("Exam Already Exists!!");
+				//		}
+				//		else if (response == "OK") {
+				//			//alert("Vehicle Added Successfully");
+				//			window.location.href = "/Transport/TransportList";
+				//		}
+
+				//	}
+				//	,
+				//	error: function (response) {
+
+				//		//debugger
+				//	},
+				//	failure: function (response) {
+				//		//debugger
+
+				//	}
+				//});
+
+			})
+		})
+
+
+	</script>
+</head>
+<body>
+
+
+
+	@*<div>
+			<h4>Staff</h4>
+			<hr />
+			<dl class="dl-horizontal">
+				<dt>
+					@Html.DisplayNameFor(model => model.First_Name)
+				</dt>
+
+
+				<dt>
+					@Html.DisplayNameFor(model => model.Last_Name)
+				</dt>
+
+
+
+				<dt>
+					@Html.DisplayNameFor(model => model.Gender_Id)
+				</dt>
+
+
+
+
+			</dl>
+		</div>*@
+	<div class="page-container" style="height:100%;">
+		<!-- Page content -->
+		<div class="page-content">
+			@*<div class="content-wrapper">*@
+			<!-- Page header -->
+			<!-- /page header -->
+			<!-- Content area -->
+			<div class="content">
+				<!-- Basic initialization -->
+				@*<div class="panel panel-tab-content">*@
+
+				<div class="panel panel-primary panel-bordered">
+					<div class="panel-heading bg-indigo-400">
+						<h6 class="panel-title ">ROLE LIST</h6>
+						<div class="heading-elements">
+							<ul class="icons-list">
+								<li><a data-action="collapse"></a></li>
+								<li><a data-action="reload"></a></li>
+								<li><a data-action="close"></a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="panel-body">
+
+					</div>
+					<div class="row form-group">
+
+						<div class="col-sm-2 col-md-2 col-md-offset-1 col-sm-offset-1">
+							<label style="font-weight:700; ">VEHICLE</label>
+							<input type="text" class="form-control col-sm-2 col-md-2" id="Name" />
+						</div>
+
+						<div class="col-sm-3 col-md-3 col-md-offset-0 col-sm-offset-0">
+							<label style="font-weight:700; ">VEHICLE NO</label>
+							<input type="text" class="form-control col-sm-3 col-md-3" id="Vehicle_No" />
+						</div>
+
+
+						<div class="col-sm-2 col-md-2 col-md-offset-0 col-sm-offset-0">
+							<label style="font-weight:700; ">NO OFSEATS</label>
+							<input type="text" class="form-control col-sm-3 col-md-3" id="No_Of_Seats" />
+						</div>
+
+
+						<div class="col-sm-2 col-md-2 col-md-offset-0 col-sm-offset-0">
+							<label style="font-weight:700; ">ACADEMIC YEAR</label>
+							<select id="dpAcademicYear" name="dpAcademicYear" class="form-control" style="margin-top:0px;"></select>
+						</div>
+
+						<div class="col-sm-2 col-md-2 col-md-offset-0 col-sm-offset-0">
+
+							<input type="button" class="btn btn-success" id="btnAddVehicle" value="ADD VEHICLE" style="margin-top: 26px; " />
+						</div>
+
+					</div>
+
+					<table class="table datatable-button-html5-basic table-striped table-bordered" id="tblVehicleList">
+						<thead class="bg-primary-400">
+							<tr>
+								<th>Name</th>
+								<th>No Of Seats</th>
+								<th>Vehicle No</th>
+								@*<th>Created On</th>*@
+								<th>Updated On</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+
+							@foreach (var item in Model)
+							{
+								<tr>
+									<td>@item.Name</td>
+									<td>@item.No_Of_Seats</td>
+									<td>@item.Vehicle_No</td>
+									<td></td>
+									@*@if (item.Created_On != null)
+										{
+											<td>@item.Created_On</td>
+										}
+										else
+										{
+											<td></td>
+										}
+										<td>@User.Identity.Name</td>*@
+									<td>
+										@Html.ActionLink("Delete", "Delete", new { id = item.Id })
+									</td>
+								</tr>
+
+							}
+						</tbody>
+					</table>
+				</div>
+
+
+
+
+				@*</div>*@
+
+				<!-- Footer -->
+				@*<div class="footer text-muted">
+						&copy; 2015. <a href="#">Limitless Web App Kit</a> by <a href="http://themeforest.net/user/Kopyov" target="_blank">Eugene Kopyov</a>
+					</div>*@
+				<!-- /footer -->
+			</div>
+			<!-- /content area -->
+			@*</div>*@
+		</div>
+	</div>
+</body>
+</html>

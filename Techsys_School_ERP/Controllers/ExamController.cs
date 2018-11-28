@@ -13,10 +13,11 @@ using Techsys_School_ERP.Model.ViewModel;
 
 namespace Techsys_School_ERP.Controllers
 {
-    public class ExamController : CommonController
+	[Authorize(Roles = "Admin, SuperAdmin")]
+	public class ExamController : CommonController
     {
 		// GET: Exam/ExamList
-		[Authorize(Roles = "Admin")]
+		[Authorize(Roles = "Admin, SuperAdmin")]
 		public ActionResult ExamList()
         {
 			List<ExamList_ViewModel> examListViewModel = new List<ExamList_ViewModel>();

@@ -29,30 +29,31 @@
 
 			$('#btnAddUser').click(function () { //On click of your button
 
+				window.location.href = "/Account/AddUser";
 
-				$.ajax({
-					url: '/Account/CreateUser/',
-					data: "{'Role_Name':'" + $("#txtAddRole").val() + "'}",
-					dataType: "json",
-					type: "POST",
-					//dataType: "html",
-					contentType: "application/json; charset=utf-8",
-					success: function (response) {
-						debugger
-						if (response == "Role Already Exists.") {
-							alert("Role Already Exists!!");
-						}
-						else if (response == "OK")
-						window.location.href = "/Account/RoleList";
-					}
-					,
-					error: function (response) {
+				//$.ajax({
+				//	url: '/Account/CreateUser/',
+				//	data: "{'Role_Name':'" + $("#txtAddRole").val() + "'}",
+				//	dataType: "json",
+				//	type: "POST",
+				//	//dataType: "html",
+				//	contentType: "application/json; charset=utf-8",
+				//	success: function (response) {
+				//		debugger
+				//		if (response == "Role Already Exists.") {
+				//			alert("Role Already Exists!!");
+				//		}
+				//		else if (response == "OK")
+				//		window.location.href = "/Account/RoleList";
+				//	}
+				//	,
+				//	error: function (response) {
 
-					},
-					failure: function (response) {
+				//	},
+				//	failure: function (response) {
 
-					}
-				});
+				//	}
+				//});
 
 			})
 		})
@@ -114,10 +115,10 @@
 
 					</div>
 					<div class="row col-xs-8">
-						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						@*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						<div class="text-left col-xs-4">
 							<input type="text" class="form-control col-xs-2" id="txtAddUser" />
-						</div>
+						</div>*@
 
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						<div class="text-left col-xs-2">
@@ -147,7 +148,7 @@
 									<td>@item.User_Id</td>
 									<td>@item.Academic_Year</td>
 									<td>@item.Role_Name</td>
-									<td>@item.Updated_On.Value.ToShortDateString()</td>
+									<td>@item.Updated_On</td>
 									<td>@User.Identity.Name</td>
 									<td>
 										@Html.ActionLink("Edit", "Edit", new { id = item.Id }) &nbsp;|&nbsp;

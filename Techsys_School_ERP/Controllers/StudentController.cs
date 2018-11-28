@@ -42,6 +42,7 @@ namespace Techsys_School_ERP.Controllers
 				{
 					nStudent_Id = Convert.ToInt64(dbcontext.Student.Max(x => x.Student_Id) + 1);
 					student.Roll_No = Convert.ToString(GetAcademicYear()) + " - " + (nStudent_Id + 1);
+					student.Student_Id = nStudent_Id;
 					
 					TempData["Student_Id"] = nStudent_Id;
 					TempData.Keep("Student_Id");
@@ -79,6 +80,7 @@ namespace Techsys_School_ERP.Controllers
 			newStudentToBeAdded.Created_On = DateTime.Now;
 			string sEmail_Id = formData.Email_Id;
 			string sReturn_Text = string.Empty;
+			string sPassword = CreateRandomPassword(6);
 			try
 			{
 				if (ModelState.IsValid)
@@ -93,14 +95,31 @@ namespace Techsys_School_ERP.Controllers
 						//{
 							dbcontext.Student.Add(newStudentToBeAdded);
 							dbcontext.SaveChanges();
-							sReturn_Text = "SuccessFully Added";
+							
+
+						MailController oMailController = new MailController();
+						oMailController.SendMail(newStudentToBeAdded.Email_Id, newStudentToBeAdded.First_Name.Substring(0, 4) + newStudentToBeAdded.Student_Id , sPassword );
 
 						//To create the UserId in the User Table for Login 
 
 						//}
 					}
-					//return Json(sReturn_Text, JsonRequestBehavior.AllowGet);
-				}
+
+					using (var dbcontext = new SchoolERPDBContext())
+					{
+						User newUserToBeAdded = new User();
+						newUserToBeAdded.Name = newStudentToBeAdded.First_Name + " " + newStudentToBeAdded.Last_Name;
+						newUserToBeAdded.EmailConfirmed = true;
+						newUserToBeAdded.Created_By = 5;
+						newUserToBeAdded.User_Id = newStudentToBeAdded.First_Name.Substring(0, 4) + newStudentToBeAdded.Student_Id;
+						newUserToBeAdded.Password = sPassword;
+						newUserToBeAdded.Is_Active = true;
+						newUserToBeAdded.Academic_Year = newStudentToBeAdded.Academic_Year;
+						newUserToBeAdded.Role_Id = Convert.ToInt16(Role_Type.Student);
+						sReturn_Text = "SuccessFully Added";
+					}
+						//return Json(sReturn_Text, JsonRequestBehavior.AllowGet);
+					}
 				else
 				{
 					foreach (ModelState modelState in ViewData.ModelState.Values)
@@ -209,10 +228,20 @@ namespace Techsys_School_ERP.Controllers
 					{
 						ViewBag.Document1 = ConvertByteStreamToString(studentDocumentToEdit.document1);
 					}
+					else
+					{
+						ViewBag.Document1 = null;
+
+					}
 
 					if (studentDocumentToEdit.document2 != null)
 					{
 						ViewBag.Document2 = ConvertByteStreamToString(studentDocumentToEdit.document2);
+					}
+					else
+					{
+						ViewBag.Document2 = null;
+
 					}
 
 					if (studentDocumentToEdit.document3 != null)
@@ -497,6 +526,18 @@ namespace Techsys_School_ERP.Controllers
 			return Json(new { items = GetCountriesList(sSearchTerm) }, JsonRequestBehavior.AllowGet);
 		}
 
+
+		public ActionResult populateHostelRoomList(string sSearchTerm)
+		{
+			return Json(SearchandGetHostelRoomList(sSearchTerm), JsonRequestBehavior.AllowGet);
+		}
+
+
+		public ActionResult populateVehicleList(string sSearchTerm)
+		{
+			return Json(SearchandGetVehicleList(sSearchTerm), JsonRequestBehavior.AllowGet);
+		}
+
 		public ActionResult GetStudentList(string q)
 
 		{
@@ -592,6 +633,19 @@ namespace Techsys_School_ERP.Controllers
 
 			return Json(lstCity, JsonRequestBehavior.AllowGet);
 
+		}
+
+
+
+		public JsonResult FetchHostelRoomBasedOnId(int nHostelRoomId)
+		{	
+			return Json(GetHostelRoomBasedOnId(nHostelRoomId), JsonRequestBehavior.AllowGet);
+		}
+
+
+		public JsonResult FetchVehicleNoBasedOnId(int nVehicleNo)
+		{			
+			return Json(GetTransportBasedOnId(nVehicleNo), JsonRequestBehavior.AllowGet);
 		}
 
 		[HttpPost]
@@ -1009,10 +1063,21 @@ namespace Techsys_School_ERP.Controllers
 				studentToBeEdited = studentEdited;
 
 				byte[] byteData = studentEdited.Photo;
-				//Convert byte arry to base64string   
-				string imreBase64Data = Convert.ToBase64String(byteData);
-				string imgDataURL = string.Format("data:image/png;base64,{0}", imreBase64Data);
-				//Passing image data in viewbag to view  
+				string imgDataURL = string.Empty;
+
+				if (byteData != null)
+				{
+					//Convert byte arry to base64string   
+					string imreBase64Data = Convert.ToBase64String(byteData);
+					imgDataURL  = string.Format("data:image/png;base64,{0}", imreBase64Data);
+					//Passing image data in viewbag to view  
+				
+				}
+				else
+				{
+					imgDataURL = string.Empty;
+				}
+
 				ViewBag.ImageData = imgDataURL;
 
 
