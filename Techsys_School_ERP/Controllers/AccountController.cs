@@ -78,7 +78,7 @@ namespace Techsys_School_ERP.Controllers
 			return View();
 		}
 
-
+        //To add a User
 		[HttpPost]
 		[Authorize(Roles = "Admin, SuperAdmin")]
 		public JsonResult AddUser(User user)
